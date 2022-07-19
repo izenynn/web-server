@@ -6,6 +6,13 @@
 *.lo
 *.o
 *.obj
+*.ko
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
 
 # Precompiled Headers
 *.gch
@@ -13,6 +20,7 @@
 
 # Compiled Dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 
@@ -23,6 +31,7 @@
 # Compiled Static libraries
 *.lai
 *.la
+*.lo
 *.a
 *.lib
 
@@ -30,3 +39,48 @@
 *.exe
 *.out
 *.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+
+# MAC OS files
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+
+# VS code files
+.vscode
+**/.vscode
+
+# CLion
+.idea
+CMakelist.txt
+
+# cache
+.cache
+**/.cache
+
+# bear
+compile_commands.json
+**/compile_commands.json
+
+# Miscellaneous
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# Program name
+webserv
