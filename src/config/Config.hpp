@@ -5,6 +5,10 @@
 # include <vector>
 # include <fstream>
 
+
+// FIXME remove \/
+# include <iostream>
+
 class Config {
 	public:
 		Config( void ); // default path
@@ -14,11 +18,19 @@ class Config {
 		Config								&operator=( const Config& other );
 
 		// get
-		const std::vector<ConfigServer>&	getServers( void ) const;
-	private:
-		int									load( const std::string& file );
+		//const std::vector<ConfigServer>&	getServers( void ) const;
 
-		std::vector<ConfigServer>			_servers;
+		int									load( const std::string& file );
+	private:
+		//std::vector<ConfigServer>			_servers;
+
+	public:
+		class ExtraClosingBrackets : public std::exception {
+			public: const char* what() const throw();
+		};
+		class ExtraOpeningBrackets : public std::exception {
+			public: const char* what() const throw();
+		};
 };
 
 #endif
