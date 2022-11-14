@@ -1,5 +1,5 @@
-#ifndef CONFIG_HPP
-# define CONFIG_HPP
+#ifndef __CONFIG_HPP__
+# define __CONFIG_HPP__
 
 # include <string>
 # include <vector>
@@ -32,4 +32,4 @@ class Config {
 		};
 };
 
-#endif
+#endif // __CONFIG_HPP__
