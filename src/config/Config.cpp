@@ -5,6 +5,7 @@
 # include <string>
 # include <vector>
 
+			std::cout << "1";
 class Config {
 	public:
 		Config( void ); // default path
@@ -31,12 +32,12 @@ namespace {
 		// TODO add comment '#' support
 		int								bracket_cnt;
 		std::ifstream					in;
-		std::vector<std::string>		tokens;
-		const std::vector<std::string>*	ret;
+		std::vector<std::string>&		tokens = *new std::vector<std::string>();
 
 		// 1. open file and iterate lines
 		in.open( file.c_str(), std::ifstream::in );
 		for ( std::string line; getline(in, line); ) {
+			std::cout << "line: " << line << std::endl;
 			// process line
 			// 2. iterate all words in line -> while start = find_first_not_of(" \t", end/0) != std::string::npos
 			//     1.1 get word -> token = line.substr(start, find_first_of(" \t", start) - start)
@@ -47,8 +48,9 @@ namespace {
 
 			std::string::size_type	start = line.find_first_not_of(" \t", 0);
 			std::string::size_type	end = 0;
-			for ( ; start != std::string::npos; start = line.find_first_not_of( " \t", end ) ) {
-				std::string	token = line.substr( start, line.find_first_of( " \t", start ) - start );
+			while ( ( start = line.find_first_not_of( " \t", end ) ) != std::string::npos ) {
+				end = line.find_first_of( " \t", start );
+				std::string	token = line.substr( start, end - start );
 				if ( token == "{" ) {
 					++bracket_cnt;
 				} else if ( token == "}" ) {
@@ -59,13 +61,15 @@ namespace {
 					token.erase(token.end() - 1);
 					tokens.push_back(token); // ?
 					tokens.push_back(";"); // ???
+				} else {
+					tokens.push_back(token);
 				}
 			}
 		}
 		if (bracket_cnt > 0) throw Config::ExtraOpeningBrackets();
 
-		ret = new std::vector<std::string>(tokens);
-		return *ret;
+		std::cout << tokens.size() << std::endl;
+		return tokens;
 	}
 }
 
@@ -78,14 +82,14 @@ Config::Config( const std::string& path ) {
 Config::~Config( void ) {}
 
 int Config::load(const std::string& file) {
-	std::vector<std::string>	tokens;
-
 	// tokenize
-	tokens = lexer( file );
+	const std::vector<std::string>& tokens = lexer( file );
 	// print toekns
-	for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+	std::cout << "hola\n" << std::endl;
+	for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
 		std::cout << *it << std::endl;
 	}
+	delete &tokens;
 	// TODO check directives are valid
 
 	// create servers
