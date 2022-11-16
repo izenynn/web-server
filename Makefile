@@ -10,6 +10,8 @@ YEL=\033[33m
 BLU=\033[34m
 MAG=\033[35m
 CYN=\033[36m
+LBLU = \033[36m
+LGRN = \033[0;90m
 
 # OS
 UNAME_S := $(shell uname -s)
@@ -115,8 +117,8 @@ OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
 #                                    RULES                                     #
 # **************************************************************************** #
 
-PHONY := install
-all: $(NAME)
+PHONY := all
+all: $(NAME) ## Descripción para all
 
 $(NAME): $(OBJ) $(LFT_NAME)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
@@ -127,20 +129,23 @@ $(NAME): $(OBJ) $(LFT_NAME)
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
 
 PHONY += install
-install: $(NAME)
+install: $(NAME)  ## Descripción para install
 	install $(NAME) $(BIN_DIR)
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize:
+	CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address
+sanitize:
+	CXXFLAGS += -pedantic -g3 -fsanitize=address
 endif
-sanitize: $(NAME)
+sanitize: $(NAME)  ## Descripción para sanitize
 
 PHONY += thread
-thread: CXXFLAGS += -g3 -fsanitize=thread
+thread:  ## Descripción para thread
+	CXXFLAGS += -g3 -fsanitize=thread
 thread: $(NAME)
 
 # OBJ
@@ -160,18 +165,26 @@ $(OBJ_PATH):
 	@printf "${NOCOL}"
 
 PHONY += clean
-clean:
+clean:  ## Descripción para clean
 	@printf "${RED}"
 	rm -rf $(OBJ_PATH)
 	@printf "${NOCOL}"
 
 PHONY += fclean
-fclean: clean
+fclean: clean  ## Descripción para fclean
 	@printf "${RED}"
 	rm -rf $(NAME)
 	@printf "${NOCOL}"
 
 PHONY += re
-re: fclean all
+re: fclean all  ## Descripción para re
+
+PHONY += help
+help: ## Shows help
+	@echo "\n$(LBLU)_______________________________ $(NAME) _______________________________$(NOCOL)"
+	@echo "\n\tUsage: 'make $(LBLU)<command>$(NOCOL)'\n"
+	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "${LBLU}%-20s${NOCOL} %s\n", $$1, $$2}'
+#	@echo "\n\t$(LGRN)Using [Argument] $(LBLU)'V=1'$(LGRN) will show all the building output$(NOCOL)"
+	@echo "\n$(LBLU)_______________________________________________________________________$(NOCOL)\n\n"
 
 .PHONY: $(PHONY)
