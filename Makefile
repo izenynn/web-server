@@ -52,22 +52,18 @@ CXXFLAGS += -I ./$(INC_PATH)
 #                                   SOURCES                                    #
 # **************************************************************************** #
 
-#SRC_DIR_MAIN	= main
-#SRC_DIR_BUILTIN	= built-in
-#SRC_DIR_EXEC	= exec
-#SRC_DIR_LEXER	= lexer
-#SRC_DIR_PARSER	= parser
-#SRC_DIR_PROMPT	= prompt
-#SRC_DIR_UTILS	= utils
+SRC_DIR_CONFIG	= config
 
+OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)
 #OBJ_DIRS_NAME =	$(SRC_DIR_MAIN)		$(SRC_DIR_BUILTIN)	$(SRC_DIR_EXEC)		\
 				$(SRC_DIR_LEXER)	$(SRC_DIR_PARSER)	$(SRC_DIR_PROMPT)	\
 				$(SRC_DIR_UTILS)
 
 OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
-SRC_ROOT =		main.c
+SRC_ROOT =		main.cpp
 
+SRC_CONFIG =	Config.cpp
 #SRC_MAIN = 		handle_line.c
 #
 #SRC_BUILTIN =	cd.c				echo.c				env.c				\
@@ -98,7 +94,8 @@ SRC_ROOT =		main.c
 #				custom_len.c		ft_getenv.c			env_utils.c			\
 #				init_utils.c		read_config.c		new_tmp.c
 
-SRC_NAME =	$(SRC_ROOT)
+SRC_NAME =	$(SRC_ROOT)														\
+			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))
 #SRC_NAME =	$(SRC_ROOT)														\
 #			$(addprefix $(SRC_DIR_MAIN)/, $(SRC_MAIN))						\
 #			$(addprefix $(SRC_DIR_BUILTIN)/, $(SRC_BUILTIN))				\
@@ -108,7 +105,7 @@ SRC_NAME =	$(SRC_ROOT)
 #			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))					\
 #			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
 
-OBJ_NAME = $(SRC_NAME:%.c=%.o)
+OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
 
 SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
