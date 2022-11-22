@@ -63,6 +63,7 @@
 # VS code files
 .vscode
 **/.vscode
+*.code-workspace
 
 # CLion
 .idea
