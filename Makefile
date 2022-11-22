@@ -115,7 +115,7 @@ OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
 # **************************************************************************** #
 
 PHONY := all
-all: $(NAME) ## Descripción para all
+all: $(NAME) ## default rule, compile web server
 
 $(NAME): $(OBJ) $(LFT_NAME)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
@@ -126,7 +126,7 @@ $(NAME): $(OBJ) $(LFT_NAME)
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
 
 PHONY += install
-install: $(NAME)  ## Descripción para install
+install: $(NAME) ## install binary on the system
 	install $(NAME) $(BIN_DIR)
 
 PHONY += sanitize
@@ -138,12 +138,12 @@ ifeq ($(UNAME_S),Darwin)
 sanitize:
 	CXXFLAGS += -pedantic -g3 -fsanitize=address
 endif
-sanitize: $(NAME)  ## Descripción para sanitize
+sanitize: $(NAME) ## compile with pedantic, debug symbol, and a bunch of sanitizes
 
 PHONY += thread
-thread:  ## Descripción para thread
+thread:
 	CXXFLAGS += -g3 -fsanitize=thread
-thread: $(NAME)
+thread: $(NAME) ## compile with thread sanitize
 
 # OBJ
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp | $(OBJ_PATH) $(OBJ_DIRS)
@@ -162,22 +162,22 @@ $(OBJ_PATH):
 	@printf "${NOCOL}"
 
 PHONY += clean
-clean:  ## Descripción para clean
+clean: ## clean objects and dependencies
 	@printf "${RED}"
 	rm -rf $(OBJ_PATH)
 	@printf "${NOCOL}"
 
 PHONY += fclean
-fclean: clean  ## Descripción para fclean
+fclean: clean ## clean everything
 	@printf "${RED}"
 	rm -rf $(NAME)
 	@printf "${NOCOL}"
 
 PHONY += re
-re: fclean all  ## Descripción para re
+re: fclean all ## redo all
 
 PHONY += help
-help: ## Shows help
+help: ## shows help
 	@echo "\n$(LBLU)_______________________________ $(NAME) _______________________________$(NOCOL)"
 	@echo "\n\tUsage: 'make $(LBLU)<command>$(NOCOL)'\n"
 	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "${LBLU}%-20s${NOCOL} %s\n", $$1, $$2}'
