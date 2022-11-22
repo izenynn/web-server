@@ -13,7 +13,7 @@ apsServer::apsServer() : \
 		std::cout << C_LIGHTYELLOW << "<apsServer>: Default constructor called" << C_OFF << std::endl;
 }
 
-apsServer::apsServer( const apsSever & data ) {
+apsServer::apsServer( const apsServer & data ) {
 	*this = data;
 	std::cout << C_LIGHTYELLOW << "<apsServer>: Copy constructor called" << C_OFF << std::endl;
 }
