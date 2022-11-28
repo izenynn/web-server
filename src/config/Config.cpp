@@ -1,4 +1,4 @@
-#include "Config.hpp"
+#include "config/Config.hpp"
 
 namespace {
 	const std::vector<std::string>& lexer( const std::string& file ) {

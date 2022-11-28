@@ -40,7 +40,7 @@ CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -MD
 
 SRC_PATH = src
 OBJ_PATH = obj
-INC_PATH = inc
+INC_PATH = include
 
 # **************************************************************************** #
 #                                    FLAGS                                     #
@@ -131,18 +131,15 @@ install: $(NAME) ## install binary on the system
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize:
-	CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize:
-	CXXFLAGS += -pedantic -g3 -fsanitize=address
+sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address
 endif
 sanitize: $(NAME) ## compile with pedantic, debug symbol, and a bunch of sanitizes
 
 PHONY += thread
-thread:
-	CXXFLAGS += -g3 -fsanitize=thread
+thread: CXXFLAGS += -g3 -fsanitize=thread
 thread: $(NAME) ## compile with thread sanitize
 
 # OBJ

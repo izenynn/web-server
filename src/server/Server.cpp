@@ -1,5 +1,5 @@
-#include "Server.hpp"
-#include "Print.hpp"
+#include "server/Server.hpp"
+#include "utils/Print.hpp"
 
 /*
 ====================
