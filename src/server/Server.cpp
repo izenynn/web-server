@@ -18,6 +18,10 @@ int Server::run() {
 		// throw "something went wrong, config is NULL"
 		return ( 1 );
 	}
+	// 1. while() wait for a connection until "select" chachets something
+	// 2. if ret <= 0 -> error
+	// 3. else -> we are good
+	//     3.1
 	return ( 0 );
 }
 
