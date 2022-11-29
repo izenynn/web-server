@@ -1,13 +1,13 @@
 #include "config/Config.hpp"
 
 namespace {
-	const std::vector<std::string>& lexer( const std::string& file ) {
+	const std::vector<std::string>& lexer( const char* file ) {
 		// TODO add comment '#' support
-		int								bracket_cnt;
 		std::ifstream					in;
 		std::vector<std::string>&		tokens = *new std::vector<std::string>();
+		int								bracket_cnt = 0;
 
-		in.open( file.c_str(), std::ifstream::in );
+		in.open( file, std::ifstream::in ); // TODO throw exception if cant read file
 		for ( std::string line; getline(in, line); ) {
 			std::string::size_type	start = line.find_first_not_of(" \t", 0);
 			std::string::size_type	end = 0;

@@ -1,14 +1,27 @@
 #include "server/Server.hpp"
-#include "utils/Print.hpp"
 
-/*
-====================
-Constructors & Destructors
-Automatically called when an object of the class Server is created or deleted
-====================
-*/
-// @DUDAS: He visto ejemplos de backlog usados en 200. He puesto 10 porque creo que entre 5 y 10 es lo correcto, pero podríamos tener que ampliarlo.
-apsServer::apsServer() : \
+const char* Server::DEFAULT_PATH = "/etc/aps/aps.conf";
+
+Server::Server( void ) {}
+
+void Server::configLoad( const char* file ) {
+	this->_config = new Config( file );
+	return ;
+}
+void Server::configLoad() {
+	this->configLoad( Server::DEFAULT_PATH );
+	return ;
+}
+
+int Server::run() {
+	if (this->_config == ft::nullptr_t) {
+		// throw "something went wrong, config is NULL"
+		return ( 1 );
+	}
+	return ( 0 );
+}
+
+/*apsServer::apsServer() : \
 	domain( AF_INET ), type( SOCK_STREAM ), protocol( 0 ), hostlong( AF_INET ), backlog( 10 ), serverFD( -1 ) {
 		std::cout << C_LIGHTYELLOW << "<apsServer>: Default constructor called" << C_OFF << std::endl;
 }
@@ -33,4 +46,4 @@ apsServer & apsServer::operator=( const apsServer & data) {
 
 apsServer::~apsServer() {
 	std::cout << C_LIGHTPURPLE << "<apsServer>: Destructor called" << C_OFF << std::endl;
-}
+}*/

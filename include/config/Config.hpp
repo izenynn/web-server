@@ -11,16 +11,16 @@
 
 class Config {
 	public:
-		Config( void ); // TODO load default path
 		Config( const std::string& path );
 		virtual ~Config( void );
 
 		Config								&operator=( const Config& other );
 
-		int									load( const std::string& file );
+		int									load( const char* file );
 
 		//const std::vector<ConfigServer>&	getServers( void ) const;
 	private:
+		Config( void ); // default path handled on 'Server' class
 		//std::vector<ConfigServer>			_servers;
 
 	public:
