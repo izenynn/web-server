@@ -5,24 +5,18 @@
 # include <vector>
 # include <fstream>
 
-
-// FIXME remove \/
-# include <iostream>
-
 class Config {
 	public:
-		Config( const char* path );
+		Config( const char* path ); // config class needs a config file
 		virtual ~Config( void );
-
-		Config								&operator=( const Config& other );
-
-		int									load( const char* file );
 
 		//const std::vector<ConfigServer>&	getServers( void ) const;
 	private:
-		Config( void ); // default path handled on 'Server' class
+		Config( void ); // not necessary
+		Config &operator=( const Config& other ); // not necessary
 		//std::vector<ConfigServer>			_servers;
 
+		void load( const char* file );
 	public:
 		class ExtraClosingBrackets : public std::exception {
 			public: const char* what() const throw();

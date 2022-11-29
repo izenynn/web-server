@@ -45,7 +45,7 @@ Config::Config( const char* path ) {
 
 Config::~Config( void ) {}
 
-int Config::load(const char* file) {
+void Config::load(const char* file) {
 	// tokenize
 	const std::vector<std::string>& tokens = lexer( file );
 	// print toekns
@@ -69,13 +69,13 @@ int Config::load(const char* file) {
 			// invalid directive
 		}
 	}*/
-	return ( 0 );
+	return ;
 }
 
 const char* Config::ExtraClosingBrackets::what() const throw() {
-	return "Exception: extra closing bracket on config";
+	return ( "Exception: extra closing bracket on config" );
 }
 
 const char* Config::ExtraOpeningBrackets::what() const throw() {
-	return "Exception: extra opening bracket on config";
+	return ( "Exception: extra opening bracket on config" );
 }
