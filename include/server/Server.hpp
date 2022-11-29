@@ -25,7 +25,7 @@ class Server {
 	public:
 		Server( void );
 		Server& operator=( const Server& other);
-		~Server();
+		~Server( void );
 
 		void configLoad(); // default path
 		void configLoad( const char* file );

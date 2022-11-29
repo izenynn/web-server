@@ -11,7 +11,7 @@
 
 class Config {
 	public:
-		Config( const std::string& path );
+		Config( const char* path );
 		virtual ~Config( void );
 
 		Config								&operator=( const Config& other );

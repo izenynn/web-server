@@ -39,13 +39,13 @@ namespace {
 
 Config::Config( void ) {}
 
-Config::Config( const std::string& path ) {
+Config::Config( const char* path ) {
 	this->load(path);
 }
 
 Config::~Config( void ) {}
 
-int Config::load(const std::string& file) {
+int Config::load(const char* file) {
 	// tokenize
 	const std::vector<std::string>& tokens = lexer( file );
 	// print toekns

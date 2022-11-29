@@ -2,7 +2,16 @@
 
 const char* Server::DEFAULT_PATH = "/etc/aps/aps.conf";
 
-Server::Server( void ) {}
+Server::Server( void ) {
+	return ;
+}
+
+Server::~Server( void ) {
+	if ( this->_config != ft::nullptr_t ) {
+		delete this->_config;
+	}
+	return ;
+}
 
 void Server::configLoad( const char* file ) {
 	this->_config = new Config( file );
