@@ -1,28 +1,30 @@
+#pragma once
+
 #ifndef __CONFIG_HPP__
 # define __CONFIG_HPP__
+
+/** INCLUDES ----------------------------------- */
 
 # include <string>
 # include <vector>
 # include <fstream>
 
+/** METHODS ------------------------------------ */
 
-// FIXME remove \/
-# include <iostream>
+namespace webserv {
 
 class Config {
 	public:
-		Config( void ); // TODO load default path
-		Config( const std::string& path );
+		Config( const char* path ); // config class needs a config file
 		virtual ~Config( void );
-
-		Config								&operator=( const Config& other );
-
-		int									load( const std::string& file );
 
 		//const std::vector<ConfigServer>&	getServers( void ) const;
 	private:
+		Config( void ); // not necessary
+		Config &operator=( const Config& other ); // not necessary
 		//std::vector<ConfigServer>			_servers;
 
+		void load( const char* file );
 	public:
 		class ExtraClosingBrackets : public std::exception {
 			public: const char* what() const throw();
@@ -32,4 +34,6 @@ class Config {
 		};
 };
 
-#endif // __CONFIG_HPP__
+} //namespace webserv
+
+#endif /** __CONFIG_HPP__ */

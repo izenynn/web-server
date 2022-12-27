@@ -30,7 +30,7 @@ BIN_DIR ?= /usr/local/bin
 
 MAKE = make
 
-CXX = c++
+CXX = g++
 
 CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -MD
 
@@ -40,7 +40,7 @@ CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -MD
 
 SRC_PATH = src
 OBJ_PATH = obj
-INC_PATH = inc
+INC_PATH = include
 
 # **************************************************************************** #
 #                                    FLAGS                                     #
@@ -53,17 +53,22 @@ CXXFLAGS += -I ./$(INC_PATH)
 # **************************************************************************** #
 
 SRC_DIR_CONFIG	= config
+SRC_DIR_SERVER	= server
+SRC_DIR_UTILS	= utils
 
-OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)
+OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)	$(SRC_DIR_SERVER)	$(SRC_DIR_UTILS)
+
 #OBJ_DIRS_NAME =	$(SRC_DIR_MAIN)		$(SRC_DIR_BUILTIN)	$(SRC_DIR_EXEC)		\
 				$(SRC_DIR_LEXER)	$(SRC_DIR_PARSER)	$(SRC_DIR_PROMPT)	\
 				$(SRC_DIR_UTILS)
 
 OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
-SRC_ROOT =		main.cpp
+SRC_ROOT	=	main.cpp
+SRC_CONFIG	=	Config.cpp
+SRC_SERVER	=	Server.cpp
+SRC_UTILS	=	log.cpp
 
-SRC_CONFIG =	Config.cpp
 #SRC_MAIN = 		handle_line.c
 #
 #SRC_BUILTIN =	cd.c				echo.c				env.c				\
@@ -89,21 +94,19 @@ SRC_CONFIG =	Config.cpp
 #				parse_redir_out.c
 #
 #SRC_PROMPT =	prompt.c
-#
-#SRC_UTILS =		init.c				error_utils.c		signals.c			\
-#				custom_len.c		ft_getenv.c			env_utils.c			\
-#				init_utils.c		read_config.c		new_tmp.c
 
 SRC_NAME =	$(SRC_ROOT)														\
-			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))
+			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\
+			$(addprefix $(SRC_DIR_SERVER)/, $(SRC_SERVER))					\
+			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
+
 #SRC_NAME =	$(SRC_ROOT)														\
 #			$(addprefix $(SRC_DIR_MAIN)/, $(SRC_MAIN))						\
 #			$(addprefix $(SRC_DIR_BUILTIN)/, $(SRC_BUILTIN))				\
 #			$(addprefix $(SRC_DIR_EXEC)/, $(SRC_EXEC))						\
 #			$(addprefix $(SRC_DIR_LEXER)/, $(SRC_LEXER))					\
 #			$(addprefix $(SRC_DIR_PARSER)/, $(SRC_PARSER))					\
-#			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))					\
-#			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
+#			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
 
@@ -131,18 +134,15 @@ install: $(NAME) ## install binary on the system
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize:
-	CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize:
-	CXXFLAGS += -pedantic -g3 -fsanitize=address
+sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address
 endif
 sanitize: $(NAME) ## compile with pedantic, debug symbol, and a bunch of sanitizes
 
 PHONY += thread
-thread:
-	CXXFLAGS += -g3 -fsanitize=thread
+thread: CXXFLAGS += -g3 -fsanitize=thread
 thread: $(NAME) ## compile with thread sanitize
 
 # OBJ
