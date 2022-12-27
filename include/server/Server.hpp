@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef __SERVER_HPP__
 # define __SERVER_HPP__
 
@@ -18,6 +20,8 @@ Server: A server listens on a connection for a request,
    request with one or more response messages.
 ===============================================================================
 */
+
+/**	METHODS   ---------------------------------- */
 
 class Server {
 	public:
@@ -41,4 +45,4 @@ class Server {
 		};
 };
 
-#endif // __SERVER_HPP__
+#endif /** __SERVER_HPP__ */

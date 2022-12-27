@@ -1,6 +1,7 @@
 #pragma once
+
 #ifndef __PRINT_HPP__
-#define __PRINT_HPP__
+# define __PRINT_HPP__
 
 /**	INCLUDES ----------------------------------- */
 

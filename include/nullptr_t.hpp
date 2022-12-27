@@ -1,5 +1,11 @@
+#pragma once
+
 #ifndef __NULLPTR_T_HPP__
 # define __NULLPTR_T_HPP__
+
+/**	INCLUDES ----------------------------------- */
+
+/**	METHODS   ---------------------------------- */
 
 namespace ft {
 	const class nullptr_t {
@@ -17,4 +23,4 @@ namespace ft {
 	} nullptr_t = {};
 }
 
-#endif // __NULLPTR_T_HPP__
+#endif /** __NULLPTR_T_HPP__ */

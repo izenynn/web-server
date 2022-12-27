@@ -1,9 +1,15 @@
+#pragma once
+
 #ifndef __CONFIG_HPP__
 # define __CONFIG_HPP__
+
+/**	INCLUDES ----------------------------------- */
 
 # include <string>
 # include <vector>
 # include <fstream>
+
+/**	METHODS   ---------------------------------- */
 
 class Config {
 	public:
@@ -26,4 +32,4 @@ class Config {
 		};
 };
 
-#endif // __CONFIG_HPP__
+#endif /** __CONFIG_HPP__ */
