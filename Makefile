@@ -54,19 +54,20 @@ CXXFLAGS += -I ./$(INC_PATH)
 
 SRC_DIR_CONFIG	= config
 SRC_DIR_SERVER	= server
+SRC_DIR_UTILS	= utils
 
-OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)	$(SRC_DIR_SERVER)
+OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)	$(SRC_DIR_SERVER)	$(SRC_DIR_UTILS)
+
 #OBJ_DIRS_NAME =	$(SRC_DIR_MAIN)		$(SRC_DIR_BUILTIN)	$(SRC_DIR_EXEC)		\
 				$(SRC_DIR_LEXER)	$(SRC_DIR_PARSER)	$(SRC_DIR_PROMPT)	\
 				$(SRC_DIR_UTILS)
 
 OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
-SRC_ROOT =		main.cpp
-
-SRC_CONFIG =	Config.cpp
-
-SRC_SERVER =	Server.cpp
+SRC_ROOT	=	main.cpp
+SRC_CONFIG	=	Config.cpp
+SRC_SERVER	=	Server.cpp
+SRC_UTILS	=	log.cpp
 
 #SRC_MAIN = 		handle_line.c
 #
@@ -93,14 +94,11 @@ SRC_SERVER =	Server.cpp
 #				parse_redir_out.c
 #
 #SRC_PROMPT =	prompt.c
-#
-#SRC_UTILS =		init.c				error_utils.c		signals.c			\
-#				custom_len.c		ft_getenv.c			env_utils.c			\
-#				init_utils.c		read_config.c		new_tmp.c
 
 SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\
-			$(addprefix $(SRC_DIR_SERVER)/, $(SRC_SERVER))
+			$(addprefix $(SRC_DIR_SERVER)/, $(SRC_SERVER))					\
+			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
 
 #SRC_NAME =	$(SRC_ROOT)														\
 #			$(addprefix $(SRC_DIR_MAIN)/, $(SRC_MAIN))						\
@@ -108,8 +106,7 @@ SRC_NAME =	$(SRC_ROOT)														\
 #			$(addprefix $(SRC_DIR_EXEC)/, $(SRC_EXEC))						\
 #			$(addprefix $(SRC_DIR_LEXER)/, $(SRC_LEXER))					\
 #			$(addprefix $(SRC_DIR_PARSER)/, $(SRC_PARSER))					\
-#			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))					\
-#			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
+#			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
 

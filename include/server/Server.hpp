@@ -9,8 +9,8 @@
 //# include <sys/socket.h>
 //# include <netinet/in.h>
 
-# include "nullptr_t.hpp"
-# include "config/Config.hpp"
+# include <types/nullptr_t.hpp>
+# include <config/Config.hpp>
 
 /*
 ===============================================================================

@@ -1,21 +1,26 @@
 #include <iostream>
 
-#include "nullptr_t.hpp"
-#include "server/Server.hpp"
+#include <types/nullptr_t.hpp>
+#include <server/Server.hpp>
+#include <utils/log.hpp>
 
-// TODO default path
 int main(int argc, char * argv[]) {
 	Server	*server = ft::nullptr_t;
 
 	// to many args
 	if ( argc > 2 ) {
 		std::cerr << "Usage: " << argv[0] << " [CONF FILE]" << std::endl;
+		webserv::log::info("info");
+		webserv::log::success("success");
+		webserv::log::warning("warning");
+		webserv::log::failure("failure");
+		webserv::log::error("error");
 		return ( 1 );
 	}
 
-	// default file
+	// default conf file
 	if ( argc == 1 ) {
-		std::cout <<
+		webserv::log::info("TODO");
 	}
 
 	try {
