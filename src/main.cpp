@@ -7,9 +7,15 @@
 int main(int argc, char * argv[]) {
 	Server	*server = ft::nullptr_t;
 
+	// to many args
 	if ( argc > 2 ) {
-		// TODO print error / usage
+		std::cerr << "Usage: " << argv[0] << " [CONF FILE]" << std::endl;
 		return ( 1 );
+	}
+
+	// default file
+	if ( argc == 1 ) {
+		std::cout <<
 	}
 
 	try {
