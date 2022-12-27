@@ -30,7 +30,7 @@ BIN_DIR ?= /usr/local/bin
 
 MAKE = make
 
-CXX = c++
+CXX = g++
 
 CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -MD
 
