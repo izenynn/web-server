@@ -3,7 +3,7 @@
 #ifndef __SERVER_HPP__
 # define __SERVER_HPP__
 
-/**	INCLUDES ----------------------------------- */
+/** INCLUDES ----------------------------------- */
 
 # include <string>
 //# include <sys/socket.h>
@@ -21,7 +21,9 @@ Server: A server listens on a connection for a request,
 ===============================================================================
 */
 
-/**	METHODS   ---------------------------------- */
+/** CLASS -------------------------------------- */
+
+namespace webserv {
 
 class Server {
 	public:
@@ -44,5 +46,7 @@ class Server {
 			public: const char* what() const throw();
 		};
 };
+
+} // namespace webserv
 
 #endif /** __SERVER_HPP__ */

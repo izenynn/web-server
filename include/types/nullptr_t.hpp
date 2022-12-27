@@ -3,9 +3,7 @@
 #ifndef __NULLPTR_T_HPP__
 # define __NULLPTR_T_HPP__
 
-/**	INCLUDES ----------------------------------- */
-
-/**	METHODS   ---------------------------------- */
+/** CLASS -------------------------------------- */
 
 namespace ft {
 	const class nullptr_t {

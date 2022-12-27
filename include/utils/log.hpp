@@ -3,12 +3,12 @@
 #ifndef __PRINT_HPP__
 # define __PRINT_HPP__
 
-/**	INCLUDES ----------------------------------- */
+/** INCLUDES ----------------------------------- */
 
 # include <iostream>
 # include <string>
 
-/**	COLORS ----------------------------------- */
+/** COLORS ------------------------------------- */
 
 // reset
 # define C_OFF			"\033[0m"
@@ -131,7 +131,7 @@
 # define CBACK_YELLOW_YELLOW	"\033[33;43m"
 # define CBACK_YELLOW_WHITE		"\033[37;43m"
 
-/**	METHODS   ---------------------------------- */
+/** METHODS ------------------------------------ */
 
 namespace webserv {
 namespace colors {
@@ -142,7 +142,7 @@ namespace log {
 	void success(const std::string& msg);
 	void warning(const std::string& msg);
 	void failure(const std::string& msg);
-	void error(const std::string& msg); // throws a exception
+	void error(const std::string& msg); // TODO throws an exception
 } // namespace log
 } // namespace webserv
 

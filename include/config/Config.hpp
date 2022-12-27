@@ -3,13 +3,15 @@
 #ifndef __CONFIG_HPP__
 # define __CONFIG_HPP__
 
-/**	INCLUDES ----------------------------------- */
+/** INCLUDES ----------------------------------- */
 
 # include <string>
 # include <vector>
 # include <fstream>
 
-/**	METHODS   ---------------------------------- */
+/** METHODS ------------------------------------ */
+
+namespace webserv {
 
 class Config {
 	public:
@@ -31,5 +33,7 @@ class Config {
 			public: const char* what() const throw();
 		};
 };
+
+} //namespace webserv
 
 #endif /** __CONFIG_HPP__ */

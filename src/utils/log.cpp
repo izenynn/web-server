@@ -1,6 +1,8 @@
-/**	INCLUDES ----------------------------------- */
+/** INCLUDES ----------------------------------- */
 
 #include <utils/log.hpp>
+
+/** METHODS ------------------------------------ */
 
 namespace webserv {
 namespace log {

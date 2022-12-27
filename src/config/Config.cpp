@@ -1,41 +1,49 @@
+/** INCLUDES ----------------------------------- */
+
 #include "config/Config.hpp"
 
-namespace {
-	const std::vector<std::string>& lexer( const char* file ) {
-		// TODO add comment '#' support
-		std::ifstream					in;
-		std::vector<std::string>&		tokens = *new std::vector<std::string>();
-		int								bracket_cnt = 0;
+namespace webserv {
 
-		in.open( file, std::ifstream::in ); // TODO throw exception if cant read file
-		for ( std::string line; getline(in, line); ) {
-			std::string::size_type	start = line.find_first_not_of(" \t", 0);
-			std::string::size_type	end = 0;
-			while ( ( start = line.find_first_not_of( " \t", end ) ) != std::string::npos ) {
-				end = line.find_first_of( " \t", start );
-				std::string	token = line.substr( start, end - start );
-				if ( token == "{" ) {
-					++bracket_cnt;
-				} else if ( token == "}" ) {
-					if ( bracket_cnt == 0 ) throw Config::ExtraClosingBrackets();
-					--bracket_cnt;
-				}
-				if (token.size() > 1 && *token.end() == ';') {
-					token.erase(token.end() - 1);
-					tokens.push_back(token);
-					tokens.push_back(";");
-				} else {
-					tokens.push_back(token);
-				}
+/** METHODS ------------------------------------ */
+
+namespace {
+const std::vector<std::string>& lexer( const char* file ) {
+	// TODO add comment '#' support
+	std::ifstream					in;
+	std::vector<std::string>&		tokens = *new std::vector<std::string>();
+	int								bracket_cnt = 0;
+
+	in.open( file, std::ifstream::in ); // TODO throw exception if cant read file
+	for ( std::string line; getline(in, line); ) {
+		std::string::size_type	start = line.find_first_not_of(" \t", 0);
+		std::string::size_type	end = 0;
+		while ( ( start = line.find_first_not_of( " \t", end ) ) != std::string::npos ) {
+			end = line.find_first_of( " \t", start );
+			std::string	token = line.substr( start, end - start );
+			if ( token == "{" ) {
+				++bracket_cnt;
+			} else if ( token == "}" ) {
+				if ( bracket_cnt == 0 ) throw Config::ExtraClosingBrackets();
+				--bracket_cnt;
+			}
+			if (token.size() > 1 && *token.end() == ';') {
+				token.erase(token.end() - 1);
+				tokens.push_back(token);
+				tokens.push_back(";");
+			} else {
+				tokens.push_back(token);
 			}
 		}
-		if (bracket_cnt > 0) {
-			throw Config::ExtraOpeningBrackets();
-		}
-
-		return tokens;
 	}
+	if (bracket_cnt > 0) {
+		throw Config::ExtraOpeningBrackets();
+	}
+
+	return tokens;
 }
+} // namespace
+
+/** CLASS -------------------------------------- */
 
 Config::Config( void ) {}
 
@@ -79,3 +87,5 @@ const char* Config::ExtraClosingBrackets::what() const throw() {
 const char* Config::ExtraOpeningBrackets::what() const throw() {
 	return ( "Exception: extra opening bracket on config" );
 }
+
+} //namespace webserv

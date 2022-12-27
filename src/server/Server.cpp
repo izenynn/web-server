@@ -1,4 +1,10 @@
+/** INCLUDES ----------------------------------- */
+
 #include "server/Server.hpp"
+
+/** CLASS -------------------------------------- */
+
+namespace webserv {
 
 const char* Server::DEFAULT_PATH = "/etc/aps/aps.conf";
 
@@ -38,3 +44,5 @@ void Server::run() {
 const char* Server::ConfigNotLoaded::what() const throw() {
 	return ( "Exception: config file not loaded" );
 }
+
+} // namespace webserv
