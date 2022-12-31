@@ -5,7 +5,9 @@
 
 /** INCLUDES ----------------------------------- */
 
-# include <string>
+# include <string> // std::string
+# include <sys/select.h> // select()
+# include <cstring> // std::memcpy()
 //# include <sys/socket.h>
 //# include <netinet/in.h>
 
@@ -39,14 +41,24 @@ class Server {
 
 		static const char* DEFAULT_PATH;
 
-		Config *_config;
+		Config *		_config;
+		fd_set			_fd_set;
+		unsigned int	_fd_cnt;
 
 	public:
+		class ServerException : virtual public std::exception {
+			private:
+				std::string message;
+			public:
+				ServerException( const std::string& msg );
+				~ServerException( void ) throw ();
+				const char * what() const throw ();
+		};
 		class ConfigNotLoaded : public std::exception {
-			public: const char* what() const throw();
+			public: const char * what() const throw ();
 		};
 };
 
-} // namespace webserv
+} /** namespace webserv */
 
 #endif /** __SERVER_HPP__ */
