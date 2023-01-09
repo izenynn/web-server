@@ -9,9 +9,19 @@
 # include <vector>
 # include <fstream>
 
-/** METHODS ------------------------------------ */
+# include <stdint.h>
+
+/** CLASS -------------------------------------- */
 
 namespace webserv {
+
+typedef struct listen_s {
+	uint32_t host;
+	uint32_t port;
+
+	listen_s() : host(0), port(0) {};
+	listen_s(uint32_t host, uint32_t port) : host(host), port(port) {}; // FIXME is this legal? variables with same name as args?
+} listen_t;
 
 class Config {
 	public:
