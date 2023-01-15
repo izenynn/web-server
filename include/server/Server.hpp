@@ -8,11 +8,14 @@
 # include <string> // std::string
 # include <sys/select.h> // select()
 # include <cstring> // std::memcpy()
+# include <map> // std::map<T, U>
 //# include <sys/socket.h>
 //# include <netinet/in.h>
 
 # include <types/nullptr_t.hpp>
 # include <config/Config.hpp>
+
+# include <stdint.h>
 
 /*
 ===============================================================================
@@ -44,6 +47,9 @@ class Server {
 		Config *		_config;
 		fd_set			_fd_set;
 		unsigned int	_fd_cnt;
+
+		std::map<uint64_t, listen_t> _servers;
+		std::map<uint64_t, Client *> _clients;
 
 	public:
 		class ServerException : virtual public std::exception {
