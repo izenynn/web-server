@@ -143,7 +143,7 @@ namespace log {
 	void warning(const std::string& msg);
 	void failure(const std::string& msg);
 	void error(const std::string& msg);
-} // namespace log
-} // namespace webserv
+} /** namespace log */
+} /** namespace webserv */
 
 #endif /** __PRINT_HPP__ */
