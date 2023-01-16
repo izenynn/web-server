@@ -31,14 +31,6 @@ Server: A server listens on a connection for a request,
 
 namespace webserv {
 
-typedef struct listen_s {
-	uint32_t host;
-	uint32_t port;
-
-	listen_s() : host(0), port(0) {};
-	listen_s(uint32_t host, uint32_t port) : host(host), port(port) {}; // FIXME is this legal? variables with same name as args?
-} listen_t;
-
 class Server {
 	public:
 		Server( void );
@@ -57,8 +49,8 @@ class Server {
 		fd_set			_fd_set;
 		unsigned int	_fd_cnt;
 
-		std::map<uint64_t, listen_t> _servers;
-		std::map<uint64_t, Client *> _clients;
+		std::map<long, listen_t> _servers;
+		std::map<long, Client *> _clients;
 
 	public:
 		class ServerException : virtual public std::exception {
