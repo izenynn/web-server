@@ -44,6 +44,6 @@ class Config {
 		};
 };
 
-} //namespace webserv
+} /** namespace webserv */
 
 #endif /** __CONFIG_HPP__ */
