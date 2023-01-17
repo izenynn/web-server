@@ -9,6 +9,7 @@
 # include <string> // std::string
 # include <netinet/in.h> // sockaddr_in
 # include <unistd.h> // close()
+# include <fcntl.h> // fcntl()
 
 /** CLASS -------------------------------------- */
 
@@ -45,10 +46,8 @@ class Client {
 
 		int							_fd;
 		struct sockaddr_in			_addr;
-		//std::string					_addr; // ???
-		listen_t					_listen;
-		//listen_t					_host; // ???
-		std::map<long, std::string>	_requests;
+		listen_t					_host;
+		std::map<int, std::string>	_requests;
 };
 
 } /** namespace webserv */
