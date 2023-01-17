@@ -23,14 +23,21 @@ typedef struct listen_s {
 
 class Client {
 	public:
-		//Client( void ); // TODO custom constructor
+		Client( const listen_t & listen );
 		virtual ~Client( void );
 
-		int getFd( void );
+		int		getFd( void );
 
 		void	configLoad( void );
+
+		int		accept( void );
+		int		send( int socket );
+		int		recv( int socket );
+
+		void	process( int socket );
 	private:
 		Client( void ); // not necessary
+		Client( const Client & other ); // not necessary
 		Client &operator=( const Client& other ); // not necessary
 
 		int							_fd;
