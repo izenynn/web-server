@@ -27,6 +27,8 @@ class Client {
 		virtual ~Client( void );
 
 		int getFd( void );
+
+		void	configLoad( void );
 	private:
 		Client( void ); // not necessary
 		Client &operator=( const Client& other ); // not necessary
