@@ -44,7 +44,9 @@ class Client {
 		Client( const Client & other ); // not necessary
 		Client &operator=( const Client& other ); // not necessary
 
-		int							_fd;
+		static const size_t k_recv_size;
+
+		int							_sockfd;
 		struct sockaddr_in			_addr;
 		listen_t					_host;
 		std::map<int, std::string>	_requests;
