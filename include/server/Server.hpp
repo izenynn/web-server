@@ -43,7 +43,7 @@ class Server {
 	private:
 		Server& operator=( const Server& other); // not necessary
 
-		static const char* DEFAULT_PATH;
+		static const char* k_default_path;
 
 		Config *		_config;
 		fd_set			_fd_set;

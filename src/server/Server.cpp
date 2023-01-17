@@ -6,7 +6,7 @@
 
 namespace webserv {
 
-const char* Server::DEFAULT_PATH = "/etc/aps/aps.conf";
+const char* Server::k_default_path = "/etc/aps/aps.conf";
 
 Server::Server( void ) {
 	return ;
@@ -24,7 +24,7 @@ void Server::configLoad( const char* file ) {
 	return ;
 }
 void Server::configLoad() {
-	this->configLoad( Server::DEFAULT_PATH );
+	this->configLoad( Server::k_default_path );
 	return ;
 }
 
