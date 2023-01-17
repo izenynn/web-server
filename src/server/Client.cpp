@@ -53,6 +53,11 @@ void Client::start( void ) {
 	return ;
 }
 
+void Client::end( void ) {
+	this->close( this->_fd );
+	this->_fd = -1;
+}
+
 void Client::close( int socket ) {
 	if ( socket > 0 ) {
 		::close( socket );
@@ -60,9 +65,6 @@ void Client::close( int socket ) {
 	// TODO clean requests of the fd
 }
 
-void Client::end( void ) {
-	this->close( this->_fd );
-	this->_fd = -1;
-}
+;
 
 } /** namespace webserv */
