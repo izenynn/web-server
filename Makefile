@@ -66,7 +66,7 @@ OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
 SRC_ROOT	=	main.cpp
 SRC_CONFIG	=	Config.cpp
-SRC_SERVER	=	Server.cpp
+SRC_SERVER	=	Server.cpp 			Client.cpp
 SRC_UTILS	=	log.cpp
 
 #SRC_MAIN = 		handle_line.c

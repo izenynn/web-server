@@ -8,6 +8,7 @@
 # include <map> // std::map
 # include <string> // std::string
 # include <netinet/in.h> // sockaddr_in
+# include <unistd.h> // close()
 
 /** CLASS -------------------------------------- */
 
@@ -15,10 +16,10 @@ namespace webserv {
 
 typedef struct listen_s {
 	uint32_t host;
-	uint32_t port;
+	uint16_t port;
 
 	listen_s() : host(0), port(0) {};
-	listen_s(uint32_t host, uint32_t port) : host(host), port(port) {}; // FIXME is this legal? variables with same name as args?
+	listen_s(uint32_t host, uint16_t port) : host(host), port(port) {}; // FIXME is this legal? variables with same name as args?
 } listen_t;
 
 class Client {
@@ -28,7 +29,8 @@ class Client {
 
 		int		getFd( void );
 
-		void	configLoad( void );
+		void	start( void );
+		void	end( void );
 
 		int		accept( void );
 		int		send( int socket );
