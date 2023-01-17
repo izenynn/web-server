@@ -35,6 +35,7 @@ class Client {
 		int		accept( void );
 		int		send( int socket );
 		int		recv( int socket );
+		int		close( int socket );
 
 		void	process( int socket );
 	private:
