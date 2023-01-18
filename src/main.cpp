@@ -5,7 +5,7 @@
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::ServerController	*server = ft::nullptr_t;
+	webserv::ServerController	*controller = ft::nullptr_t;
 
 	// to many args
 	if ( argc > 2 ) {
@@ -16,12 +16,12 @@ int main( int argc, char * argv[] ) {
 
 	// web server
 	try {
-		server = new webserv::ServerController();
-		if ( argc == 2 ) server->configLoad( argv[1] );
-		else             server->configLoad();
-		server->run();
+		controller = new webserv::ServerController();
+		if ( argc == 2 ) controller->configLoad( argv[1] );
+		else             controller->configLoad();
+		controller->run();
 		// TODO server.clean();
-		delete server;
+		delete controller;
 	} catch( std::exception& e ) {
 		std::cout << e.what() << std::endl;
 	}
