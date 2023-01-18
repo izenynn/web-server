@@ -63,8 +63,10 @@ void ServerController::run( void ) {
 
 /** EXCEPTIONS --------------------------------- */
 
-ServerController::ServerException::ServerException( const std::string& msg )
-	: message(msg) {}
+ServerController::ServerException::ServerException( const std::string & msg )
+		: message( msg ) {
+	return ;
+}
 
 ServerController::ServerException::~ServerException( void ) throw () {}
 const char * ServerController::ServerException::what() const throw () {
