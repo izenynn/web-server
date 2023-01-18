@@ -1,77 +1,123 @@
 /** INCLUDES ----------------------------------- */
 
 #include <server/Server.hpp>
+#include <sys/socket.h>
+#include <utils/log.hpp>
 
 /** CLASS -------------------------------------- */
 
+namespace {
+	inline void initAddr( struct sockaddr_in & addr, const webserv::listen_t & listen ) {
+		addr.sin_family = AF_INET;
+		addr.sin_addr.s_addr = htonl(listen.host);
+		addr.sin_port = htons(listen.port);
+		return ;
+	}
+}
+
 namespace webserv {
 
-const char* Server::k_default_path = "/etc/aps/aps.conf";
+const size_t Server::k_recv_size = 4096;
 
-Server::Server( void ) {
-	return ;
+Server::Server( const listen_t & listen ) 
+		: _sockfd(-1),
+		  _host(listen) {
+		this->_addr.sin_family = AF_INET;
+		initAddr(this->_addr, this->_host);
+		return ;
 }
 
 Server::~Server( void ) {
-	if ( this->_config != ft::nullptr_t ) {
-		delete this->_config;
-	}
 	return ;
 }
 
-void Server::configLoad( const char* file ) {
-	this->_config = new Config( file );
-	return ;
-}
-void Server::configLoad() {
-	this->configLoad( Server::k_default_path );
-	return ;
+int Server::getFd( void ) {
+	return ( this->_sockfd );
 }
 
-void Server::run( void ) {
-	if (this->_config == ft::nullptr_t) {
-		throw Server::ConfigNotLoaded();
-		return ;
+void Server::start( void ) {
+	this->_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->_sockfd == -1 ) {
+		log::failure( "socket() failed, could not create endpoint" );
+		// TODO throw / log error ???
 	}
 
-	fd_set			readfds;
-	struct timeval	timeout;
-	int				ret;
-
-	timeout.tv_sec = 5; timeout.tv_usec = 0;
-	return ; // TODO temporary return to avoid hang up on this point until webserv is completed
-	while ( 1 ) {
-		ret = 0;
-
-		while ( ret == 0 ) {
-			std::memcpy(&readfds, &this->_fd_set, sizeof(this->_fd_set));
-
-			// TODO writefds must be filled with ready clients
-
-			ret = select(this->_fd_cnt + 1, &readfds, NULL, NULL, &timeout);
-		}
-		if ( ret < 0 ) {
-			// TODO better than exit just reset all connections and keep running
-			throw Server::ServerException("select() returned -1");
-		} else if ( ret >= 0 ){
-			; // TODO
-		}
+	initAddr(this->_addr, this->_host);
+	if ( -1 == bind( this->_sockfd, reinterpret_cast<struct sockaddr *>( &this->_addr ), sizeof( this->_addr ) ) ) {
+		log::failure( "bind() failed, could not bind port" );
+		// TODO throw / log error ???
+	}
+	
+	if ( -1 == listen( this->_sockfd, 1000 ) ) {
+		log::failure( "listen() failed, could not listen" );
+		// TODO throw / log error ???
 	}
 
 	return ;
 }
 
-/** EXCEPTIONS --------------------------------- */
-
-Server::ServerException::ServerException( const std::string& msg )
-	: message(msg) {}
-Server::ServerException::~ServerException( void ) throw () {}
-const char * Server::ServerException::what() const throw () {
-	return this->message.c_str();
+void Server::end( void ) {
+	this->close( this->_sockfd );
+	this->_sockfd = -1;
+	return ;
 }
 
-const char * Server::ConfigNotLoaded::what() const throw () {
-	return ( "Exception: config file not loaded" );
+int Server::accept( void ) {
+	int socket = ::accept(this->_sockfd, NULL, NULL);
+	if ( -1 == socket ) {
+		log::failure( "accept() failed, could not create socket" );
+		return ( -1 );
+		
+	}
+	fcntl(socket, F_SETFL, O_NONBLOCK);
+	// TODO initialize requests ?
+	return ( socket );
+}
+
+int Server::send( int socket ) {
+	static std::map<int, size_t> sent;
+
+	// create map entry if doesnt exists
+	if ( sent.end() == sent.find( socket ) ) {
+		sent[socket] = 0;
+	}
+
+	// TODO
+	if ( 0 == sent[socket] ) {
+		// TODO
+	}
+	// TODO
+
+	return ( 0 );
+}
+
+int Server::recv( int socket ) {
+	char	buffer[Server::k_recv_size] = {};
+	int		ret;
+
+	ret = ::recv( socket, buffer, Server::k_recv_size - 1, 0 );
+	if ( -1 == ret ) {
+		log::info( "socket: " + SSTR( socket ) + ": recv() error, connection closed" );
+		this->close( socket );
+		return ( -1 );
+	}
+	if ( 0 == ret ) {
+		log::info( "socket: " + SSTR( socket ) + ": connection was closed by a client" );
+		this->close( socket );
+		return ( -1 );
+	}
+
+	// TODO read and save request
+
+	return ( 0 );
+}
+
+void Server::close( int socket ) {
+	if ( socket > 0 ) {
+		::close( socket );
+	}
+	// TODO clean requests of the fd
+	return ;
 }
 
 } /** namespace webserv */
