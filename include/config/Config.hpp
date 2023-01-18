@@ -9,7 +9,9 @@
 # include <vector>
 # include <fstream>
 
-/** METHODS ------------------------------------ */
+# include <stdint.h>
+
+/** CLASS -------------------------------------- */
 
 namespace webserv {
 
@@ -34,6 +36,6 @@ class Config {
 		};
 };
 
-} //namespace webserv
+} /** namespace webserv */
 
 #endif /** __CONFIG_HPP__ */

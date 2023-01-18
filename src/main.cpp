@@ -4,29 +4,21 @@
 #include <server/Server.hpp>
 #include <utils/log.hpp>
 
-int main(int argc, char * argv[]) {
-	Server	*server = ft::nullptr_t;
+int main( int argc, char * argv[] ) {
+	webserv::Server	*server = ft::nullptr_t;
 
 	// to many args
 	if ( argc > 2 ) {
-		std::cerr << "Usage: " << argv[0] << " [CONF FILE]" << std::endl;
-		webserv::log::info("info");
-		webserv::log::success("success");
-		webserv::log::warning("warning");
-		webserv::log::failure("failure");
-		webserv::log::error("error");
+		webserv::log::failure( "Error: too many arguments" );
+		webserv::log::failure( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
 		return ( 1 );
 	}
 
-	// default conf file
-	if ( argc == 1 ) {
-		webserv::log::info("TODO");
-	}
-
+	// web server
 	try {
-		server = new Server();
+		server = new webserv::Server();
 		if ( argc == 2 ) server->configLoad( argv[1] );
-		else             server->configLoad(); // default path
+		else             server->configLoad();
 		server->run();
 		// TODO server.clean();
 		delete server;

@@ -8,6 +8,9 @@
 # include <iostream>
 # include <string>
 
+# include <sstream>
+# define SSTR( x ) static_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
+
 /** COLORS ------------------------------------- */
 
 // reset
@@ -142,8 +145,8 @@ namespace log {
 	void success(const std::string& msg);
 	void warning(const std::string& msg);
 	void failure(const std::string& msg);
-	void error(const std::string& msg); // TODO throws an exception
-} // namespace log
-} // namespace webserv
+	void error(const std::string& msg);
+} /** namespace log */
+} /** namespace webserv */
 
 #endif /** __PRINT_HPP__ */
