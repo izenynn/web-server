@@ -30,11 +30,13 @@ class Config {
 
 		void load( const char* file );
 	public:
-		class ExtraClosingBrackets : public std::exception {
-			public: const char* what() const throw();
-		};
-		class ExtraOpeningBrackets : public std::exception {
-			public: const char* what() const throw();
+		class ConfigException : virtual public std::exception {
+			private:
+				std::string message;
+			public:
+				ConfigException( const std::string & msg );
+				~ConfigException( void ) throw ();
+				const char * what() const throw ();
 		};
 };
 

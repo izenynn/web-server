@@ -1,20 +1,26 @@
 /** INCLUDES ----------------------------------- */
 
 #include <iostream>
+
 #include <config/Config.hpp>
+#include <utils/log.hpp>
 
 namespace webserv {
 
 /** METHODS ------------------------------------ */
 
 namespace {
+
+// tokenize and check for extra or missing '{}'
 const std::vector<std::string> * lexer( const char* file ) {
 	// TODO add comment '#' support
 	std::ifstream					in;
 	std::vector<std::string> *		tokens = new std::vector<std::string>();
 	int								bracket_cnt = 0;
 
-	in.open( file, std::ifstream::in ); // TODO throw exception if cant read file
+	// TODO throw exception if cant read file
+	in.open( file, std::ifstream::in );
+
 	for ( std::string line; getline(in, line); ) {
 		std::string::size_type	start = line.find_first_not_of(" \t", 0);
 		std::string::size_type	end = 0;
@@ -24,7 +30,9 @@ const std::vector<std::string> * lexer( const char* file ) {
 			if ( token == "{" ) {
 				++bracket_cnt;
 			} else if ( token == "}" ) {
-				if ( bracket_cnt == 0 ) throw Config::ExtraClosingBrackets();
+				if ( bracket_cnt == 0 ) {
+					throw Config::ConfigException( "exception: extra one or more closing bracket on config" );
+				}
 				--bracket_cnt;
 			}
 			if (token.size() > 1 && *token.end() == ';') {
@@ -37,12 +45,12 @@ const std::vector<std::string> * lexer( const char* file ) {
 		}
 	}
 	if (bracket_cnt > 0) {
-		throw Config::ExtraOpeningBrackets();
+		throw Config::ConfigException( "exception: missing one or more closing bracket on config" );
 	}
 
 	return tokens;
 }
-} // namespace
+} /** namespace */
 
 /** CLASS -------------------------------------- */
 
@@ -59,13 +67,32 @@ void Config::load(const char* file) {
 	const std::vector<std::string> * tokens = webserv::nullptr_t;
 
 	tokens = lexer( file );
-	// print toekns
-	std::cout << "TOKENS:" << std::endl;
+	/*std::cout << "TOKENS:" << std::endl;
 	for (std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
 		std::cout << *it << std::endl;
 	}
-	delete tokens;
+	delete tokens;*/
+
 	// TODO check directives are valid
+	for ( std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
+		if ( "server" == *it ) {
+			// TODO create a class for the server config and move all this to the server config class
+			ServerConfig srvConf;
+			if ( ++it, "{" == *it ) {
+				throw Config::ConfigException( "exception: expected '{' after 'server' directive" );
+			}
+			// TODO create parse method and send all tokens between the '{}'
+			// TODO parse must retucn the it pointing to the last element, '}' i think
+			if ( ++it, srvConf.parse( tokens, it ) ) {
+				log::error( "error parsing 'server' directive on token: " + SSTR( *it ) );
+				throw Config::ConfigException( "exception: error while parsing 'server' directive" );
+			}
+		} else {
+			log::error( "unknown directive: " + SSTR( *it ) );
+			throw Config::ConfigException( "exception: unknown directive" );
+			; // TODO throw config exception -> unknowv directive
+		}
+	}
 
 	// create servers
 	/*std::vector<std::string>::iterator it;
@@ -83,12 +110,9 @@ void Config::load(const char* file) {
 	return ;
 }
 
-const char* Config::ExtraClosingBrackets::what() const throw() {
-	return ( "Exception: extra closing bracket on config" );
+Config::ConfigException::ConfigException( const std::string & msg )
+		: message( msg ) {
+	return ;
 }
 
-const char* Config::ExtraOpeningBrackets::what() const throw() {
-	return ( "Exception: extra opening bracket on config" );
-}
-
-} //namespace webserv
+} /** namespace webserv */
