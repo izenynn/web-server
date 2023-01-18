@@ -5,7 +5,7 @@
 
 /** CLASS -------------------------------------- */
 
-namespace ft {
+namespace webserv {
 	const class nullptr_t {
 		public:
 			template<class T>

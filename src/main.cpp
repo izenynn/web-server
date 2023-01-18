@@ -5,7 +5,7 @@
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::ServerController	*controller = ft::nullptr_t;
+	webserv::ServerController *controller = webserv::nullptr_t;
 
 	// to many args
 	if ( argc > 2 ) {

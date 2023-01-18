@@ -13,7 +13,7 @@ ServerController::ServerController( void ) {
 }
 
 ServerController::~ServerController( void ) {
-	if ( this->_config != ft::nullptr_t ) {
+	if ( this->_config != webserv::nullptr_t ) {
 		delete this->_config;
 	}
 	return ;
@@ -29,7 +29,7 @@ void ServerController::configLoad() {
 }
 
 void ServerController::run( void ) {
-	if (this->_config == ft::nullptr_t) {
+	if (this->_config == webserv::nullptr_t) {
 		throw ServerController::ConfigNotLoaded();
 		return ;
 	}

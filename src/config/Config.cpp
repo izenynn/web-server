@@ -1,5 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
+#include <iostream>
 #include <config/Config.hpp>
 
 namespace webserv {
@@ -7,10 +8,10 @@ namespace webserv {
 /** METHODS ------------------------------------ */
 
 namespace {
-const std::vector<std::string>& lexer( const char* file ) {
+const std::vector<std::string> * lexer( const char* file ) {
 	// TODO add comment '#' support
 	std::ifstream					in;
-	std::vector<std::string>&		tokens = *new std::vector<std::string>();
+	std::vector<std::string> *		tokens = new std::vector<std::string>();
 	int								bracket_cnt = 0;
 
 	in.open( file, std::ifstream::in ); // TODO throw exception if cant read file
@@ -28,10 +29,10 @@ const std::vector<std::string>& lexer( const char* file ) {
 			}
 			if (token.size() > 1 && *token.end() == ';') {
 				token.erase(token.end() - 1);
-				tokens.push_back(token);
-				tokens.push_back(";");
+				tokens->push_back(token);
+				tokens->push_back(";");
 			} else {
-				tokens.push_back(token);
+				tokens->push_back(token);
 			}
 		}
 	}
@@ -55,13 +56,15 @@ Config::~Config( void ) {}
 
 void Config::load(const char* file) {
 	// tokenize
-	const std::vector<std::string>& tokens = lexer( file );
+	const std::vector<std::string> * tokens = webserv::nullptr_t;
+
+	tokens = lexer( file );
 	// print toekns
-	/*std::cout << "hola\n" << std::endl;
-	for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
+	std::cout << "TOKENS:" << std::endl;
+	for (std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
 		std::cout << *it << std::endl;
-	}*/
-	delete &tokens;
+	}
+	delete tokens;
 	// TODO check directives are valid
 
 	// create servers

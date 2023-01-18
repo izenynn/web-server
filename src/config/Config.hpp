@@ -11,6 +11,8 @@
 
 # include <stdint.h>
 
+# include <types/nullptr_t.hpp>
+
 /** CLASS -------------------------------------- */
 
 namespace webserv {
