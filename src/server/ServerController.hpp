@@ -57,7 +57,7 @@ class ServerController {
 			private:
 				std::string message;
 			public:
-				ServerException( const std::string& msg );
+				ServerException( const std::string & msg );
 				~ServerException( void ) throw ();
 				const char * what() const throw ();
 		};
