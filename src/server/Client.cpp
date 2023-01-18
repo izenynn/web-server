@@ -36,7 +36,7 @@ int Client::getFd( void ) {
 }
 
 void Client::start( void ) {
-	this->_fd = socket(AF_INET, SOCK_STREAM, 0);
+	this->_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_sockfd == -1 ) {
 		log::failure( "socket() failed, could not create endpoint" );
 		// TODO throw / log error ???
