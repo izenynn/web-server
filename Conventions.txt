@@ -1,0 +1,92 @@
+/////////////////////////////////////// CLASES ///////////////////////////////////////
+
+1. list of friend classes
+2. public variables
+3. public methods
+4. protected variables
+5. protected methods
+6. private variables
+7. private methods
+
+
+The standard header for a class is:
+/*
+===============================================================================
+Description
+===============================================================================
+*/
+
+- Class names start with "aps" and each successive word starts with an
+upper case
+
+
+class idVec3 {
+	float			x;
+	float			y;
+	float			z;
+	float			Length( void ) const;
+	const float *	ToFloatPtr( void ) const;
+}
+The * of the pointer is in the first column because it improves
+readability when considered part of the type.
+
+
+
+/////////////////////////////////////// DEFINES ///////////////////////////////////////
+
+Defined names use all upper case characters. Multiple words are
+separated with an underscore.
+#define SIDE_FRONT 0
+
+
+/////////////////////////////////////// FUNCIONES ///////////////////////////////////////
+
+- Function names start with an upper case
+- The standard header for functions is:
+/*
+====================
+FunctionName
+Description
+====================
+*/
+
+Names of recursive functions end with "_r"
+void WalkBSP_r( int node );
+
+/////////////////////////////////////// VARIABLES ///////////////////////////////////////
+
+Variable names start with a lower case character.
+float x;
+In multi-word variable names the first word starts with a lower case
+character and each successive word starts with an upper case.
+float maxDistanceFromPlane;
+
+Use ‘const’ as much as possible.
+Use:
+const int *p; // pointer to const int
+int * const p; // const pointer to int
+const int * const p; // const pointer to const int
+
+/////////////////////////////////////// TYPEDEFS ///////////////////////////////////////
+
+Typedef names use the same naming convention as variables, however
+they always end with "_t".
+typedef int fileHandle_t;
+
+/////////////////////////////////////// STRUCTS ///////////////////////////////////////
+
+Struct names use the same naming convention as variables, however
+they always end with "_t".
+struct renderEntity_t;
+
+/////////////////////////////////////// ENUMS ///////////////////////////////////////
+
+Enum names use the same naming convention as variables, however they
+always end with "_t". The enum constants use all upper case
+characters. Multiple words are separated with an underscore.
+enum contact_t {
+CONTACT_NONE,
+CONTACT_EDGE,
+CONTACT_MODELVERTEX,
+CONTACT_TRMVERTEX
+};
