@@ -12,6 +12,7 @@
 # include <stdint.h>
 
 # include <types/nullptr_t.hpp>
+# include <config/ServerConfig.hpp>
 
 /** CLASS -------------------------------------- */
 
@@ -22,11 +23,12 @@ class Config {
 		Config( const char* path ); // config class needs a config file
 		virtual ~Config( void );
 
-		//const std::vector<ConfigServer>&	getServers( void ) const;
+		//const std::vector<ServerConfig>&	getServers( void ) const;
 	private:
 		Config( void ); // not necessary
 		Config &operator=( const Config& other ); // not necessary
-		//std::vector<ConfigServer>			_servers;
+
+		//std::vector<ServerConfig>			_servers;
 
 		void load( const char* file );
 	public:

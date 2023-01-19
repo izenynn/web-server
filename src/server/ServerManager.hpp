@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __SERVER_CONTROLLER_HPP__
-# define __SERVER_CONTROLLER_HPP__
+#ifndef __SERVER_MANAGER_HPP__
+# define __SERVER_MANAGER_HPP__
 
 /** INCLUDES ----------------------------------- */
 
@@ -31,10 +31,10 @@ Server: A server listens on a connection for a request,
 
 namespace webserv {
 
-class ServerController {
+class ServerManager {
 	public:
-		ServerController( void );
-		~ServerController( void );
+		ServerManager( void );
+		~ServerManager( void );
 
 		void configLoad( void ); // default path
 		void configLoad( const char* file );
@@ -68,4 +68,4 @@ class ServerController {
 
 } /** namespace webserv */
 
-#endif /** __SERVER_CONTROLLER_HPP__ */
+#endif /** __SERVER_MANAGER_HPP__ */

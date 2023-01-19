@@ -79,18 +79,21 @@ void Config::load(const char* file) {
 			// TODO create a class for the server config and move all this to the server config class
 			ServerConfig srvConf;
 			if ( ++it, "{" == *it ) {
+				log::error( "expected '{' after 'server' directive" );
+				delete tokens;
 				throw Config::ConfigException( "exception: expected '{' after 'server' directive" );
 			}
 			// TODO create parse method and send all tokens between the '{}'
 			// TODO parse must retucn the it pointing to the last element, '}' i think
-			if ( ++it, srvConf.parse( tokens, it ) ) {
+			if ( ++it, -1 == srvConf.parse( tokens, it ) ) {
 				log::error( "error parsing 'server' directive on token: " + SSTR( *it ) );
+				delete tokens;
 				throw Config::ConfigException( "exception: error while parsing 'server' directive" );
 			}
 		} else {
 			log::error( "unknown directive: " + SSTR( *it ) );
+			delete tokens;
 			throw Config::ConfigException( "exception: unknown directive" );
-			; // TODO throw config exception -> unknowv directive
 		}
 	}
 

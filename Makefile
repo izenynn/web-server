@@ -3,15 +3,15 @@
 # **************************************************************************** #
 
 # COLORS
-NOCOL=\033[0m
-RED=\033[31m
-GRN=\033[32m
-YEL=\033[33m
-BLU=\033[34m
-MAG=\033[35m
-CYN=\033[36m
-LBLU = \033[36m
-LGRN = \033[0;90m
+NOCOL	= \033[0m
+RED		= \033[31m
+GRN		= \033[32m
+YEL		= \033[33m
+BLU		= \033[34m
+MAG		= \033[35m
+CYN		= \033[36m
+LBLU	= \033[36m
+LGRN	= \033[0;90m
 
 # OS
 UNAME_S := $(shell uname -s)
@@ -67,10 +67,9 @@ OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
 SRC_ROOT	=	main.cpp
 
-SRC_CONFIG	=	Config.cpp
+SRC_CONFIG	=	Config.cpp 			ServerConfig.cpp
 
-SRC_SERVER	=	ServerController.cpp	\
-				Server.cpp
+SRC_SERVER	=	ServerManager.cpp	Server.cpp
 
 SRC_UTILS	=	log.cpp
 
