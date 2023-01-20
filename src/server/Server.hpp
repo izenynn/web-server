@@ -19,7 +19,7 @@ namespace webserv {
 
 class Server {
 	public:
-		Server( const listen_t & listen );
+		Server( const Listen & listen );
 		virtual ~Server( void );
 
 		int		getFd( void );
@@ -42,7 +42,7 @@ class Server {
 
 		int							_sockfd;
 		struct sockaddr_in			_addr;
-		listen_t					_host;
+		Listen						_host;
 		std::map<int, std::string>	_requests;
 };
 

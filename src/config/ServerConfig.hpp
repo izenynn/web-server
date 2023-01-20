@@ -7,9 +7,10 @@
 
 # include <string>
 # include <vector>
+# include <map>
 
 # include <types/nullptr_t.hpp>
-# include <server/Server.hpp>
+# include <config/Listen.hpp>
 
 /** CLASS -------------------------------------- */
 
@@ -25,7 +26,7 @@ class ServerConfig {
 		ServerConfig( const ServerConfig & other ); // net necessary
 		ServerConfig &operator=( const ServerConfig& other ); // not necessary
 
-		std::vector<listen_t>				_listen;
+		std::vector<Listen>				_listen;
 		
 		std::vector<std::string>			_server_name;
 		std::vector<std::string>			_allowed_methods;
