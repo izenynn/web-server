@@ -1,30 +1,40 @@
 #include <iostream>
 
 #include <types/nullptr_t.hpp>
-#include <server/ServerController.hpp>
+#include <server/ServerManager.hpp>
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::ServerController	*server = ft::nullptr_t;
+	webserv::ServerManager * manager = webserv::nullptr_t;
 
-	// to many args
+	// too many args
 	if ( argc > 2 ) {
 		webserv::log::failure( "Error: too many arguments" );
 		webserv::log::failure( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
 		return ( 1 );
 	}
 
-	// web server
-	try {
-		server = new webserv::ServerController();
-		if ( argc == 2 ) server->configLoad( argv[1] );
-		else             server->configLoad();
-		server->run();
-		// TODO server.clean();
-		delete server;
-	} catch( std::exception& e ) {
-		std::cout << e.what() << std::endl;
+	// help message
+	if ( argc == 2 && ( 0 == strcmp( "-h", argv[1] ) || 0 == strcmp( "--help", argv[1] ) ) ) {
+		webserv::log::info( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
+		return ( 0 );
 	}
+
+	// web server
+	manager = new webserv::ServerManager();
+
+	try {
+		if ( argc == 2 ) manager->load( argv[1] );
+		else             manager->load();
+	} catch ( std::exception & e ) {
+		delete manager;
+		webserv::log::error( e.what() );
+		return ( 1 );
+	}
+
+	manager->run();
+
+	delete manager;
 
 	return ( 0 );
 }

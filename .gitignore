@@ -85,3 +85,5 @@ dkms.conf
 
 # Program name
 webserv
+# log
+log

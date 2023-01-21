@@ -1,68 +1,66 @@
 /** INCLUDES ----------------------------------- */
 
-#include "config/Config.hpp"
+#include <config/Config.hpp>
+#include <utils/log.hpp>
 
 namespace webserv {
 
-/** METHODS ------------------------------------ */
-
-namespace {
-const std::vector<std::string>& lexer( const char* file ) {
-	// TODO add comment '#' support
-	std::ifstream					in;
-	std::vector<std::string>&		tokens = *new std::vector<std::string>();
-	int								bracket_cnt = 0;
-
-	in.open( file, std::ifstream::in ); // TODO throw exception if cant read file
-	for ( std::string line; getline(in, line); ) {
-		std::string::size_type	start = line.find_first_not_of(" \t", 0);
-		std::string::size_type	end = 0;
-		while ( ( start = line.find_first_not_of( " \t", end ) ) != std::string::npos ) {
-			end = line.find_first_of( " \t", start );
-			std::string	token = line.substr( start, end - start );
-			if ( token == "{" ) {
-				++bracket_cnt;
-			} else if ( token == "}" ) {
-				if ( bracket_cnt == 0 ) throw Config::ExtraClosingBrackets();
-				--bracket_cnt;
-			}
-			if (token.size() > 1 && *token.end() == ';') {
-				token.erase(token.end() - 1);
-				tokens.push_back(token);
-				tokens.push_back(";");
-			} else {
-				tokens.push_back(token);
-			}
-		}
-	}
-	if (bracket_cnt > 0) {
-		throw Config::ExtraOpeningBrackets();
-	}
-
-	return tokens;
-}
-} // namespace
-
 /** CLASS -------------------------------------- */
 
-Config::Config( void ) {}
-
-Config::Config( const char* path ) {
-	this->load(path);
+Config::Config( void ) {
+	return ;
 }
 
-Config::~Config( void ) {}
+Config::~Config( void ) {
+	for ( std::vector<ServerConfig *>::iterator it = this->_server.begin(); it != this->_server.end(); ) {
+		delete *it;
+		it = this->_server.erase( it );
+	}
+	return ;
+}
 
-void Config::load(const char* file) {
-	// tokenize
-	const std::vector<std::string>& tokens = lexer( file );
-	// print toekns
-	/*std::cout << "hola\n" << std::endl;
-	for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
+const std::vector<ServerConfig *> * Config::getServers( void ) const {
+	return ( &( this->_server ) );
+}
+
+void Config::load(const char * const file) {
+	this->_file = file;
+
+	this->lexer();
+	this->parser();
+
+	/*// print tokens
+	std::cout << "TOKENS:" << std::endl;
+	for (std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
 		std::cout << *it << std::endl;
+	}
+	delete tokens;*/
+
+	// print config
+	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
+		(*it)->print( "" );
+	}
+
+	// deprecated
+	/*for ( std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
+		if ( "server" == *it ) {
+			ServerConfig srvConf;
+			if ( ++it, "{" == *it ) {
+				log::error( "expected '{' after 'server' directive" );
+				delete tokens;
+				throw Config::ConfigException( "exception: expected '{' after 'server' directive" );
+			}
+			if ( ++it, -1 == srvConf.parse( tokens, it ) ) {
+				log::error( "error parsing 'server' directive on token: " + SSTR( *it ) );
+				delete tokens;
+				throw Config::ConfigException( "exception: error while parsing 'server' directive" );
+			}
+		} else {
+			log::error( "unknown directive: " + SSTR( *it ) );
+			delete tokens;
+			throw Config::ConfigException( "exception: unknown directive" );
+		}
 	}*/
-	delete &tokens;
-	// TODO check directives are valid
 
 	// create servers
 	/*std::vector<std::string>::iterator it;
@@ -80,12 +78,96 @@ void Config::load(const char* file) {
 	return ;
 }
 
-const char* Config::ExtraClosingBrackets::what() const throw() {
-	return ( "Exception: extra closing bracket on config" );
+// tokenize and check for extra or missing '{}'
+void Config::lexer( void ) {
+	// TODO add comment '#' support
+	std::ifstream					in;
+
+	// open file
+	in.open( this->_file, std::ifstream::in );
+	if ( false == in ) {
+		throw Config::ConfigException( "exception: can't open config file: " + std::string( this->_file ) );
+	}
+
+	// tokenize line by line
+	for ( std::string line; getline(in, line); ) {
+		std::string::size_type	start = line.find_first_not_of(" \t", 0);
+		std::string::size_type	end = 0;
+		while ( ( start = line.find_first_not_of( " \t", end ) ) != std::string::npos ) {
+			end = line.find_first_of( " \t", start );
+			std::string	token = line.substr( start, end - start );
+
+			// save token, if semicolon separate it from directive
+			if ( token.length() > 1 && token[token.length() - 1] == ';' ) {
+				token.erase(token.end() - 1);
+				this->_tokens.push_back(token);
+				this->_tokens.push_back(";");
+			} else {
+				this->_tokens.push_back(token);
+			}
+		}
+	}
+
+	// close file
+	in.close();
 }
 
-const char* Config::ExtraOpeningBrackets::what() const throw() {
-	return ( "Exception: extra opening bracket on config" );
+// parse tokens into actual config and run basic checks
+void Config::parser( void ) {
+	// check for brackets
+	int bracketCnt = 0;
+	for ( token_type::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
+		if ( "{" == *it ) {
+			++bracketCnt;
+		} else if ( "}" == *it ) {
+			if ( 0 == bracketCnt ) {
+				throw Config::ConfigException( "exception: extra one or more closing bracket on config" );
+			}
+			--bracketCnt;
+		}
+	}
+	if ( bracketCnt > 0 ) {
+		throw Config::ConfigException( "exception: missing one or more closing bracket on config" );
+	}
+
+	// parse tokens
+	int serverCnt = 0;
+	for ( token_type::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
+		if ( "server" == *it ) {
+			ServerConfig * server = new ServerConfig();
+
+			//server->setId = serverCnt;
+			try {
+				server->parser( ++it );
+			} catch ( std::exception & e ) {
+				delete server;
+				log::error( e.what() );
+				throw Config::ConfigException( "exception: server block parser throw an exception" );
+			}
+
+			this->_server.push_back( server );
+
+			++serverCnt;
+		} else {
+			throw Config::ConfigException( "exception: unknown directive" );
+		}
+	}
+	if ( serverCnt == 0 ) {
+		throw Config::ConfigException( "exception: missing 'server' directive" );
+	}
+
+	return ;
 }
 
-} //namespace webserv
+Config::ConfigException::ConfigException( const std::string & msg )
+		: message( msg ) {
+	return ;
+}
+Config::ConfigException::~ConfigException( void ) throw () {
+	return ;
+}
+const char * Config::ConfigException::what( void ) const throw () {
+	return this->message.c_str();
+}
+
+} /** namespace webserv */

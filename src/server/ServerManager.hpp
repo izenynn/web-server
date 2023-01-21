@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __SERVER_CONTROLLER_HPP__
-# define __SERVER_CONTROLLER_HPP__
+#ifndef __SERVER_MANAGER_HPP__
+# define __SERVER_MANAGER_HPP__
 
 /** INCLUDES ----------------------------------- */
 
@@ -15,6 +15,7 @@
 # include <types/nullptr_t.hpp>
 # include <config/Config.hpp>
 # include <server/Server.hpp>
+//# include <server/Client.hpp>
 
 # include <stdint.h>
 
@@ -31,15 +32,15 @@ Server: A server listens on a connection for a request,
 
 namespace webserv {
 
-class ServerController {
+class ServerManager {
 	public:
-		ServerController( void );
-		~ServerController( void );
+		ServerManager( void );
+		~ServerManager( void );
 
-		void configLoad( void ); // default path
-		void configLoad( const char* file );
+		void load( void ); // default path
+		void load( const char* file );
+
 		void run( void );
-
 	private:
 		Server& operator=( const Server& other); // not necessary
 
@@ -49,23 +50,21 @@ class ServerController {
 		fd_set			_fd_set;
 		unsigned int	_fd_cnt;
 
-		std::map<int, listen_t> _servers;
-		std::map<int, Server *> _clients;
+		const std::vector<ServerConfig *> *		_servers_config;
 
+		std::map<int, Listen>					_servers;
+		//std::map<int, Client *>				_clients;
 	public:
-		class ServerException : virtual public std::exception {
+		class ServerManagerException : virtual public std::exception {
 			private:
 				std::string message;
 			public:
-				ServerException( const std::string& msg );
-				~ServerException( void ) throw ();
-				const char * what() const throw ();
-		};
-		class ConfigNotLoaded : public std::exception {
-			public: const char * what() const throw ();
+				ServerManagerException( const std::string & msg );
+				virtual ~ServerManagerException( void ) throw ();
+				virtual const char * what( void ) const throw ();
 		};
 };
 
 } /** namespace webserv */
 
-#endif /** __SERVER_CONTROLLER_HPP__ */
+#endif /** __SERVER_MANAGER_HPP__ */

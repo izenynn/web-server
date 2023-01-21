@@ -3,15 +3,15 @@
 # **************************************************************************** #
 
 # COLORS
-NOCOL=\033[0m
-RED=\033[31m
-GRN=\033[32m
-YEL=\033[33m
-BLU=\033[34m
-MAG=\033[35m
-CYN=\033[36m
-LBLU = \033[36m
-LGRN = \033[0;90m
+NOCOL	= \033[0m
+RED		= \033[31m
+GRN		= \033[32m
+YEL		= \033[33m
+BLU		= \033[34m
+MAG		= \033[35m
+CYN		= \033[36m
+LBLU	= \033[36m
+LGRN	= \033[0;90m
 
 # OS
 UNAME_S := $(shell uname -s)
@@ -47,6 +47,7 @@ INC_PATH = include
 # **************************************************************************** #
 
 CXXFLAGS += -I ./$(INC_PATH)
+CXXFLAGS += -I ./$(SRC_PATH)
 
 # **************************************************************************** #
 #                                   SOURCES                                    #
@@ -66,10 +67,9 @@ OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
 SRC_ROOT	=	main.cpp
 
-SRC_CONFIG	=	Config.cpp
+SRC_CONFIG	=	Config.cpp 			ServerConfig.cpp
 
-SRC_SERVER	=	ServerController.cpp	\
-				Server.cpp
+SRC_SERVER	=	ServerManager.cpp	Server.cpp
 
 SRC_UTILS	=	log.cpp
 
@@ -113,9 +113,11 @@ SRC_NAME =	$(SRC_ROOT)														\
 #			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
+DEP_NAME = $(SRC_NAME:%.cpp=%.d)
 
 SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
+DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 
 # **************************************************************************** #
 #                                    RULES                                     #
@@ -187,5 +189,7 @@ help: ## shows help
 	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "${LBLU}%-20s${NOCOL} %s\n", $$1, $$2}'
 #	@echo "\n\t$(LGRN)Using [Argument] $(LBLU)'V=1'$(LGRN) will show all the building output$(NOCOL)"
 	@echo "\n$(LBLU)_______________________________________________________________________$(NOCOL)\n\n"
+
+-include $(DEP)
 
 .PHONY: $(PHONY)
