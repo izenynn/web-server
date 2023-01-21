@@ -14,6 +14,12 @@ int main( int argc, char * argv[] ) {
 		return ( 1 );
 	}
 
+	// help message
+	if ( argc == 2 && ( strcmp( "-h", argv[1] ) || strcmp( "--help", argv[1] ) ) ) {
+		webserv::log::info( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
+		return ( 0 );
+	}
+
 	// web server
 	try {
 		manager = new webserv::ServerManager();
@@ -21,7 +27,7 @@ int main( int argc, char * argv[] ) {
 		if ( argc == 2 ) manager->configLoad( argv[1] );
 		else             manager->configLoad();
 
-		manager->run();
+		//manager->run();
 
 		// TODO server.clean();
 		delete manager;
