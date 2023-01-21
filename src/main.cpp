@@ -15,29 +15,27 @@ int main( int argc, char * argv[] ) {
 	}
 
 	// help message
-	if ( argc == 2 && ( strcmp( "-h", argv[1] ) || strcmp( "--help", argv[1] ) ) ) {
+	if ( argc == 2 && ( 0 == strcmp( "-h", argv[1] ) || 0 == strcmp( "--help", argv[1] ) ) ) {
 		webserv::log::info( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
 		return ( 0 );
 	}
 
 	// web server
-	try {
-		manager = new webserv::ServerManager();
+	manager = new webserv::ServerManager();
 
+	try {
 		if ( argc == 2 ) manager->configLoad( argv[1] );
 		else             manager->configLoad();
-
-		//manager->run();
-
-		// TODO server.clean();
-		delete manager;
 	} catch( std::exception& e ) {
 		std::cout << e.what() << std::endl;
-		if ( webserv::nullptr_t != manager ) {
-			delete manager;
-		}
+		delete manager;
 		return ( 1 );
 	}
+
+	//manager->run();
+
+	// TODO server.clean();
+	delete manager;
 
 	return ( 0 );
 }
