@@ -31,12 +31,14 @@ class Config {
 		Config( const Config & other ); // not necessary
 		Config &operator=( const Config& other ); // not necessary
 
+		const char *						_file;
+		std::vector<std::string>			_tokens;
+		std::vector<ServerConfig *>			_server;
+
 		void load( const char* file );
 
-		const token_type *	lexer( const char * const file );
-		void				parser( const token_type * const tokens );
-
-		std::vector<ServerConfig *>			_server;
+		void				lexer( void );
+		void				parser( void );
 	public:
 		class ConfigException : virtual public std::exception {
 			private:

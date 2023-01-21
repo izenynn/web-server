@@ -26,8 +26,8 @@ int main( int argc, char * argv[] ) {
 	try {
 		if ( argc == 2 ) manager->configLoad( argv[1] );
 		else             manager->configLoad();
-	} catch( std::exception& e ) {
-		std::cout << e.what() << std::endl;
+	} catch ( std::exception& e ) {
+		//std::cout << e.what() << std::endl;
 		delete manager;
 		return ( 1 );
 	}

@@ -113,9 +113,11 @@ SRC_NAME =	$(SRC_ROOT)														\
 #			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
+DEP_NAME = $(SRC_NAME:%.cpp=%.d)
 
 SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
+DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 
 # **************************************************************************** #
 #                                    RULES                                     #
@@ -187,5 +189,7 @@ help: ## shows help
 	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "${LBLU}%-20s${NOCOL} %s\n", $$1, $$2}'
 #	@echo "\n\t$(LGRN)Using [Argument] $(LBLU)'V=1'$(LGRN) will show all the building output$(NOCOL)"
 	@echo "\n$(LBLU)_______________________________________________________________________$(NOCOL)\n\n"
+
+-include $(DEP)
 
 .PHONY: $(PHONY)

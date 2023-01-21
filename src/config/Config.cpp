@@ -12,7 +12,7 @@ Config::Config( void ) {
 }
 
 Config::Config( const char* path ) {
-	this->load(path);
+	this->load( path );
 	return ;
 }
 
@@ -29,11 +29,10 @@ const std::vector<ServerConfig *> & Config::getServers( void ) const {
 }
 
 void Config::load(const char * const file) {
-	// tokenize
-	const std::vector<std::string> * tokens = webserv::nullptr_t;
+	this->_file = file;
 
-	tokens = this->lexer( file );
-	this->parser( tokens );
+	this->lexer();
+	this->parser();
 
 	/*// print tokens
 	std::cout << "TOKENS:" << std::endl;
@@ -46,8 +45,6 @@ void Config::load(const char * const file) {
 	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
 		(*it)->print( "" );
 	}
-
-	delete tokens;
 
 	// deprecated
 	/*for ( std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
@@ -90,17 +87,15 @@ void Config::load(const char * const file) {
 }
 
 // tokenize and check for extra or missing '{}'
-const Config::token_type * Config::lexer( const char * const file ) {
+void Config::lexer( void ) {
 	// TODO add comment '#' support
 	std::ifstream					in;
-	std::vector<std::string> *		tokens = new std::vector<std::string>();
 
 	// open file
-	in.open( file, std::ifstream::in );
+	in.open( this->_file, std::ifstream::in );
 	if ( false == in ) {
-		delete tokens;
-		log::error( "can't open config file: " + std::string( file ) );
-		throw Config::ConfigException( "exception: can't open config file: " + std::string( file ) );
+		log::error( "can't open config file: " + std::string( this->_file ) );
+		throw Config::ConfigException( "exception: can't open config file: " + std::string( this->_file ) );
 	}
 
 	// tokenize line by line
@@ -114,25 +109,23 @@ const Config::token_type * Config::lexer( const char * const file ) {
 			// save token, if semicolon separate it from directive
 			if ( token.length() > 1 && token[token.length() - 1] == ';' ) {
 				token.erase(token.end() - 1);
-				tokens->push_back(token);
-				tokens->push_back(";");
+				this->_tokens.push_back(token);
+				this->_tokens.push_back(";");
 			} else {
-				tokens->push_back(token);
+				this->_tokens.push_back(token);
 			}
 		}
 	}
 
 	// close file
 	in.close();
-
-	return tokens;
 }
 
 // parse tokens into actual config and run basic checks
-void Config::parser( const Config::token_type * const tokens ) {
+void Config::parser( void ) {
 	// check for brackets
 	int bracketCnt = 0;
-	for ( token_type::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
+	for ( token_type::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
 		if ( "{" == *it ) {
 			++bracketCnt;
 		} else if ( "}" == *it ) {
@@ -150,12 +143,19 @@ void Config::parser( const Config::token_type * const tokens ) {
 
 	// parse tokens
 	int serverCnt = 0;
-	for ( token_type::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
+	for ( token_type::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
 		if ( "server" == *it ) {
 			ServerConfig * server = new ServerConfig();
 
 			//server->setId = serverCnt;
-			server->parser( ++it );
+			try {
+				server->parser( ++it );
+			} catch ( std::exception & e ) {
+				delete server;
+				//std::cout << e.what() << std::endl;
+				log::error( "config parser throw an exception" );
+				throw Config::ConfigException( "exception: config parser throw an exception" );
+			}
 
 			this->_server.push_back( server );
 
