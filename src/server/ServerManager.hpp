@@ -14,7 +14,6 @@
 
 # include <types/nullptr_t.hpp>
 # include <config/Config.hpp>
-# include <server/Server.hpp>
 //# include <server/Client.hpp>
 
 # include <stdint.h>
@@ -42,7 +41,7 @@ class ServerManager {
 
 		void run( void );
 	private:
-		Server& operator=( const Server& other); // not necessary
+		ServerManager & operator=( const ServerManager & other); // not necessary
 
 		static const char* k_default_path;
 
