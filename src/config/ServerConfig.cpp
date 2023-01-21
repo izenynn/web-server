@@ -137,7 +137,6 @@ void ServerConfig::print( const std::string & indent ) {
 void ServerConfig::parser( token_type::const_iterator & it ) {
 	// check '{' after 'server' directive
 	if ( "{" != *it ) {
-		log::error( "expected '{' after 'server' directive" );
 		throw ServerConfig::ServerConfigException( "exception: expected '{' after 'server' directive" );
 	}
 	++it;
@@ -151,12 +150,10 @@ void ServerConfig::parser( token_type::const_iterator & it ) {
 			const token_type::const_iterator prev = it;
 			++it;
 			if ( "}" == *it ) {
-				log::error( "missing directive '" + *prev + "' value in 'server' block" );
 				throw ServerConfig::ServerConfigException( "exception: missing directive '" + *prev + "' value in 'server' block" );
 			}
 			( this->*( directive->second ) )( it );
 		} else {
-			log::error( "unknown directive: '" + *it + "' in 'server' block" );
 			throw ServerConfig::ServerConfigException( "exception: unknown directive: '" + *it + "' in 'server' block" );
 		}
 	}
@@ -182,42 +179,46 @@ ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 
 void ServerConfig::parseLocation( token_type::const_iterator & it ) {
 	std::string		location		= *it;
-	ServerConfig *	locationConfig	= this->createLocationServerConfig();
+	ServerConfig *	locationConfig	= webserv::nullptr_t;
 
 	// check not duplicate location
 	if ( this->_location.end() != this->_location.find( location ) ) {
-		log::error( "duplicate value in directive 'location'" );
 		throw ServerConfig::ServerConfigException( "exception: duplicate value in directive 'location'" );
 	}
 
 	// check '{' after 'location' directive
 	++it;
 	if ( "{" != *it ) {
-		log::error( "expected '{' after 'location' directive" );
 		throw ServerConfig::ServerConfigException( "exception: expected '{' after 'location' directive" );
-		
 	}
-	++it;
 
 	// parse location block
-	std::map<std::string, parse_directive_type>::const_iterator directive;
-	for ( ; "}" != *it; ++it ) {
-		directive = this->_locationDirectives.find( *it );
-		if ( this->_locationDirectives.end() != directive ) {
-			// check there is a next token and pass it to the directive parser function
-			const token_type::const_iterator prev = it;
-			++it;
-			if ( "}" == *it ) {
-				log::error( "missing directive '" + *prev + "' value in 'location' block" );
-				throw ServerConfig::ServerConfigException( "exception: missing directive '" + *prev + "' value in 'location' block" );
+	++it;
+	try {
+		// create copy of current config for location config
+		locationConfig = this->createLocationServerConfig();
+		// parse location block directives
+		std::map<std::string, parse_directive_type>::const_iterator directive;
+		for ( ; "}" != *it; ++it ) {
+			directive = this->_locationDirectives.find( *it );
+			if ( this->_locationDirectives.end() != directive ) {
+				// check there is a next token and pass it to the directive parser function
+				const token_type::const_iterator prev = it;
+				++it;
+				if ( "}" == *it ) {
+					throw ServerConfig::ServerConfigException( "exception: missing directive '" + *prev + "' value in 'location' block" );
+				}
+				//( this->*( directive->second ) )( it );
+				( locationConfig->*( directive->second ) )( it );
+			} else {
+				throw ServerConfig::ServerConfigException( "exception: unknown directive: '" + *it + "' in 'location' block" );
 			}
-			//( this->*( directive->second ) )( it );
-			( locationConfig->*( directive->second ) )( it );
-		} else {
-			log::error( "unknown directive: '" + *it + "' in 'location' block" );
-			throw ServerConfig::ServerConfigException( "exception: unknown directive: '" + *it + "' in 'location' block" );
-		}
 
+		}
+	} catch ( std::exception & e ) {
+		delete locationConfig;
+		log::error( e.what() );
+		throw ServerConfig::ServerConfigException( "exception: location block parser throw an exception" );
 	}
 
 	// add location to map
@@ -239,11 +240,9 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 		std::string tmpPort	= token.substr( sep + 1 );
 
 		if ( false == isValidIp( tmpIp ) ) {
-			log::error( "invalid port on 'listen' directive" );
 			throw ServerConfig::ServerConfigException( "exception: invalid port on 'listen' directive" );
 		}
 		if ( false == isValidPort( tmpPort ) ) {
-			log::error( "invalid IP on 'listen' directive" );
 			throw ServerConfig::ServerConfigException( "exception: invalid IP on 'listen' directive" );
 		}
 
@@ -257,14 +256,12 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 		port = atoi( (*it).c_str() );
 	// invalid
 	} else {
-		log::error( "invalid value on 'listen' directive" );
 		throw ServerConfig::ServerConfigException( "exception: invalid value on 'listen' directive" );
 	}
 
 	// check value not duplicated
 	Listen * listen = new Listen( ip, port );
 	if ( this->_listen.end() != std::find( this->_listen.begin(), this-> _listen.end(), listen ) ) {
-		log::error( "duplicate value in directive 'listen'" );
 		throw ServerConfig::ServerConfigException( "duplicate value in directive 'listen'" );
 	}
 
@@ -274,11 +271,9 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 	// check nexy token is ';' (no need to check if it is '}', because if it is not ';' it will thow an erro)
 	++it;
 	if ( "}" == *it ) {
-		log::error( "missing ';' near token 'listen'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'listen'" );
 	}
 	if ( ";" != *it ) {
-		log::error( "too many values in directive 'listen'" );
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'listen'" );
 	}
 
@@ -288,11 +283,9 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 void ServerConfig::parseServerName( token_type::const_iterator & it ) {
 	// check next token is not an end token, server_name requires a value
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'server_name'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'server_name'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'server_name'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'server_name'" );
 	}
 
@@ -300,7 +293,6 @@ void ServerConfig::parseServerName( token_type::const_iterator & it ) {
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
 		if ( "}" == *it ) {
-			log::error( "missing ';' near token 'server_name'" );
 			throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'server_name'" );
 		}
 		// save directive
@@ -313,11 +305,9 @@ void ServerConfig::parseServerName( token_type::const_iterator & it ) {
 void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 	// check next token is not an end token, root requires a value
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'root'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'root'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'root'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'root'" );
 	}
 
@@ -327,11 +317,9 @@ void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 	// check next token is ';'
 	++it;
 	if ( "}" == *it ) {
-		log::error( "missing ';' near token 'root'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'root'" );
 	}
 	if ( ";" != *it ) {
-		log::error( "too many values in directive 'root'" );
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'root'" );
 	}
 
@@ -341,11 +329,9 @@ void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 	// check next token is not an end token, server_name requires a value
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'index'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'index'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'index'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'index'" );
 	}
 
@@ -353,7 +339,6 @@ void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
 		if ( "}" == *it ) {
-			log::error( "missing ';' near token 'index'" );
 			throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'index'" );
 		}
 		// save directive
@@ -366,11 +351,9 @@ void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 void ServerConfig::parseAutoindex( token_type::const_iterator & it ) {
 	// check next token is not an end token, server_name requires a value
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'autoindex'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'autoindex'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'autoindex'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'autoindex'" );
 	};
 
@@ -380,18 +363,15 @@ void ServerConfig::parseAutoindex( token_type::const_iterator & it ) {
 	} else if ( "off" == *it ) {
 		this->_autoindex = false;
 	} else {
-		log::error( "unknown value: '" + *it + "' in 'autoindex' directive" );
 		throw ServerConfig::ServerConfigException( "exception: unknown value: '" + *it + "' in 'autoindex' directive" );
 	}
 
 	// check next token is ';'
 	++it;
 	if ( "}" == *it ) {
-		log::error( "missing ';' near token 'autoindex'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'autoindex" );
 	}
 	if ( ";" != *it ) {
-		log::error( "too many values in directive 'autoindex'" );
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'autoindex'" );
 	}
 
@@ -401,11 +381,9 @@ void ServerConfig::parseAutoindex( token_type::const_iterator & it ) {
 void ServerConfig::parseErrorPage( token_type::const_iterator & it ) {
 	// check next token is not an end token, server_name requires a value
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'error_page'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'error_page'" );
 	};
 
@@ -416,11 +394,9 @@ void ServerConfig::parseErrorPage( token_type::const_iterator & it ) {
 		++it;
 	}
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'error_page'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'error_page'" );
 	};
 	for ( std::vector<int>::const_iterator n = codes.begin(); n != codes.end(); ++n ) {
@@ -430,11 +406,9 @@ void ServerConfig::parseErrorPage( token_type::const_iterator & it ) {
 	// check next token is ';'
 	++it;
 	if ( "}" == *it ) {
-		log::error( "missing ';' near token 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'error_page'" );
 	}
 	if ( ";" != *it ) {
-		log::error( "too many values in directive 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'error_page'" );
 	}
 
@@ -444,11 +418,9 @@ void ServerConfig::parseErrorPage( token_type::const_iterator & it ) {
 void ServerConfig::parseLimitExcept( token_type::const_iterator & it ) {
 	// check next token is not an end token
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'limit_except'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'limit_except'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'limit_except'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'limit_except'" );
 	}
 
@@ -456,7 +428,6 @@ void ServerConfig::parseLimitExcept( token_type::const_iterator & it ) {
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
 		if ( "}" == *it ) {
-			log::error( "missing ';' near token 'limit_except'" );
 			throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'limit_except'" );
 		}
 		// save directive
@@ -469,17 +440,14 @@ void ServerConfig::parseLimitExcept( token_type::const_iterator & it ) {
 void ServerConfig::parseClientMaxBodySize( token_type::const_iterator & it ) {
 	// check next token is not an end token
 	if ( "}" == *it ) {
-		log::error( "missing value and ';' near token 'client_max_body_size'" );
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'client_max_body_size'" );
 	}
 	if ( ";" == *it ) {
-		log::error( "not enough values in directive 'client_max_body_size'" );
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'client_max_body_size'" );
 	};
 
 	// save directive
 	if ( std::string::npos != it->find_first_not_of( "0123456789" ) ) {
-		log::error( "invalid size in 'client_max_body_size' directive" );
 		throw ServerConfig::ServerConfigException( "exception: invalid size in 'client_max_body_size' directive" );
 	}
 	this->_client_max_body_size = atoi( it->c_str() );
@@ -487,11 +455,9 @@ void ServerConfig::parseClientMaxBodySize( token_type::const_iterator & it ) {
 	// check next token is ';'
 	++it;
 	if ( "}" == *it ) {
-		log::error( "missing ';' near token 'client_max_body_size'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'client_max_body_size'" );
 	}
 	if ( ";" != *it ) {
-		log::error( "too many values in directive 'client_max_body_size'" );
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'client_max_body_size'" );
 	}
 

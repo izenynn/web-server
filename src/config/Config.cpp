@@ -94,7 +94,6 @@ void Config::lexer( void ) {
 	// open file
 	in.open( this->_file, std::ifstream::in );
 	if ( false == in ) {
-		log::error( "can't open config file: " + std::string( this->_file ) );
 		throw Config::ConfigException( "exception: can't open config file: " + std::string( this->_file ) );
 	}
 
@@ -130,14 +129,12 @@ void Config::parser( void ) {
 			++bracketCnt;
 		} else if ( "}" == *it ) {
 			if ( 0 == bracketCnt ) {
-				log::error( "extra one or more closing bracket on config" );
 				throw Config::ConfigException( "exception: extra one or more closing bracket on config" );
 			}
 			--bracketCnt;
 		}
 	}
 	if ( bracketCnt > 0 ) {
-		log::error( "missing one or more closing bracket on config " );
 		throw Config::ConfigException( "exception: missing one or more closing bracket on config" );
 	}
 
@@ -152,21 +149,18 @@ void Config::parser( void ) {
 				server->parser( ++it );
 			} catch ( std::exception & e ) {
 				delete server;
-				//std::cout << e.what() << std::endl;
-				log::error( "config parser throw an exception" );
-				throw Config::ConfigException( "exception: config parser throw an exception" );
+				log::error( e.what() );
+				throw Config::ConfigException( "exception: server block parser throw an exception" );
 			}
 
 			this->_server.push_back( server );
 
 			++serverCnt;
 		} else {
-			log::error( "unknown directive: " + *it );
 			throw Config::ConfigException( "exception: unknown directive" );
 		}
 	}
 	if ( serverCnt == 0 ) {
-		log::error( "missing 'server' directive" );
 		throw Config::ConfigException( "exception: missing 'server' directive" );
 	}
 
