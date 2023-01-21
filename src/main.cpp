@@ -24,8 +24,8 @@ int main( int argc, char * argv[] ) {
 	manager = new webserv::ServerManager();
 
 	try {
-		if ( argc == 2 ) manager->configLoad( argv[1] );
-		else             manager->configLoad();
+		if ( argc == 2 ) manager->load( argv[1] );
+		else             manager->load();
 	} catch ( std::exception & e ) {
 		delete manager;
 		webserv::log::error( e.what() );

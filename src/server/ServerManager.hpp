@@ -15,6 +15,7 @@
 # include <types/nullptr_t.hpp>
 # include <config/Config.hpp>
 # include <server/Server.hpp>
+//# include <server/Client.hpp>
 
 # include <stdint.h>
 
@@ -36,10 +37,10 @@ class ServerManager {
 		ServerManager( void );
 		~ServerManager( void );
 
-		void configLoad( void ); // default path
-		void configLoad( const char* file );
-		void run( void );
+		void load( void ); // default path
+		void load( const char* file );
 
+		void run( void );
 	private:
 		Server& operator=( const Server& other); // not necessary
 
@@ -49,9 +50,10 @@ class ServerManager {
 		fd_set			_fd_set;
 		unsigned int	_fd_cnt;
 
-		std::map<int, Listen> _servers;
-		std::map<int, Server *> _clients;
+		const std::vector<ServerConfig *> *		_servers_config;
 
+		std::map<int, Listen>					_servers;
+		//std::map<int, Client *>				_clients;
 	public:
 		class ServerManagerException : virtual public std::exception {
 			private:

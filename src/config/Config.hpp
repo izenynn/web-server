@@ -27,7 +27,7 @@ class Config {
 
 		void load( const char* file );
 
-		const std::vector<ServerConfig *> &	getServers( void ) const;
+		const std::vector<ServerConfig *> *	getServers( void ) const;
 	private:
 		Config( const Config & other ); // not necessary
 		Config &operator=( const Config& other ); // not necessary

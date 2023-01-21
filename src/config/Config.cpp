@@ -19,8 +19,8 @@ Config::~Config( void ) {
 	return ;
 }
 
-const std::vector<ServerConfig *> & Config::getServers( void ) const {
-	return ( this->_server );
+const std::vector<ServerConfig *> * Config::getServers( void ) const {
+	return ( &( this->_server ) );
 }
 
 void Config::load(const char * const file) {

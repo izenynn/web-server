@@ -10,7 +10,8 @@ namespace webserv {
 const char* ServerManager::k_default_path = "/etc/aps/aps.conf";
 
 ServerManager::ServerManager( void ) 
-		: _config( webserv::nullptr_t ) {
+		: _config( webserv::nullptr_t ),
+		  _servers_config( webserv::nullptr_t ) {
 	return ;
 }
 
@@ -21,17 +22,21 @@ ServerManager::~ServerManager( void ) {
 	return ;
 }
 
-void ServerManager::configLoad( const char* file ) {
+void ServerManager::load( const char* file ) {
 	this->_config = new Config();
 	this->_config->load( file );
+
+	this->_servers_config = this->_config->getServers();
+
 	return ;
 }
-void ServerManager::configLoad() {
-	this->configLoad( ServerManager::k_default_path );
+void ServerManager::load() {
+	this->load( ServerManager::k_default_path );
 	return ;
 }
 
 void ServerManager::run( void ) {
+	return ; // FIXME temporary return to avoid crash :"D
 	if (this->_config == webserv::nullptr_t) {
 		throw ServerManager::ServerManagerException("exception: config file not loaded");
 		return ;
