@@ -25,18 +25,23 @@ class ServerConfig {
 		ServerConfig( void );
 		virtual ~ServerConfig( void );
 
+
 		void parser( token_type::const_iterator & it );
 
 		const int & getId( void ) const;
 		void setId( const int & id );
 	private:
-		ServerConfig( const ServerConfig & other ); // net necessary
-		ServerConfig &operator=( const ServerConfig& other ); // not necessary
+		ServerConfig( const ServerConfig & other ); // not necessary
+		ServerConfig & operator=( const ServerConfig & other ); // not necessary
 
 		int _id;
 
+		void			clear( void ); // FIXME not used
+		ServerConfig *	createLocationServerConfig( void );
+
 		typedef void ( ServerConfig::*parse_directive_type )( token_type::const_iterator & );
-		std::map<std::string, parse_directive_type> _directivesValid;
+		std::map<std::string, parse_directive_type> _serverDirectives;
+		std::map<std::string, parse_directive_type> _locationDirectives;
 
 		void parseLocation(				token_type::const_iterator & it );
 		void parseListen(				token_type::const_iterator & it );
@@ -48,15 +53,16 @@ class ServerConfig {
 		void parseLimitExcept(			token_type::const_iterator & it );
 		void parseClientMaxBodySize(	token_type::const_iterator & it );
 
-		std::vector<Listen *>				_listens;
+		std::vector<Listen *>					_listens;
+		std::map<std::string, ServerConfig *>	_location;
 
-		/*std::vector<std::string>			_server_name;
-		std::vector<std::string>			_allowed_methods;
+		std::vector<std::string>			_server_name;
+		std::string							_root;
 		std::vector<std::string>			_index;
-		std::map<std::string, ServerConfig>	_location;
+		bool								_autoindex;
 		std::map<int, std::string>			_error_page;
-		int									_client_max_body_size;
-		bool								_autoindex;*/
+		std::vector<std::string>			_limit_except;
+		size_t								_client_max_body_size;
 	public:
 		class ServerConfigException : virtual public std::exception {
 			private:
