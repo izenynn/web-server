@@ -97,7 +97,7 @@ const Config::token_type * Config::lexer( const char * const file ) {
 			std::string	token = line.substr( start, end - start );
 
 			// save token, if semicolon separate it from directive
-			if (token.size() > 1 && *token.end() == ';') {
+			if ( token.length() > 1 && token[token.length() - 1] == ';' ) {
 				token.erase(token.end() - 1);
 				tokens->push_back(token);
 				tokens->push_back(";");
