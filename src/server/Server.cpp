@@ -7,23 +7,23 @@
 /** CLASS -------------------------------------- */
 
 namespace {
-	inline void initAddr( struct sockaddr_in & addr, const webserv::listen_t & listen ) {
+	/*inline void initAddr( struct sockaddr_in & addr, const webserv::Listen & listen ) {
 		addr.sin_family = AF_INET;
-		addr.sin_addr.s_addr = htonl(listen.host);
+		//addr.sin_addr.s_addr = htonl(listen.ip);
 		addr.sin_port = htons(listen.port);
 		return ;
-	}
+	}*/
 }
 
 namespace webserv {
 
 const size_t Server::k_recv_size = 4096;
 
-Server::Server( const listen_t & listen ) 
+Server::Server( const Listen & listen ) 
 		: _sockfd(-1),
 		  _host(listen) {
 		this->_addr.sin_family = AF_INET;
-		initAddr(this->_addr, this->_host);
+		//initAddr(this->_addr, this->_host);
 		return ;
 }
 
@@ -42,7 +42,7 @@ void Server::start( void ) {
 		// TODO throw / log error ???
 	}
 
-	initAddr(this->_addr, this->_host);
+	//initAddr(this->_addr, this->_host);
 	if ( -1 == bind( this->_sockfd, reinterpret_cast<struct sockaddr *>( &this->_addr ), sizeof( this->_addr ) ) ) {
 		log::failure( "bind() failed, could not bind port" );
 		// TODO throw / log error ???

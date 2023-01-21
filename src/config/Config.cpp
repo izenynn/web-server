@@ -15,7 +15,7 @@ Config::Config( const char* path ) {
 
 Config::~Config( void ) {}
 
-const std::vector<ServerConfig> & Config::getServers( void ) const {
+const std::vector<ServerConfig *> & Config::getServers( void ) const {
 	return ( this->_servers );
 }
 
@@ -83,6 +83,7 @@ const Config::token_type * Config::lexer( const char * const file ) {
 	// open file
 	in.open( file, std::ifstream::in );
 	if ( false == in ) {
+		delete tokens;
 		log::error( "can't open config file: " + std::string( file ) );
 		throw Config::ConfigException( "exception: can't open config file: " + std::string( file ) );
 	}
@@ -138,7 +139,7 @@ void Config::parser( const Config::token_type * const tokens ) {
 		if ( "server" == *it ) {
 			ServerConfig * server = new ServerConfig();
 
-			server->setId = serverCnt;
+			//server->setId = serverCnt;
 			server->parser( ++it );
 
 			this->_servers.push_back( server );
@@ -160,6 +161,12 @@ void Config::parser( const Config::token_type * const tokens ) {
 Config::ConfigException::ConfigException( const std::string & msg )
 		: message( msg ) {
 	return ;
+}
+Config::ConfigException::~ConfigException( void ) throw () {
+	return ;
+}
+const char * Config::ConfigException::what( void ) const throw () {
+	return this->message.c_str();
 }
 
 } /** namespace webserv */

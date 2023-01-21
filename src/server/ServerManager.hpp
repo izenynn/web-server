@@ -49,20 +49,17 @@ class ServerManager {
 		fd_set			_fd_set;
 		unsigned int	_fd_cnt;
 
-		std::map<int, listen_t> _servers;
+		std::map<int, Listen> _servers;
 		std::map<int, Server *> _clients;
 
 	public:
-		class ServerException : virtual public std::exception {
+		class ServerManagerException : virtual public std::exception {
 			private:
 				std::string message;
 			public:
-				ServerException( const std::string & msg );
-				~ServerException( void ) throw ();
-				const char * what() const throw ();
-		};
-		class ConfigNotLoaded : public std::exception {
-			public: const char * what() const throw ();
+				ServerManagerException( const std::string & msg );
+				virtual ~ServerManagerException( void ) throw ();
+				virtual const char * what( void ) const throw ();
 		};
 };
 

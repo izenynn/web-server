@@ -5,7 +5,7 @@
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::ServerManager *manager = webserv::nullptr_t;
+	webserv::ServerManager * manager = webserv::nullptr_t;
 
 	// too many args
 	if ( argc > 2 ) {
@@ -33,6 +33,10 @@ int main( int argc, char * argv[] ) {
 		delete manager;
 	} catch( std::exception& e ) {
 		std::cout << e.what() << std::endl;
+		if ( webserv::nullptr_t != manager ) {
+			delete manager;
+		}
+		return ( 1 );
 	}
 
 	return ( 0 );

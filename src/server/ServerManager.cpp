@@ -9,7 +9,8 @@ namespace webserv {
 
 const char* ServerManager::k_default_path = "/etc/aps/aps.conf";
 
-ServerManager::ServerManager( void ) {
+ServerManager::ServerManager( void ) 
+		: _config( webserv::nullptr_t ) {
 	return ;
 }
 
@@ -32,7 +33,7 @@ void ServerManager::configLoad() {
 void ServerManager::run( void ) {
 	if (this->_config == webserv::nullptr_t) {
 		log::error( "config file not loaded" );
-		throw ServerManager::ServerException("exception: config file not loaded");
+		throw ServerManager::ServerManagerException("exception: config file not loaded");
 		return ;
 	}
 
@@ -55,7 +56,7 @@ void ServerManager::run( void ) {
 		if ( ret < 0 ) {
 			// TODO better than exit just reset all connections and keep running
 			log::error( "select() returned -1" );
-			throw ServerManager::ServerException( "exception: select() returned -1" );
+			throw ServerManager::ServerManagerException( "exception: select() returned -1" );
 		} else if ( ret >= 0 ){
 			; // TODO
 		}
@@ -66,13 +67,14 @@ void ServerManager::run( void ) {
 
 /** EXCEPTIONS --------------------------------- */
 
-ServerManager::ServerException::ServerException( const std::string & msg )
+ServerManager::ServerManagerException::ServerManagerException( const std::string & msg )
 		: message( msg ) {
 	return ;
 }
-
-ServerManager::ServerException::~ServerException( void ) throw () {}
-const char * ServerManager::ServerException::what() const throw () {
+ServerManager::ServerManagerException::~ServerManagerException( void ) throw () {
+	return ;
+}
+const char * ServerManager::ServerManagerException::what( void ) const throw () {
 	return this->message.c_str();
 }
 

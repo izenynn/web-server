@@ -69,8 +69,8 @@ class ServerConfig {
 				std::string message;
 			public:
 				ServerConfigException( const std::string & msg );
-				~ServerConfigException( void ) throw ();
-				const char * what() const throw ();
+				virtual ~ServerConfigException( void ) throw ();
+				virtual const char * what( void ) const throw ();
 		};
 };
 

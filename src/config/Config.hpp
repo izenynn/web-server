@@ -25,7 +25,7 @@ class Config {
 		Config( const char* path ); // config class needs a config file
 		virtual ~Config( void );
 
-		const std::vector<ServerConfig> &	getServers( void ) const;
+		const std::vector<ServerConfig *> &	getServers( void ) const;
 	private:
 		Config( void ); // not necessary
 		Config( const Config & other ); // not necessary
@@ -43,8 +43,8 @@ class Config {
 				std::string message;
 			public:
 				ConfigException( const std::string & msg );
-				~ConfigException( void ) throw ();
-				const char * what() const throw ();
+				virtual ~ConfigException( void ) throw ();
+				virtual const char * what( void ) const throw ();
 		};
 };
 

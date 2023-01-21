@@ -36,12 +36,12 @@ namespace {
 		}
 		// scanf will check format and save numbers
 		unsigned int n[4];
-		if ( sscanf( ip.c_str(),"%d.%d.%d.%d", &(n[0]), &(n[1]), &(n[2]), &(n[3]) ) != 4 ) {
+		if ( sscanf( ip.c_str(),"%u.%u.%u.%u", &(n[0]), &(n[1]), &(n[2]), &(n[3]) ) != 4 ) {
 			return ( false );
 		}
 		// check all digits
 		for ( int i = 0; i < 4; ++i ) {
-			if ( n[i] < 0 || n[i] > 255 ) {
+			if ( n[i] > 255 ) {
 				return ( false );
 			}
 		}
@@ -462,6 +462,12 @@ void ServerConfig::parseClientMaxBodySize( token_type::const_iterator & it ) {
 ServerConfig::ServerConfigException::ServerConfigException( const std::string & msg )
 		: message( msg ) {
 	return ;
+}
+ServerConfig::ServerConfigException::~ServerConfigException( void ) throw () {
+	return ;
+}
+const char * ServerConfig::ServerConfigException::what( void ) const throw () {
+	return this->message.c_str();
 }
 
 } /** namespace webserv */
