@@ -19,6 +19,8 @@
 namespace webserv {
 
 class Config {
+	private:
+		typedef std::vector<std::string> token_type;
 	public:
 		Config( const char* path ); // config class needs a config file
 		virtual ~Config( void );
@@ -29,14 +31,12 @@ class Config {
 		Config( const Config & other ); // not necessary
 		Config &operator=( const Config& other ); // not necessary
 
-		typedef std::vector<std::string>	token_type;
-
 		void load( const char* file );
 
 		const token_type *	lexer( const char * const file );
 		void				parser( const token_type * const tokens );
 
-		std::vector<ServerConfig>			_servers;
+		std::vector<ServerConfig *>			_servers;
 	public:
 		class ConfigException : virtual public std::exception {
 			private:

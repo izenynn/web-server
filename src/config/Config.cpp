@@ -1,7 +1,5 @@
 /** INCLUDES ----------------------------------- */
 
-#include <iostream>
-
 #include <config/Config.hpp>
 #include <utils/log.hpp>
 
@@ -115,7 +113,6 @@ const Config::token_type * Config::lexer( const char * const file ) {
 }
 
 // parse tokens into actual config and run basic checks
-// TODO check that the '{}' and the directive checks are working
 void Config::parser( const Config::token_type * const tokens ) {
 	// check for brackets
 	int bracketCnt = 0;
@@ -142,7 +139,7 @@ void Config::parser( const Config::token_type * const tokens ) {
 			ServerConfig * server = new ServerConfig();
 
 			server->setId = serverCnt;
-			server->parse( tokens, it );
+			server->parser( ++it );
 
 			this->_servers.push_back( server );
 
