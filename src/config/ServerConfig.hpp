@@ -25,7 +25,7 @@ class ServerConfig {
 		ServerConfig( void );
 		virtual ~ServerConfig( void );
 
-
+		void print( const std::string & indent ); // FIXME just to test, remove this
 		void parser( token_type::const_iterator & it );
 
 		const int & getId( void ) const;
@@ -53,7 +53,7 @@ class ServerConfig {
 		void parseLimitExcept(			token_type::const_iterator & it );
 		void parseClientMaxBodySize(	token_type::const_iterator & it );
 
-		std::vector<Listen *>					_listens;
+		std::vector<Listen *>					_listen;
 		std::map<std::string, ServerConfig *>	_location;
 
 		std::vector<std::string>			_server_name;

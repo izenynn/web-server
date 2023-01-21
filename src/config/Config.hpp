@@ -36,7 +36,7 @@ class Config {
 		const token_type *	lexer( const char * const file );
 		void				parser( const token_type * const tokens );
 
-		std::vector<ServerConfig *>			_servers;
+		std::vector<ServerConfig *>			_server;
 	public:
 		class ConfigException : virtual public std::exception {
 			private:

@@ -54,7 +54,9 @@ namespace webserv {
 /** CLASS -------------------------------------- */
 
 ServerConfig::ServerConfig( void )
-		: _id( -1 ) {
+		: _id( -1 ),
+		  _autoindex( false ),
+		  _client_max_body_size( 8196 ) {
 	this->_serverDirectives["location"] =				&ServerConfig::parseLocation;
 	this->_serverDirectives["listen"] =					&ServerConfig::parseListen;
 	this->_serverDirectives["server_name"] =			&ServerConfig::parseServerName;
@@ -80,15 +82,56 @@ ServerConfig::ServerConfig( void )
 }
 
 ServerConfig::~ServerConfig( void ) {
-	for ( std::vector<Listen *>::iterator it = this->_listens.begin(); it != this->_listens.end(); ) {
+	for ( std::vector<Listen *>::iterator it = this->_listen.begin(); it != this->_listen.end(); ) {
 		delete *it;
-		it = this->_listens.erase( it );
+		it = this->_listen.erase( it );
 	}
 	for ( std::map<std::string, ServerConfig *>::iterator it = this->_location.begin(); it != this->_location.end(); ) {
 		delete it->second;
 		this->_location.erase( it++ );
 	}
 	return ;
+}
+
+void ServerConfig::print( const std::string & indent ) {
+	std::cout << indent << "listen:" << std::endl;
+	for ( std::vector<Listen *>::const_iterator it = this->_listen.begin(); it != this->_listen.end(); ++it ) {
+		std::cout << indent << "    " << "ip: " << (*it)->ip << " port: " << (*it)->port << std::endl;
+	}
+
+	std::cout << indent << "server_name:" << std::endl;
+	for ( std::vector<std::string>::const_iterator it = this->_server_name.begin(); it != this->_server_name.end(); ++it ) {
+		std::cout << indent << "    " << *it << std::endl;
+	}
+
+	std::cout << indent << "root: " << this->_root << std::endl;
+
+	std::cout << indent << "index:" << std::endl;
+	for ( std::vector<std::string>::const_iterator it = this->_index.begin(); it != this->_index.end(); ++it ) {
+		std::cout << indent << "    " << *it << std::endl;
+	}
+
+	std::cout << indent << "autoindex: " << std::boolalpha << this->_autoindex << std::endl;
+
+	std::cout << indent << "error_page:" << std::endl;
+	for ( std::map<int, std::string>::const_iterator it = this->_error_page.begin(); it != this->_error_page.end(); ++it ) {
+		std::cout << indent << "    " << it->first << " " << it->second << std::endl;
+	}
+
+	std::cout << indent << "limit_except:" << std::endl;
+	for ( std::vector<std::string>::const_iterator it = this->_limit_except.begin(); it != this->_limit_except.end(); ++it ) {
+		std::cout << indent << "    " << *it << std::endl;
+	}
+
+	std::cout << indent << "client_max_body_size: " << this->_client_max_body_size << std::endl;
+
+	if ( false == this->_location.empty() ) {
+		std::cout << indent << "locations:" << std::endl;
+		for ( std::map<std::string, ServerConfig *>::const_iterator it = this->_location.begin(); it != this->_location.end(); ++it ) {
+			std::cout << indent << "    " << it->first << std::endl;
+			it->second->print( indent + "        " );
+		}
+	}
 }
 
 void ServerConfig::parser( token_type::const_iterator & it ) {
@@ -134,7 +177,7 @@ ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 	//location->_cgi_param = this->_cgi_param;
 	//location->_cgi_pass = this->_cgi_pass;
 
-	return webserv::nullptr_t;
+	return location;
 }
 
 void ServerConfig::parseLocation( token_type::const_iterator & it ) {
@@ -148,6 +191,7 @@ void ServerConfig::parseLocation( token_type::const_iterator & it ) {
 	}
 
 	// check '{' after 'location' directive
+	++it;
 	if ( "{" != *it ) {
 		log::error( "expected '{' after 'location' directive" );
 		throw ServerConfig::ServerConfigException( "exception: expected '{' after 'location' directive" );
@@ -159,7 +203,7 @@ void ServerConfig::parseLocation( token_type::const_iterator & it ) {
 	std::map<std::string, parse_directive_type>::const_iterator directive;
 	for ( ; "}" != *it; ++it ) {
 		directive = this->_locationDirectives.find( *it );
-		if ( this->_serverDirectives.end() != directive ) {
+		if ( this->_locationDirectives.end() != directive ) {
 			// check there is a next token and pass it to the directive parser function
 			const token_type::const_iterator prev = it;
 			++it;
@@ -167,7 +211,8 @@ void ServerConfig::parseLocation( token_type::const_iterator & it ) {
 				log::error( "missing directive '" + *prev + "' value in 'location' block" );
 				throw ServerConfig::ServerConfigException( "exception: missing directive '" + *prev + "' value in 'location' block" );
 			}
-			( this->*( directive->second ) )( it );
+			//( this->*( directive->second ) )( it );
+			( locationConfig->*( directive->second ) )( it );
 		} else {
 			log::error( "unknown directive: '" + *it + "' in 'location' block" );
 			throw ServerConfig::ServerConfigException( "exception: unknown directive: '" + *it + "' in 'location' block" );
@@ -218,13 +263,13 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 
 	// check value not duplicated
 	Listen * listen = new Listen( ip, port );
-	if ( this->_listens.end() != std::find( this->_listens.begin(), this-> _listens.end(), listen ) ) {
+	if ( this->_listen.end() != std::find( this->_listen.begin(), this-> _listen.end(), listen ) ) {
 		log::error( "duplicate value in directive 'listen'" );
 		throw ServerConfig::ServerConfigException( "duplicate value in directive 'listen'" );
 	}
 
 	// add to listen vector
-	this->_listens.push_back( listen );
+	this->_listen.push_back( listen );
 
 	// check nexy token is ';' (no need to check if it is '}', because if it is not ';' it will thow an erro)
 	++it;
@@ -368,6 +413,7 @@ void ServerConfig::parseErrorPage( token_type::const_iterator & it ) {
 	std::vector<int> codes;
 	while ( std::string::npos == it->find_first_not_of( "0123456789" ) ) {
 		codes.push_back( atoi( it->c_str() ) );
+		++it;
 	}
 	if ( "}" == *it ) {
 		log::error( "missing value and ';' near token 'error_page'" );

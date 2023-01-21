@@ -17,15 +17,15 @@ Config::Config( const char* path ) {
 }
 
 Config::~Config( void ) {
-	for ( std::vector<ServerConfig *>::iterator it = this->_servers.begin(); it != this->_servers.end(); ) {
+	for ( std::vector<ServerConfig *>::iterator it = this->_server.begin(); it != this->_server.end(); ) {
 		delete *it;
-		it = this->_servers.erase( it );
+		it = this->_server.erase( it );
 	}
 	return ;
 }
 
 const std::vector<ServerConfig *> & Config::getServers( void ) const {
-	return ( this->_servers );
+	return ( this->_server );
 }
 
 void Config::load(const char * const file) {
@@ -35,13 +35,19 @@ void Config::load(const char * const file) {
 	tokens = this->lexer( file );
 	this->parser( tokens );
 
-	delete tokens;
-
-	/*std::cout << "TOKENS:" << std::endl;
+	/*// print tokens
+	std::cout << "TOKENS:" << std::endl;
 	for (std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
 		std::cout << *it << std::endl;
 	}
 	delete tokens;*/
+
+	// print config
+	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
+		(*it)->print( "" );
+	}
+
+	delete tokens;
 
 	// deprecated
 	/*for ( std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
@@ -151,7 +157,7 @@ void Config::parser( const Config::token_type * const tokens ) {
 			//server->setId = serverCnt;
 			server->parser( ++it );
 
-			this->_servers.push_back( server );
+			this->_server.push_back( server );
 
 			++serverCnt;
 		} else {
