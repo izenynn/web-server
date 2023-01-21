@@ -227,11 +227,10 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 	this->_listens.push_back( listen );
 
 	// check nexy token is ';' (no need to check if it is '}', because if it is not ';' it will thow an erro)
-	const token_type::const_iterator prev = it;
 	++it;
 	if ( "}" == *it ) {
-		log::error( "missing ';' near token '" + *prev + "'" );
-		throw ServerConfig::ServerConfigException( "exception: missing ';' near token '" + *prev + "'" );
+		log::error( "missing ';' near token 'listen'" );
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'listen'" );
 	}
 	if ( ";" != *it ) {
 		log::error( "too many values in directive 'listen'" );
@@ -281,6 +280,7 @@ void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 	this->_root = *it;
 
 	// check next token is ';'
+	++it;
 	if ( "}" == *it ) {
 		log::error( "missing ';' near token 'root'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'root'" );
@@ -315,16 +315,6 @@ void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 		this->_index.push_back( *it );
 	}
 
-	// check next token is ';'
-	if ( "}" == *it ) {
-		log::error( "missing ';' near token 'index'" );
-		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'index'" );
-	}
-	if ( ";" != *it ) {
-		log::error( "too many values in directive 'index'" );
-		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'index'" );
-	}
-
 	return ;
 }
 
@@ -350,6 +340,7 @@ void ServerConfig::parseAutoindex( token_type::const_iterator & it ) {
 	}
 
 	// check next token is ';'
+	++it;
 	if ( "}" == *it ) {
 		log::error( "missing ';' near token 'autoindex'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'autoindex" );
@@ -391,6 +382,7 @@ void ServerConfig::parseErrorPage( token_type::const_iterator & it ) {
 	}
 
 	// check next token is ';'
+	++it;
 	if ( "}" == *it ) {
 		log::error( "missing ';' near token 'error_page'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'error_page'" );
@@ -447,6 +439,7 @@ void ServerConfig::parseClientMaxBodySize( token_type::const_iterator & it ) {
 	this->_client_max_body_size = atoi( it->c_str() );
 
 	// check next token is ';'
+	++it;
 	if ( "}" == *it ) {
 		log::error( "missing ';' near token 'client_max_body_size'" );
 		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'client_max_body_size'" );
