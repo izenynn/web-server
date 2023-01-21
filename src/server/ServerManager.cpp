@@ -22,7 +22,8 @@ ServerManager::~ServerManager( void ) {
 }
 
 void ServerManager::configLoad( const char* file ) {
-	this->_config = new Config( file );
+	this->_config = new Config();
+	this->_config->load( file );
 	return ;
 }
 void ServerManager::configLoad() {

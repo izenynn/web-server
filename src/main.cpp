@@ -32,9 +32,8 @@ int main( int argc, char * argv[] ) {
 		return ( 1 );
 	}
 
-	//manager->run();
+	manager->run();
 
-	// TODO manager->clean();
 	delete manager;
 
 	return ( 0 );

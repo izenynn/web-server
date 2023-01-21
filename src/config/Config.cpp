@@ -11,11 +11,6 @@ Config::Config( void ) {
 	return ;
 }
 
-Config::Config( const char* path ) {
-	this->load( path );
-	return ;
-}
-
 Config::~Config( void ) {
 	for ( std::vector<ServerConfig *>::iterator it = this->_server.begin(); it != this->_server.end(); ) {
 		delete *it;
@@ -49,15 +44,12 @@ void Config::load(const char * const file) {
 	// deprecated
 	/*for ( std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
 		if ( "server" == *it ) {
-			// TODO create a class for the server config and move all this to the server config class
 			ServerConfig srvConf;
 			if ( ++it, "{" == *it ) {
 				log::error( "expected '{' after 'server' directive" );
 				delete tokens;
 				throw Config::ConfigException( "exception: expected '{' after 'server' directive" );
 			}
-			// TODO create parse method and send all tokens between the '{}'
-			// TODO parse must retucn the it pointing to the last element, '}' i think
 			if ( ++it, -1 == srvConf.parse( tokens, it ) ) {
 				log::error( "error parsing 'server' directive on token: " + SSTR( *it ) );
 				delete tokens;
