@@ -126,10 +126,10 @@ DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 PHONY := all
 all: $(NAME) ## default rule, compile web server
 
-$(NAME): $(OBJ) $(LFT_NAME)
+$(NAME): $(OBJ)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
 	@printf "${BLU}"
-	$(CXX) $(CXXFLAGS) $(OBJ) $(LFT_NAME) -o $@ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $@
 	@printf "${NOCOL}"
 	@printf "\n${GRN}SUCCESS!${NOCOL}\n"
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
@@ -181,14 +181,6 @@ fclean: clean ## clean everything
 
 PHONY += re
 re: fclean all ## redo all
-
-PHONY += help
-help: ## shows help
-	@echo "\n$(LBLU)_______________________________ $(NAME) _______________________________$(NOCOL)"
-	@echo "\n\tUsage: 'make $(LBLU)<command>$(NOCOL)'\n"
-	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "${LBLU}%-20s${NOCOL} %s\n", $$1, $$2}'
-#	@echo "\n\t$(LGRN)Using [Argument] $(LBLU)'V=1'$(LGRN) will show all the building output$(NOCOL)"
-	@echo "\n$(LBLU)_______________________________________________________________________$(NOCOL)\n\n"
 
 -include $(DEP)
 
