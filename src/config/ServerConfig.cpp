@@ -80,6 +80,14 @@ ServerConfig::ServerConfig( void )
 }
 
 ServerConfig::~ServerConfig( void ) {
+	for ( std::vector<Listen *>::iterator it = this->_listens.begin(); it != this->_listens.end(); ) {
+		delete *it;
+		it = this->_listens.erase( it );
+	}
+	for ( std::map<std::string, ServerConfig *>::iterator it = this->_location.begin(); it != this->_location.end(); ) {
+		delete it->second;
+		this->_location.erase( it++ );
+	}
 	return ;
 }
 
@@ -110,14 +118,6 @@ void ServerConfig::parser( token_type::const_iterator & it ) {
 		}
 	}
 
-	return ;
-}
-
-void ServerConfig::clear( void ) {
-	for ( std::vector<Listen *>::iterator it = this->_listens.begin(); it != this->_listens.end(); ) {
-		delete *it;
-		it = this->_listens.erase(it);
-	}
 	return ;
 }
 

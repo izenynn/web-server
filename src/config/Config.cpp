@@ -7,13 +7,22 @@ namespace webserv {
 
 /** CLASS -------------------------------------- */
 
-Config::Config( void ) {}
+Config::Config( void ) {
+	return ;
+}
 
 Config::Config( const char* path ) {
 	this->load(path);
+	return ;
 }
 
-Config::~Config( void ) {}
+Config::~Config( void ) {
+	for ( std::vector<ServerConfig *>::iterator it = this->_servers.begin(); it != this->_servers.end(); ) {
+		delete *it;
+		it = this->_servers.erase( it );
+	}
+	return ;
+}
 
 const std::vector<ServerConfig *> & Config::getServers( void ) const {
 	return ( this->_servers );
