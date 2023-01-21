@@ -69,7 +69,7 @@ SRC_ROOT	=	main.cpp
 
 SRC_CONFIG	=	Config.cpp 			ServerConfig.cpp
 
-SRC_SERVER	=	ServerManager.cpp
+SRC_SERVER	=	Server.cpp
 
 SRC_UTILS	=	log.cpp
 

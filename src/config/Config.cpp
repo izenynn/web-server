@@ -37,44 +37,10 @@ void Config::load(const char * const file) {
 	delete tokens;*/
 
 	// print config
-	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
+	/*for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
 		(*it)->print( "" );
-	}
-
-	// deprecated
-	/*for ( std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it ) {
-		if ( "server" == *it ) {
-			ServerConfig srvConf;
-			if ( ++it, "{" == *it ) {
-				log::error( "expected '{' after 'server' directive" );
-				delete tokens;
-				throw Config::ConfigException( "exception: expected '{' after 'server' directive" );
-			}
-			if ( ++it, -1 == srvConf.parse( tokens, it ) ) {
-				log::error( "error parsing 'server' directive on token: " + SSTR( *it ) );
-				delete tokens;
-				throw Config::ConfigException( "exception: error while parsing 'server' directive" );
-			}
-		} else {
-			log::error( "unknown directive: " + SSTR( *it ) );
-			delete tokens;
-			throw Config::ConfigException( "exception: unknown directive" );
-		}
 	}*/
 
-	// create servers
-	/*std::vector<std::string>::iterator it;
-	if (this->_servers.empty()) {
-		// no server block error
-		return ( 1 );
-	}
-	for (it = tokens.begin(); it != tokens.end(); ++it) {
-		if (*it == "server") {
-			// save server to vector
-		} else {
-			// invalid directive
-		}
-	}*/
 	return ;
 }
 

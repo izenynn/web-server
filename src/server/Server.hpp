@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __SERVER_MANAGER_HPP__
-# define __SERVER_MANAGER_HPP__
+#ifndef __SERVER_HPP__
+# define __SERVER_HPP__
 
 /** INCLUDES ----------------------------------- */
 
@@ -16,32 +16,21 @@
 # include <config/Config.hpp>
 //# include <server/Client.hpp>
 
-# include <stdint.h>
-
-/*
-===============================================================================
-Server: A server listens on a connection for a request,
-   parses each message received, interprets the message semantics in
-   relation to the identified request target, and responds to that
-   request with one or more response messages.
-===============================================================================
-*/
-
 /** CLASS -------------------------------------- */
 
 namespace webserv {
 
-class ServerManager {
+class Server {
 	public:
-		ServerManager( void );
-		~ServerManager( void );
+		Server( void );
+		~Server( void );
 
 		void load( void ); // default path
 		void load( const char* file );
 
 		void run( void );
 	private:
-		ServerManager & operator=( const ServerManager & other); // not necessary
+		Server & operator=( const Server & other); // not necessary
 
 		static const char* k_default_path;
 
@@ -66,4 +55,4 @@ class ServerManager {
 
 } /** namespace webserv */
 
-#endif /** __SERVER_MANAGER_HPP__ */
+#endif /** __SERVER_HPP__ */

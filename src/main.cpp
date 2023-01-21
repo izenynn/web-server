@@ -1,11 +1,11 @@
 #include <iostream>
 
 #include <types/nullptr_t.hpp>
-#include <server/ServerManager.hpp>
+#include <server/Server.hpp>
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::ServerManager * manager = webserv::nullptr_t;
+	webserv::Server * manager = webserv::nullptr_t;
 
 	// too many args
 	if ( argc > 2 ) {
@@ -21,7 +21,7 @@ int main( int argc, char * argv[] ) {
 	}
 
 	// web server
-	manager = new webserv::ServerManager();
+	manager = new webserv::Server();
 
 	try {
 		if ( argc == 2 ) manager->load( argv[1] );

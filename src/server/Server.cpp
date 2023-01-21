@@ -1,28 +1,28 @@
 /** INCLUDES ----------------------------------- */
 
-#include <server/ServerManager.hpp>
+#include <server/Server.hpp>
 #include <utils/log.hpp>
 
 /** CLASS -------------------------------------- */
 
 namespace webserv {
 
-const char* ServerManager::k_default_path = "/etc/aps/aps.conf";
+const char* Server::k_default_path = "/etc/aps/aps.conf";
 
-ServerManager::ServerManager( void ) 
+Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
 		  _servers_config( webserv::nullptr_t ) {
 	return ;
 }
 
-ServerManager::~ServerManager( void ) {
+Server::~Server( void ) {
 	if ( this->_config != webserv::nullptr_t ) {
 		delete this->_config;
 	}
 	return ;
 }
 
-void ServerManager::load( const char* file ) {
+void Server::load( const char* file ) {
 	this->_config = new Config();
 	this->_config->load( file );
 
@@ -30,15 +30,15 @@ void ServerManager::load( const char* file ) {
 
 	return ;
 }
-void ServerManager::load() {
-	this->load( ServerManager::k_default_path );
+void Server::load() {
+	this->load( Server::k_default_path );
 	return ;
 }
 
-void ServerManager::run( void ) {
+void Server::run( void ) {
 	return ; // FIXME temporary return to avoid crash :"D
 	if (this->_config == webserv::nullptr_t) {
-		throw ServerManager::ServerManagerException("exception: config file not loaded");
+		//throw Server::ServerManagerException("exception: config file not loaded");
 		return ;
 	}
 
@@ -60,26 +60,13 @@ void ServerManager::run( void ) {
 		}
 		if ( ret < 0 ) {
 			// TODO better than exit just reset all connections and keep running
-			throw ServerManager::ServerManagerException( "exception: select() returned -1" );
+			//throw ServerManager::ServerManagerException( "exception: select() returned -1" );
 		} else if ( ret >= 0 ){
 			; // TODO
 		}
 	}
 
 	return ;
-}
-
-/** EXCEPTIONS --------------------------------- */
-
-ServerManager::ServerManagerException::ServerManagerException( const std::string & msg )
-		: message( msg ) {
-	return ;
-}
-ServerManager::ServerManagerException::~ServerManagerException( void ) throw () {
-	return ;
-}
-const char * ServerManager::ServerManagerException::what( void ) const throw () {
-	return this->message.c_str();
 }
 
 } /** namespace webserv */
