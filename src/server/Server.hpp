@@ -11,6 +11,7 @@
 # include <list>
 # include <vector>
 # include <algorithm> // std::find()
+# include <ctime> // nanosleep()
 
 # include <sys/socket.h> // socket()
 # include <sys/select.h> // select()
@@ -54,7 +55,8 @@ class Server {
 		static const int		k_backlog_size; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
 		static const int		k_max_clients;
 		static const int		k_buffer_size;
-		static const __time_t	k_timeout_sec;
+		static const time_t		k_timeout_sec;
+		static const long		k_nsec_loop_delay;
 
 		Config *							_config;
 		const std::vector<ServerConfig *> *	_server_configs;

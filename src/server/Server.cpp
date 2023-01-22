@@ -1,5 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
+#include <ctime>
 #include <server/Server.hpp>
 #include <utils/log.hpp>
 
@@ -11,7 +12,8 @@ const char *	Server::k_default_path = "/etc/aps/aps.conf";
 const int		Server::k_backlog_size = 1024;
 const int		Server::k_max_clients = 1024;
 const int		Server::k_buffer_size = 16384;
-const __time_t	Server::k_timeout_sec = 5;
+const time_t	Server::k_timeout_sec = 5;
+const long		Server::k_nsec_loop_delay = 500L * 1000L;
 
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
@@ -66,9 +68,12 @@ int Server::start( void ) {
 	log::info( "starting server..." );
 
 	struct timeval timeout;
-	timeout.tv_sec = this->k_timeout_sec;
+	timeout.tv_sec = Server::k_timeout_sec;
 	timeout.tv_usec = 0;
-	//(void)timeout;
+
+	struct timespec loop_delay;
+	loop_delay.tv_sec = 0;
+	loop_delay.tv_nsec = Server::k_nsec_loop_delay;
 
 	while ( true ) {
 		this->_fd_read	= this->_fd_set;
@@ -76,10 +81,46 @@ int Server::start( void ) {
 
 		ret = select( this->_fd_max + 1, &(this->_fd_read), &(this->_fd_write), NULL, &timeout );
 
-		// TODO stuff
+		if ( -1 == ret ) {
+			log::failure( "select() failed with return code: -1" );
+		} else if ( ret >= 0 ) {
+			// iterate our listeners
+			for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
+				// check if listener fd is on read set (if we need to read from that fd)
+				if ( 0 != FD_ISSET( it->first, &(this->_fd_read) ) ) {
+					// create a new client!
+					this->newClient( it->first );
+				}
+			}
+			// TODO stuff
+		}
+
+		while ( nanosleep( &loop_delay, &loop_delay ) );
 	}
 
 	return ( 0 );
+}
+
+void Server::newClient( int fd ) {
+	struct sockaddr_storage addr;
+	socklen_t addr_len = sizeof( client );
+
+	FD_CLR( fd, &(this->_fd_read) );
+
+	int sockfd = ::accept( fd, reinterpret_cast<struct sockaddr *>(&addr), &addr_len );
+	if ( -1 == sockfd ) {
+		log::failure( "accept() failed with return code: -1" );
+		return ;
+	}
+	log::info( "new connection on " + this->_servers[fd]->ip + ":" + SSTR( this->_servers[fd]->port ) );
+
+	fcntl( sockfd, F_SETFL, O_NONBLOCK );
+
+	this->_clients[sockfd] = new Client( sockfd, addr, this->_servers[fd], this->_clients.size() >= Server::k_max_clients );
+
+	this->addToFdSet( sockfd );
+
+	return ;
 }
 
 void Server::addToFdSet( int fd ) {
@@ -91,6 +132,8 @@ void Server::addToFdSet( int fd ) {
 	if ( fd > this->_fd_max ) {
 		this->_fd_max = fd;
 	}
+
+	return ;
 }
 
 void Server::delFromFdSet( int fd ) {
@@ -104,6 +147,8 @@ void Server::delFromFdSet( int fd ) {
 	if ( fd == this->_fd_max ) {
 		this->_fd_max = *(this->_fd_list.rbegin() );
 	}
+
+	return ;
 }
 
 int Server::initialize( void ) {
@@ -134,7 +179,7 @@ int Server::initialize( void ) {
 				addr.sin_family = AF_INET;
 				addr.sin_addr.s_addr = inet_addr( (*it2)->ip.c_str() );
 				addr.sin_port = htons( (*it2)->port );
-				if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>( &addr ), sizeof( addr ) ) ) {
+				if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>(&addr), sizeof( addr ) ) ) {
 					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 					return ( -1 );
 				}
@@ -142,7 +187,7 @@ int Server::initialize( void ) {
 				//int option_value = 1;
 				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 
-				if ( -1 == listen( sockfd, this->k_backlog_size ) ) {
+				if ( -1 == listen( sockfd, Server::k_backlog_size ) ) {
 					log::error( "listen() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 					return ( -1 );
 				}
