@@ -40,7 +40,7 @@ CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -MD
 
 SRC_PATH = src
 OBJ_PATH = obj
-INC_PATH = include
+INC_PATH = inc
 
 # **************************************************************************** #
 #                                    FLAGS                                     #
