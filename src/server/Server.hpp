@@ -67,8 +67,6 @@ class Server {
 		fd_set			_fd_write;
 		int				_highest_fd;
 
-		std::string		_head;
-
 		int initialize( void );
 };
 
