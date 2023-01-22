@@ -59,7 +59,7 @@ int Server::run( void ) {
 	for ( std::vector<ServerConfig *>::const_iterator it = this->_server_configs->begin(); it != this->_server_configs->end(); ++it ) {
 		// set default listen if server doesnt have one
 		std::vector<Listen *> & listens = (*it)->getListen();
-		if ( listens.empty() ) {
+		if ( true == listens.empty() ) {
 			listens.push_back( new Listen("0.0.0.0", 80 ) );
 		}
 
@@ -81,6 +81,7 @@ int Server::run( void ) {
 				addr.sin_port = htons( (*it2)->port );
 				if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>( &addr ), sizeof( addr ) ) ) {
 					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
+					return ( -1 );
 				}
 
 				//int option_value = 1;
@@ -88,6 +89,7 @@ int Server::run( void ) {
 
 				if ( -1 == listen( sockfd, this->k_backlog_size ) ) {
 					log::error( "listen() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
+					return ( -1 );
 				}
 
 				this->_servers[sockfd] = new Listen( (*it2)->ip, (*it2)->port );
@@ -97,6 +99,10 @@ int Server::run( void ) {
 				log::info( "started listening on " + (*it2)->ip + ":" + SSTR( (*it2)->port ) );
 			}
 		}
+	}
+	if ( true == binded.empty() ) {
+		log::error( "failed to start server" );
+		return ( -1 );
 	}
 
 	// server loop
