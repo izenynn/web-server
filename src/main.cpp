@@ -1,11 +1,11 @@
-#include <iostream>
+#include <cstring> // std::strcmp()
 
 #include <types/nullptr_t.hpp>
 #include <server/Server.hpp>
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::Server * manager = webserv::nullptr_t;
+	webserv::Server * server = webserv::nullptr_t;
 
 	// too many args
 	if ( argc > 2 ) {
@@ -15,26 +15,28 @@ int main( int argc, char * argv[] ) {
 	}
 
 	// help message
-	if ( argc == 2 && ( 0 == strcmp( "-h", argv[1] ) || 0 == strcmp( "--help", argv[1] ) ) ) {
+	if ( argc == 2 && ( 0 == std::strcmp( "-h", argv[1] ) || 0 == std::strcmp( "--help", argv[1] ) ) ) {
 		webserv::log::info( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
 		return ( 0 );
 	}
 
 	// web server
-	manager = new webserv::Server();
+	server = new webserv::Server();
 
 	try {
-		if ( argc == 2 ) manager->load( argv[1] );
-		else             manager->load();
+		if ( argc == 2 ) server->load( argv[1] );
+		else             server->load();
 	} catch ( std::exception & e ) {
-		delete manager;
+		delete server;
 		webserv::log::error( e.what() );
 		return ( 1 );
 	}
 
-	manager->run();
+	//server->print();
 
-	delete manager;
+	server->run();
+
+	delete server;
 
 	return ( 0 );
 }

@@ -35,6 +35,11 @@ void Server::load() {
 	return ;
 }
 
+void Server::print( void ) {
+	this->_config->print();
+	return ;
+}
+
 void Server::run( void ) {
 	return ; // FIXME temporary return to avoid crash :"D
 	if (this->_config == webserv::nullptr_t) {
@@ -52,7 +57,7 @@ void Server::run( void ) {
 		ret = 0;
 
 		while ( ret == 0 ) {
-			std::memcpy( &readfds, &this->_fd_set, sizeof( this->_fd_set ) );
+			//std::memcpy( &readfds, &this->_fd_set, sizeof( this->_fd_set ) );
 
 			// TODO writefds must be filled with ready clients
 

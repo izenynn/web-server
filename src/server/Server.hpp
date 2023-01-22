@@ -7,8 +7,9 @@
 
 # include <string> // std::string
 # include <sys/select.h> // select()
-# include <cstring> // std::memcpy()
-# include <map> // std::map<T, U>
+//# include <cstring> // std::memcpy()
+# include <map>
+# include <list>
 //# include <sys/socket.h>
 //# include <netinet/in.h>
 
@@ -27,30 +28,38 @@ class Server {
 
 		void load( void ); // default path
 		void load( const char* file );
+		void print( void );
 
 		void run( void );
+
+		bool recv( int fd );
+		bool send( int fd );
+
+		void newClient( int fd );
+		void disconnectClient( int fd );
+		void closeClient( int fd );
+		//void timeoutClient( Client * client );
+
+		void addToSet( int fd );
+		void denFromSet( int fd );
 	private:
 		Server & operator=( const Server & other); // not necessary
 
-		static const char* k_default_path;
+		static const char * k_default_path;
 
-		Config *		_config;
-		fd_set			_fd_set;
-		unsigned int	_fd_cnt;
-
-		const std::vector<ServerConfig *> *		_servers_config;
+		Config *							_config;
+		const std::vector<ServerConfig *> *	_servers_config;
 
 		std::map<int, Listen>					_servers;
 		//std::map<int, Client *>				_clients;
-	public:
-		class ServerManagerException : virtual public std::exception {
-			private:
-				std::string message;
-			public:
-				ServerManagerException( const std::string & msg );
-				virtual ~ServerManagerException( void ) throw ();
-				virtual const char * what( void ) const throw ();
-		};
+
+		std::list<int>	_fd_list;
+		fd_set			_fd_set;
+		fd_set			_fd_read;
+		fd_set			_fd_write;
+		unsigned int	_fd_cnt;
+
+		std::string		_head;
 };
 
 } /** namespace webserv */

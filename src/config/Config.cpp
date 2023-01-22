@@ -29,19 +29,19 @@ void Config::load(const char * const file) {
 	this->lexer();
 	this->parser();
 
-	/*// print tokens
-	std::cout << "TOKENS:" << std::endl;
-	for (std::vector<std::string>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
+	return ;
+}
+
+void Config::print( void ) {
+	log::info( "TOKENS: " );
+	for ( std::vector<std::string>::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
 		std::cout << *it << std::endl;
 	}
-	delete tokens;*/
 
-	// print config
-	/*for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
+	log::info( "CONFIG CLASS INFO AFTER PARSER: " );
+	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
 		(*it)->print( "" );
-	}*/
-
-	return ;
+	}
 }
 
 // tokenize and check for extra or missing '{}'
