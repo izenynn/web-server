@@ -45,24 +45,27 @@ class Server {
 		void closeClient( int fd );
 		//void timeoutClient( Client * client );
 
-		void addToSet( int fd );
-		void denFromSet( int fd );
+		void addToFdSet( int fd );
+		void delFromFdSet( int fd );
 	private:
 		Server & operator=( const Server & other); // not necessary
 
-		static const char * k_default_path;
+		static const char *		k_default_path;
+		static const int		k_backlog_size; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
+		static const int		k_max_clients;
+		static const int		k_buffer_size;
 
 		Config *							_config;
 		const std::vector<ServerConfig *> *	_server_configs;
 
-		std::map<int, Listen>					_servers;
+		std::map<int, Listen *>					_servers;
 		//std::map<int, Client *>				_clients;
 
 		std::list<int>	_fd_list;
 		fd_set			_fd_set;
 		fd_set			_fd_read;
 		fd_set			_fd_write;
-		unsigned int	_fd_cnt;
+		int				_highest_fd;
 
 		std::string		_head;
 };
