@@ -23,6 +23,10 @@ struct Listen {
 	Listen(std::string ip, uint16_t port) : ip(ip), port(port) {}; // FIXME is this legal? variables with same name as args?
 };
 
+inline bool operator==( const Listen & lhs, const Listen & rhs ) {
+	return ( lhs.ip == rhs.ip && lhs.port == rhs.port );
+}
+
 } /** namespace webserv */
 
 #endif /** __LISTEN_HPP__ */

@@ -42,7 +42,7 @@ void Server::print( void ) {
 
 int Server::run( void ) {
 	int fd = 0;
-	std::vector<Listen> binded;
+	std::vector<Listen *> binded;
 
 	// setup sockets, iterate each ServerConfig
 	for ( std::vector<ServerConfig *>::const_iterator it = this->_server_configs->begin(); it != this->_server_configs->end(); ++it ) {
