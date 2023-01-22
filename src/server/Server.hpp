@@ -68,6 +68,8 @@ class Server {
 		int				_highest_fd;
 
 		std::string		_head;
+
+		int initialize( void );
 };
 
 } /** namespace webserv */

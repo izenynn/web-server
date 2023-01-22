@@ -15,6 +15,9 @@ const int Server::k_buffer_size = 16384;
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
 		  _server_configs( webserv::nullptr_t ) {
+	FD_ZERO( &(this->_fd_set) );
+	FD_ZERO( &(this->_fd_read) );
+	FD_ZERO( &(this->_fd_write) );
 	return ;
 }
 
@@ -52,6 +55,42 @@ void Server::print( void ) {
 }
 
 int Server::run( void ) {
+	int ret = this->initialize();
+	if ( 0 != ret ) {
+		return ( ret );
+	}
+
+	// server loop
+	// TODO
+
+	return ( 0 );
+}
+
+void Server::addToFdSet( int fd ) {
+	this->_fd_list.push_back( fd );
+	this->_fd_list.sort();
+
+	FD_SET( fd, &(this->_fd_set) );
+
+	/*if ( fd > this->_highest_fd ) {
+		this->_highest_fd = fd;
+	}*/
+}
+
+void Server::delFromFdSet( int fd ) {
+	for ( std::list<int>::iterator it = this->_fd_list.begin(); it != this->_fd_list.end(); ++it ) {
+		if ( fd == *it ) this->_fd_list.erase( it );
+		break ;
+	}
+
+	FD_CLR( fd, &(this->_fd_set) );
+
+	/*if ( fd == this->_highest_fd ) {
+		this->_highest_fd = *(this->_fd_list.rbegin() );
+	}*/
+}
+
+int Server::initialize( void ) {
 	int sockfd = 0;
 	std::vector<Listen> binded;
 
@@ -105,34 +144,7 @@ int Server::run( void ) {
 		return ( -1 );
 	}
 
-	// server loop
-	// TODO
-
 	return ( 0 );
-}
-
-void Server::addToFdSet( int fd ) {
-	this->_fd_list.push_back( fd );
-	this->_fd_list.sort();
-
-	FD_SET( fd, &(this->_fd_set) );
-
-	/*if ( fd > this->_highest_fd ) {
-		this->_highest_fd = fd;
-	}*/
-}
-
-void Server::delFromFdSet( int fd ) {
-	for ( std::list<int>::iterator it = this->_fd_list.begin(); it != this->_fd_list.end(); ++it ) {
-		if ( fd == *it ) this->_fd_list.erase( it );
-		break ;
-	}
-
-	FD_CLR( fd, &(this->_fd_set) );
-
-	/*if ( fd == this->_highest_fd ) {
-		this->_highest_fd = *(this->_fd_list.rbegin() );
-	}*/
 }
 
 } /** namespace webserv */
