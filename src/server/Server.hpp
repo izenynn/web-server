@@ -35,7 +35,7 @@ class Server {
 		void load( const char* file );
 		void print( void );
 
-		int run( void );
+		int start( void );
 
 		bool recv( int fd );
 		bool send( int fd );
@@ -54,6 +54,7 @@ class Server {
 		static const int		k_backlog_size; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
 		static const int		k_max_clients;
 		static const int		k_buffer_size;
+		static const __time_t	k_timeout_sec;
 
 		Config *							_config;
 		const std::vector<ServerConfig *> *	_server_configs;
@@ -65,7 +66,7 @@ class Server {
 		fd_set			_fd_set;
 		fd_set			_fd_read;
 		fd_set			_fd_write;
-		int				_highest_fd;
+		int				_fd_max;
 
 		int initialize( void );
 };

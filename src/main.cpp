@@ -35,7 +35,7 @@ int main( int argc, char * argv[] ) {
 
 	//server->print();
 
-	ret = server->run();
+	ret = server->start();
 
 	delete server;
 

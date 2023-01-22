@@ -7,10 +7,11 @@
 
 namespace webserv {
 
-const char * Server::k_default_path = "/etc/aps/aps.conf";
-const int Server::k_backlog_size = 1024;
-const int Server::k_max_clients = 1024;
-const int Server::k_buffer_size = 16384;
+const char *	Server::k_default_path = "/etc/aps/aps.conf";
+const int		Server::k_backlog_size = 1024;
+const int		Server::k_max_clients = 1024;
+const int		Server::k_buffer_size = 16384;
+const __time_t	Server::k_timeout_sec = 5;
 
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
@@ -54,14 +55,29 @@ void Server::print( void ) {
 	return ;
 }
 
-int Server::run( void ) {
-	int ret = this->initialize();
+int Server::start( void ) {
+	int ret = 0;
+
+	ret = this->initialize();
 	if ( 0 != ret ) {
 		return ( ret );
 	}
 
-	// server loop
-	// TODO
+	log::info( "starting server..." );
+
+	struct timeval timeout;
+	timeout.tv_sec = this->k_timeout_sec;
+	timeout.tv_usec = 0;
+	//(void)timeout;
+
+	while ( true ) {
+		this->_fd_read	= this->_fd_set;
+		this->_fd_write	= this->_fd_set;
+
+		ret = select( this->_fd_max + 1, &(this->_fd_read), &(this->_fd_write), NULL, &timeout );
+
+		// TODO stuff
+	}
 
 	return ( 0 );
 }
@@ -72,9 +88,9 @@ void Server::addToFdSet( int fd ) {
 
 	FD_SET( fd, &(this->_fd_set) );
 
-	/*if ( fd > this->_highest_fd ) {
-		this->_highest_fd = fd;
-	}*/
+	if ( fd > this->_fd_max ) {
+		this->_fd_max = fd;
+	}
 }
 
 void Server::delFromFdSet( int fd ) {
@@ -85,9 +101,9 @@ void Server::delFromFdSet( int fd ) {
 
 	FD_CLR( fd, &(this->_fd_set) );
 
-	/*if ( fd == this->_highest_fd ) {
-		this->_highest_fd = *(this->_fd_list.rbegin() );
-	}*/
+	if ( fd == this->_fd_max ) {
+		this->_fd_max = *(this->_fd_list.rbegin() );
+	}
 }
 
 int Server::initialize( void ) {
@@ -143,6 +159,8 @@ int Server::initialize( void ) {
 		log::error( "failed to start server" );
 		return ( -1 );
 	}
+
+	log::success( "server initialition successful" );
 
 	return ( 0 );
 }
