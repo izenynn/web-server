@@ -58,6 +58,7 @@ int Server::run( void ) {
 			if ( binded.end() == std::find( binded.begin(), binded.end(), *it2 ) ) {
 				fd = socket( PF_INET, SOCK_STREAM, 0 );
 				if ( -1 == fd ) {
+					log::error( "socket() failed with return code: -1" );
 					return ( -1 );
 				}
 				return ( 0 );
