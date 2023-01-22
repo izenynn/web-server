@@ -71,6 +71,9 @@ int Server::run( void ) {
 				if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>( &addr ), sizeof( addr ) ) ) {
 					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 				}
+
+				int option_value = 1;
+				setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 			}
 		}
 	}
