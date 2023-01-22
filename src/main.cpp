@@ -5,7 +5,8 @@
 #include <utils/log.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::Server * server = webserv::nullptr_t;
+	int					ret = 0;
+	webserv::Server *	server = webserv::nullptr_t;
 
 	// too many args
 	if ( argc > 2 ) {
@@ -34,9 +35,9 @@ int main( int argc, char * argv[] ) {
 
 	//server->print();
 
-	server->run();
+	ret = server->run();
 
 	delete server;
 
-	return ( 0 );
+	return ( ret );
 }

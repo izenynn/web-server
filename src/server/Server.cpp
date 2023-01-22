@@ -40,50 +40,32 @@ void Server::print( void ) {
 	return ;
 }
 
-void Server::run( void ) {
-	//int serverFd = 0;
-	std::vector<Listen> bind;
+int Server::run( void ) {
+	int fd = 0;
+	std::vector<Listen> binded;
 
-	// setup sockets
+	// setup sockets, iterate each ServerConfig
 	for ( std::vector<ServerConfig *>::const_iterator it = this->_server_configs->begin(); it != this->_server_configs->end(); ++it ) {
-		// set default listen if servers doesnt have one
-		std::vector<Listen *> listen = (*it)->getListen();
+		// set default listen if server doesnt have one
+		std::vector<Listen *> & listen = (*it)->getListen();
 		if ( listen.empty() ) {
 			listen.push_back( new Listen("0.0.0.0", 80 ) );
 		}
-	}
 
-	return ; // FIXME temporary return to avoid crash :"D
-	if (this->_config == webserv::nullptr_t) {
-		//throw Server::ServerManagerException("exception: config file not loaded");
-		return ;
-	}
-
-	fd_set			readfds;
-	struct timeval	timeout;
-	int				ret;
-
-	timeout.tv_sec = 5; timeout.tv_usec = 0;
-	return ; // TODO temporary return to avoid hang up on this point until webserv is completed
-	while ( 1 ) {
-		ret = 0;
-
-		while ( ret == 0 ) {
-			//std::memcpy( &readfds, &this->_fd_set, sizeof( this->_fd_set ) );
-
-			// TODO writefds must be filled with ready clients
-
-			ret = select( this->_fd_cnt + 1, &readfds, NULL, NULL, &timeout );
-		}
-		if ( ret < 0 ) {
-			// TODO better than exit just reset all connections and keep running
-			//throw ServerManager::ServerManagerException( "exception: select() returned -1" );
-		} else if ( ret >= 0 ){
-			; // TODO
+		// iterate listens
+		for ( std::vector<Listen *>::iterator it2 = listen.begin(); it2 != listen.end(); ++it2 ) {
+			// if listen not binded yet set it up
+			if ( binded.end() == std::find( binded.begin(), binded.end(), *it2 ) ) {
+				fd = socket( PF_INET, SOCK_STREAM, 0 );
+				if ( -1 == fd ) {
+					return ( -1 );
+				}
+				return ( 0 );
+			}
 		}
 	}
 
-	return ;
+	return ( 0 );
 }
 
 } /** namespace webserv */

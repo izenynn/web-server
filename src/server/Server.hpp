@@ -6,12 +6,14 @@
 /** INCLUDES ----------------------------------- */
 
 # include <string> // std::string
-# include <sys/select.h> // select()
 //# include <cstring> // std::memcpy()
 # include <map>
 # include <list>
 # include <vector>
-//# include <sys/socket.h>
+# include <algorithm> // std::find()
+
+# include <sys/socket.h> // socket()
+# include <sys/select.h> // select()
 //# include <netinet/in.h>
 
 # include <types/nullptr_t.hpp>
@@ -31,7 +33,7 @@ class Server {
 		void load( const char* file );
 		void print( void );
 
-		void run( void );
+		int run( void );
 
 		bool recv( int fd );
 		bool send( int fd );
