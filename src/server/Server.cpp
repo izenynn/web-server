@@ -64,7 +64,13 @@ int Server::run( void ) {
 
 				fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-				;
+				struct sockaddr_in addr;
+				addr.sin_family = AF_INET;
+				addr.sin_addr.s_addr = inet_addr( (*it2)->ip.c_str() );
+				addr.sin_port = htons( (*it2)->port );
+				if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>( &addr ), sizeof( addr ) ) ) {
+					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
+				}
 			}
 		}
 	}
