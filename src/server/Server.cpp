@@ -116,7 +116,7 @@ void Server::newClient( int fd ) {
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-	this->_clients[sockfd] = new Client( sockfd, addr, this->_servers[fd], this->_clients.size() >= Server::k_max_clients );
+	this->_clients[sockfd] = new Client( sockfd, this->_servers[fd], this->_clients.size() >= Server::k_max_clients );
 
 	this->addToFdSet( sockfd );
 
