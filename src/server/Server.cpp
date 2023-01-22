@@ -11,7 +11,7 @@ const char* Server::k_default_path = "/etc/aps/aps.conf";
 
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
-		  _servers_config( webserv::nullptr_t ) {
+		  _server_configs( webserv::nullptr_t ) {
 	return ;
 }
 
@@ -26,7 +26,7 @@ void Server::load( const char* file ) {
 	this->_config = new Config();
 	this->_config->load( file );
 
-	this->_servers_config = this->_config->getServers();
+	this->_server_configs = this->_config->getServers();
 
 	return ;
 }
@@ -41,6 +41,18 @@ void Server::print( void ) {
 }
 
 void Server::run( void ) {
+	//int serverFd = 0;
+	std::vector<Listen> bind;
+
+	// setup sockets
+	for ( std::vector<ServerConfig *>::const_iterator it = this->_server_configs->begin(); it != this->_server_configs->end(); ++it ) {
+		// set default listen if servers doesnt have one
+		std::vector<Listen *> listen = (*it)->getListen();
+		if ( listen.empty() ) {
+			listen.push_back( new Listen("0.0.0.0", 80 ) );
+		}
+	}
+
 	return ; // FIXME temporary return to avoid crash :"D
 	if (this->_config == webserv::nullptr_t) {
 		//throw Server::ServerManagerException("exception: config file not loaded");
