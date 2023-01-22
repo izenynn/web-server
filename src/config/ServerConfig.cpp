@@ -53,9 +53,9 @@ namespace webserv {
 
 /** CLASS -------------------------------------- */
 
+//: _id( -1 ), // FIXME
 ServerConfig::ServerConfig( void )
-		: _id( -1 ),
-		  _autoindex( false ),
+		: _autoindex( false ),
 		  _client_max_body_size( 8196 ) {
 	this->_serverDirectives["location"] =				&ServerConfig::parseLocation;
 	this->_serverDirectives["listen"] =					&ServerConfig::parseListen;
@@ -159,6 +159,16 @@ void ServerConfig::parser( token_type::const_iterator & it ) {
 	}
 
 	return ;
+}
+
+std::vector<Listen *> & ServerConfig::getListen( void ) {
+	return ( this->_listen );
+}
+std::vector<std::string> & ServerConfig::getServerName( void ) {
+	return ( this->_server_name );
+}
+std::map<std::string, ServerConfig *> & ServerConfig::getLocation( void ) {
+	return ( this->_location );
 }
 
 ServerConfig * ServerConfig::createLocationServerConfig( void ) {

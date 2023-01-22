@@ -28,13 +28,18 @@ class ServerConfig {
 		void print( const std::string & indent ); // FIXME just to test, remove this
 		void parser( token_type::const_iterator & it );
 
-		const int & getId( void ) const;
-		void setId( const int & id );
+		// FIXME
+		//const int & getId( void ) const;
+		//void setId( const int & id );
+
+		std::vector<Listen *> &					getListen( void );
+		std::vector<std::string> &				getServerName( void );
+		std::map<std::string, ServerConfig *> &	getLocation( void );
 	private:
 		ServerConfig( const ServerConfig & other ); // not necessary
 		ServerConfig & operator=( const ServerConfig & other ); // not necessary
 
-		int _id;
+		//int _id; // FIXME
 
 		void			clear( void ); // FIXME not used
 		ServerConfig *	createLocationServerConfig( void );
