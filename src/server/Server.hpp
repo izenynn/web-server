@@ -10,6 +10,7 @@
 //# include <cstring> // std::memcpy()
 # include <map>
 # include <list>
+# include <vector>
 //# include <sys/socket.h>
 //# include <netinet/in.h>
 
@@ -48,7 +49,7 @@ class Server {
 		static const char * k_default_path;
 
 		Config *							_config;
-		const std::vector<ServerConfig *> *	_servers_config;
+		const std::vector<ServerConfig *> *	_server_configs;
 
 		std::map<int, Listen>					_servers;
 		//std::map<int, Client *>				_clients;
