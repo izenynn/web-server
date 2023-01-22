@@ -41,7 +41,7 @@ void Server::print( void ) {
 }
 
 int Server::run( void ) {
-	int fd = 0;
+	int sockfd = 0;
 	std::vector<Listen *> binded;
 
 	// setup sockets, iterate each ServerConfig
@@ -56,12 +56,15 @@ int Server::run( void ) {
 		for ( std::vector<Listen *>::iterator it2 = listen.begin(); it2 != listen.end(); ++it2 ) {
 			// if listen not binded yet set it up
 			if ( binded.end() == std::find( binded.begin(), binded.end(), *it2 ) ) {
-				fd = socket( PF_INET, SOCK_STREAM, 0 );
-				if ( -1 == fd ) {
+				sockfd = socket( PF_INET, SOCK_STREAM, 0 );
+				if ( -1 == sockfd ) {
 					log::error( "socket() failed with return code: -1" );
 					return ( -1 );
 				}
-				return ( 0 );
+
+				fcntl( sockfd, F_SETFL, O_NONBLOCK );
+
+				;
 			}
 		}
 	}

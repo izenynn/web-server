@@ -14,6 +14,7 @@
 
 # include <sys/socket.h> // socket()
 # include <sys/select.h> // select()
+# include <fcntl.h> // fcntl()
 //# include <netinet/in.h>
 
 # include <types/nullptr_t.hpp>
