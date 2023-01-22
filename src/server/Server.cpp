@@ -83,8 +83,8 @@ int Server::run( void ) {
 					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 				}
 
-				int option_value = 1;
-				setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
+				//int option_value = 1;
+				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 
 				if ( -1 == listen( sockfd, this->k_backlog_size ) ) {
 					log::error( "listen() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
