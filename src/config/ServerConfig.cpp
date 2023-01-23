@@ -3,55 +3,59 @@
 #include <config/ServerConfig.hpp>
 #include <utils/log.hpp>
 
+/** UTILS -------------------------------------- */
+
 namespace {
-	bool isValidPort( const std::string & port ) {
-		// check is all digits
-		if ( std::string::npos != port.find_first_not_of( "0123456789" ) ) {
-			return ( false );
-		}
-		// check not all 0 and skip them
-		std::string::size_type start = port.find_first_not_of( "0" );
-		if ( std::string::npos == start ) {
-			return ( false );
-		}
-		// check lenght: valid range: 1 - 65535
-		std::string number = port.substr( start );
-		if ( number.length() < 1 || number.length() > 5 ) {
-			return ( false );
-		}
-		if ( number.length() == 5 && number > "65535" ) {
-			return ( false );
-		}
-		// true
-		return ( true );
+
+bool isValidPort( const std::string & port ) {
+	// check is all digits
+	if ( std::string::npos != port.find_first_not_of( "0123456789" ) ) {
+		return ( false );
 	}
-	bool isValidIp( const std::string & ip ) {
-		// check is all digits and dots
-		if ( std::string::npos != ip.find_first_not_of( ".0123456789" ) ) {
-			return ( false );
-		}
-		// check there are no more than 3 dots
-		if ( 3 != std::count( ip.begin(), ip.end(), '.' ) ) {
-			return ( false );
-		}
-		// scanf will check format and save numbers
-		unsigned int n[4];
-		if ( sscanf( ip.c_str(),"%u.%u.%u.%u", &(n[0]), &(n[1]), &(n[2]), &(n[3]) ) != 4 ) {
-			return ( false );
-		}
-		// check all digits
-		for ( int i = 0; i < 4; ++i ) {
-			if ( n[i] > 255 ) {
-				return ( false );
-			}
-		}
-		return ( true );
+	// check not all 0 and skip them
+	std::string::size_type start = port.find_first_not_of( "0" );
+	if ( std::string::npos == start ) {
+		return ( false );
 	}
+	// check lenght: valid range: 1 - 65535
+	std::string number = port.substr( start );
+	if ( number.length() < 1 || number.length() > 5 ) {
+		return ( false );
+	}
+	if ( number.length() == 5 && number > "65535" ) {
+		return ( false );
+	}
+	// true
+	return ( true );
+}
+bool isValidIp( const std::string & ip ) {
+	// check is all digits and dots
+	if ( std::string::npos != ip.find_first_not_of( ".0123456789" ) ) {
+		return ( false );
+	}
+	// check there are no more than 3 dots
+	if ( 3 != std::count( ip.begin(), ip.end(), '.' ) ) {
+		return ( false );
+	}
+	// scanf will check format and save numbers
+	unsigned int n[4];
+	if ( sscanf( ip.c_str(),"%u.%u.%u.%u", &(n[0]), &(n[1]), &(n[2]), &(n[3]) ) != 4 ) {
+		return ( false );
+	}
+	// check all digits
+	for ( int i = 0; i < 4; ++i ) {
+		if ( n[i] > 255 ) {
+			return ( false );
+		}
+	}
+	return ( true );
 }
 
-namespace webserv {
+} /** namespace */
 
 /** CLASS -------------------------------------- */
+
+namespace webserv {
 
 //: _id( -1 ), // FIXME
 ServerConfig::ServerConfig( void )

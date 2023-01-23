@@ -8,13 +8,6 @@
 
 namespace webserv {
 
-const char *	Server::k_default_path = "/etc/aps/aps.conf";
-const int		Server::k_backlog_size = 1024;
-const int		Server::k_max_clients = 1024;
-const int		Server::k_buffer_size = 16384;
-const time_t	Server::k_timeout_sec = 5;
-const long		Server::k_nsec_loop_delay = 500L * 1000L;
-
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
 		  _server_configs( webserv::nullptr_t ) {
@@ -48,7 +41,7 @@ void Server::load( const char* file ) {
 	return ;
 }
 void Server::load() {
-	this->load( Server::k_default_path );
+	this->load( Config::kDefaultPath );
 	return ;
 }
 
@@ -68,12 +61,12 @@ int Server::start( void ) {
 	log::info( "starting server..." );
 
 	struct timeval timeout;
-	timeout.tv_sec = Server::k_timeout_sec;
+	timeout.tv_sec = Config::kTimeoutSec;
 	timeout.tv_usec = 0;
 
 	struct timespec loop_delay;
 	loop_delay.tv_sec = 0;
-	loop_delay.tv_nsec = Server::k_nsec_loop_delay;
+	loop_delay.tv_nsec = Config::kNsecLoopDelay;
 
 	while ( true ) {
 		this->_fd_read	= this->_fd_set;
@@ -116,7 +109,7 @@ void Server::newClient( int fd ) {
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-	this->_clients[sockfd] = new Client( sockfd, this->_servers[fd], this->_clients.size() >= Server::k_max_clients );
+	this->_clients[sockfd] = new Client( sockfd, this->_servers[fd], this->_clients.size() >= Config::kMaxClients );
 
 	this->addToFdSet( sockfd );
 
@@ -187,7 +180,7 @@ int Server::initialize( void ) {
 				//int option_value = 1;
 				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 
-				if ( -1 == listen( sockfd, Server::k_backlog_size ) ) {
+				if ( -1 == listen( sockfd, Config::kBacklogSize ) ) {
 					log::error( "listen() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 					return ( -1 );
 				}

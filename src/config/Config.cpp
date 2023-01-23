@@ -7,6 +7,14 @@ namespace webserv {
 
 /** CLASS -------------------------------------- */
 
+const char *					Config::kDefaultPath = "/etc/aps/aps.conf";
+const int						Config::kBacklogSize = 1024;
+const int						Config::kMaxClients = 1024;
+const int						Config::kBufferSize = 16384;
+const time_t					Config::kTimeoutSec = 5;
+const long						Config::kNsecLoopDelay = 500L * 1000L;
+const std::string::size_type	Config::kLimitRequestLimit = 8190;
+
 Config::Config( void ) {
 	return ;
 }

@@ -51,12 +51,12 @@ class Server {
 	private:
 		Server & operator=( const Server & other); // not necessary
 
-		static const char *		k_default_path;
+		/*static const char *		k_default_path;
 		static const int		k_backlog_size; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
 		static const int		k_max_clients;
 		static const int		k_buffer_size;
 		static const time_t		k_timeout_sec;
-		static const long		k_nsec_loop_delay;
+		static const long		k_nsec_loop_delay;*/
 
 		Config *							_config;
 		const std::vector<ServerConfig *> *	_server_configs;

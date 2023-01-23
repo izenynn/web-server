@@ -8,6 +8,8 @@
 # include <string>
 # include <map>
 
+# include <config/Config.hpp>
+
 /** CLASS -------------------------------------- */
 
 namespace webserv {
@@ -17,18 +19,43 @@ class Request {
 		Request( void );
 		~Request( void );
 
-		int parse( std::string & buffer );
+		int parse( const std::string & buffer );
 		int parse( char * buffer, int len );
-
-		int requestLine( void );
-		int headers( void );
-		int body( void );
 	private:
+		Request( const Request & other ); // not necessary
+		Request & operator=( const Request & other ); // not necessary
+
+		static const int kLimitRequestLimit;
+
+		int parseRequestLine( void );
+		int parseHeaders( void );
+		int parseBody( void );
+		int parseChunk( void );
+
 		std::string		_method;
 		std::string		_request_uri;
+		std::string		_uri_params;
 		std::string		_version;
 		std::string		_body;
 		std::map<std::string, std::string> _headers;
+
+		std::string		_buffer;
+
+		enum Status {
+			kRequestLine = 0,
+			kHeaders,
+			kBody,
+			kChunk,
+			kComplete,
+			kError,
+		};
+		enum ChunkStatus {
+			kChunkBody = 0,
+			kChunkSize,
+		};
+
+		Status			_status;
+		ChunkStatus		_chunkStatus;
 };
 
 } /** namespace webserv */
