@@ -81,6 +81,14 @@ inline std::string & trim( std::string & s, const char * t = " \t\n\r\f\v" ) {
 	return ( ltrim( rtrim( s, t ), t ) );
 }
 
+template <typename T>
+bool fromHex(const std::string& hexValue, T& result) {
+	std::stringstream ss;
+	ss << std::hex << hexValue;
+	ss >> result;
+
+	return ( !ss.fail() );
+}
 
 } /** namespace */
 
@@ -97,6 +105,7 @@ Request::~Request( void ) {
 }
 
 int Request::parse( const std::string & buffer ) {
+	// FIXME we really need to return 0 or 1 ????
 	int ret;
 
 	this->_buffer += buffer;
@@ -122,6 +131,16 @@ int Request::parse( const std::string & buffer ) {
 		return ( ret );
 	}
 
+	// okay (should return on complete)
+	if ( ret == 0 ) {
+		return ( ret );
+	}
+	// no body
+	if ( ret == 1 ) {
+		this->_status = this->kComplete;
+		return ( ret );
+	}
+	// error
 	if ( ret > 0 ) {
 		this->_status = this->kError;
 		return ( ret );
@@ -222,6 +241,116 @@ int Request::parseHeaders( void ) {
 		this->_buffer.erase( 0, eol + Config::kEOL.length() );
 	}
 
+	// check host is present
+	if ( this->_headers.end() == this->_headers.find( "Host" ) || this->_headers["Host"].empty() ) {
+		return ( 400 ); // 400 bad request
+	}
+
+	return ( 0 );
+}
+
+int Request::parseBody( void ) {
+	// chunked
+	if ( this->_headers.end() != this->_headers.find( "Transfer-Encoding" ) && this->_headers["Transfer-Encoding"] == "chunked" ) {
+		this->_status = this->kChunk;
+		return ( 0 );
+	// not chunked
+	} else if ( this->_headers.end() != this->_headers.find( "Content-Length" ) ) {
+		if ( std::string::npos != this->_headers["Content-Length"].find_first_not_of( "0123456789" ) ) {
+			return ( 400 ); // 400 bad request
+		}
+		std::string::size_type length = atoi( this->_headers["Content-Length"].c_str() );
+		if ( length < 0 ) {
+			return ( 400 ); // 400 bad request
+		}
+		this->_length = length;
+	// no body
+	} else {
+		//return ( 1 );
+		return ( 0 );
+	}
+
+	// parse body
+	if ( this->_buffer.length() >= this->_length ) {
+		this->_body.insert( 0, this->_buffer, 0, this->_length );
+		this->_buffer.clear();
+
+		if ( this->_length != this->_body.length() ) {
+			return ( 400 ); // 400 bad request
+		}
+		//return ( 1 );
+	}
+
+	return ( 0 );
+}
+
+int Request::parseChunk( void ) {
+	this->_chunkStatus = this->kChunkSize;
+	std::string::size_type size = 0;
+
+	for ( std::string::size_type eol = this->_buffer.find( Config::kEOL ); eol != std::string::npos; eol = this->_buffer.find( Config::kEOL ) ) {
+		if ( this->kChunkSize == this->_chunkStatus ) {
+			std::string hex = this->_buffer.substr( 0, eol );
+			if ( false == fromHex( hex, size ) ) {
+				return ( 400 ); // 400 bad request
+			}
+			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			this->_chunkStatus = this->kChunkBody;
+		} else if ( this->kChunkBody == this->_chunkStatus ) {
+			if ( 0 == size ) {
+				// trailer
+				if ( false == this->_buffer.empty() ) {
+					return ( this->parseChunkTrailer() );
+				}
+				//return ( 1 );
+				return ( 0 );
+			}
+			/*this->_body += this->_buffer.substr( 0, eol );
+			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			size = 0;
+			this->_chunkStatus = this->kChunkSize;*/
+			this->_body += this->_buffer.substr( 0, size );
+			this->_buffer.erase( 0, size + Config::kEOL.length() );
+			size = 0;
+			this->_chunkStatus = this->kChunkSize;
+		}
+	}
+
+	return ( 0 );
+}
+
+int Request::parseChunkTrailer( void ) {
+	std::string key, value;
+	std::string::size_type sep;
+
+	for ( std::string::size_type eol = this->_buffer.find( Config::kEOL ); eol != std::string::npos; eol = this->_buffer.find( Config::kEOL ) ) {
+		// chunk trailer ends on line with only "\r\n"
+		if ( 0 == this->_buffer.find( Config::kEOL ) ) {
+			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			break ;
+		}
+		// parse trailer
+		sep = this->_buffer.find( ':' );
+		if ( std::string::npos == sep || 0 == sep || this->_buffer[eol - 1] == ' ' ) {
+			return ( 400 ); // 400 bad request
+		}
+		key		= this->_buffer.substr( 0, sep );
+		value	= this->_buffer.substr( sep + 1, eol - sep - 1 );
+		if ( this->_headers.end() != this->_headers.find( key ) ) {
+			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
+		} else {
+			if ( key.length() >= Config::kLimitRequestLimit || value.length() >= Config::kLimitRequestLimit ) {
+				return ( 400 ); // 400 bad request
+			}
+			this->_headers[key] = trim( value, " " );
+			if ( true == this->_headers[key].empty() ) {
+				this->_headers.erase( key );
+			}
+		}
+		this->_buffer.erase( 0, eol + Config::kEOL.length() );
+	}
+
+	//return ( 1 );
 	return ( 0 );
 }
 

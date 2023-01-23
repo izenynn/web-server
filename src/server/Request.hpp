@@ -7,6 +7,7 @@
 
 # include <string>
 # include <map>
+# include <sstream>
 
 # include <config/Config.hpp>
 
@@ -32,6 +33,8 @@ class Request {
 		int parseBody( void );
 		int parseChunk( void );
 
+		int parseChunkTrailer( void );
+
 		std::string		_method;
 		std::string		_request_uri;
 		std::string		_uri_params;
@@ -40,6 +43,8 @@ class Request {
 		std::map<std::string, std::string> _headers;
 
 		std::string		_buffer;
+
+		std::string::size_type	_length;
 
 		enum Status {
 			kRequestLine = 0,
