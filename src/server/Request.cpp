@@ -56,6 +56,32 @@ bool isForbiddenUri( const std::string & uri ) {
 	return ( false );
 }
 
+// trim from left
+inline std::string & ltrim( std::string & s, const char * t = " \t\n\r\f\v" ) {
+	std::string::size_type index = s.find_first_not_of( t );
+	if ( std::string::npos == index ) {
+		return ( s );
+	}
+	s.erase( 0, index );
+	return ( s );
+}
+
+// trim from right
+inline std::string & rtrim( std::string & s, const char * t = " \t\n\r\f\v" ) {
+	std::string::size_type index = s.find_last_not_of( t );
+	if ( std::string::npos == index ) {
+		return ( s );
+	}
+	s.erase( index + 1 );
+	return ( s );
+}
+
+// trim from left & right
+inline std::string & trim( std::string & s, const char * t = " \t\n\r\f\v" ) {
+	return ( ltrim( rtrim( s, t ), t ) );
+}
+
+
 } /** namespace */
 
 /** CLASS -------------------------------------- */
@@ -160,8 +186,43 @@ int Request::parseRequestLine( void ) {
 	return ( 0 );
 }
 
-/*int parseHeaders( void ) {
-	;
-}*/
+int Request::parseHeaders( void ) {
+	std::string key, value;
+	std::string::size_type sep;
+
+	// iterate lines until body
+	for ( std::string::size_type eol = this->_buffer.find( Config::kEOL ); eol != std::string::npos; eol = this->_buffer.find( Config::kEOL ) ) {
+		// if no more headers (two consecutive new lines)
+		if ( 0 == eol ) {
+			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			this->_status = this->kBody;
+			break ;
+		}
+
+		// parse headers
+		sep = this->_buffer.find( ':' );
+		if ( std::string::npos == sep || 0 == sep || this->_buffer[eol - 1] == ' ' ) {
+			return ( 400 ); // 400 bad request
+		}
+		key		= this->_buffer.substr( 0, sep );
+		value	= this->_buffer.substr( sep + 1, eol - sep - 1 );
+		if ( this->_headers.end() != this->_headers.find( key ) ) {
+			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
+			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			continue ;
+		}
+		if ( key.length() >= Config::kLimitRequestLimit || value.length() >= Config::kLimitRequestLimit ) {
+			return ( 400 ); // 400 bad request
+		}
+		this->_headers[key] = trim( value, " " );
+		if ( true == this->_headers[key].empty() ) {
+			this->_headers.erase( key );
+		}
+
+		this->_buffer.erase( 0, eol + Config::kEOL.length() );
+	}
+
+	return ( 0 );
+}
 
 } /** namespace webserv */
