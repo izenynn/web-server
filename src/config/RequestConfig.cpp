@@ -27,8 +27,8 @@ void RequestConfig::initialize( void ) {
 	this->_location = this->getRequestLocation();
 }
 
-bool RequestConfig::isValidMethod( const std::string & method ) {
-	const std::vector<std::string> & allowedMethods = this->_location->_limit_except;
+bool RequestConfig::isValidMethod( const std::string & method ){
+	const std::vector<std::string> & allowedMethods = this->_location->second->_limit_except;
 
 	if ( true == allowedMethods.empty() ) {
 		return ( true );
@@ -41,7 +41,7 @@ bool RequestConfig::isValidMethod( const std::string & method ) {
 	return ( false );
 }
 
-ServerConfig * RequestConfig::getRequestServer( void ) {
+const ServerConfig * RequestConfig::getRequestServer( void ) {
 	std::vector<ServerConfig *> matches;
 
 	// match server with same ip:port
@@ -68,6 +68,23 @@ ServerConfig * RequestConfig::getRequestServer( void ) {
 
 	// if only one match or server_name match dont found anything -> return first server
 	return ( matches.front() );
+}
+
+const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLocation( void ) {
+	const std::pair<const std::string, ServerConfig *> * match = webserv::nullptr_t;
+
+	// find location with longest match
+	for ( std::map<std::string, ServerConfig *>::const_iterator it = this->_server->_location.begin(); it != this->_server->_location.end(); ++it ) {
+		if ( this->_request_uri.find( it->first ) ) {
+			if ( webserv::nullptr_t == match ) {
+				match = &(*it);
+			} else if ( it->first > match->first ) {
+				match = &(*it);
+			}
+		}
+	}
+
+	return match;
 }
 
 } /** namespace webserv */

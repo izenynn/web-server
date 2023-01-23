@@ -24,8 +24,8 @@ class RequestConfig {
 	private:
 		RequestConfig( void ); // not necessary
 
-		ServerConfig *	getRequestServer( void );
-		ServerConfig *	getRequestLocation( void );
+		const ServerConfig *									getRequestServer( void );
+		const std::pair<const std::string, ServerConfig *> *	getRequestLocation( void );
 
 		std::string							_request_uri;
 
@@ -35,8 +35,8 @@ class RequestConfig {
 
 		const std::vector<ServerConfig *> &	_servers;
 
-		const ServerConfig *				_server;
-		const ServerConfig *				_location;
+		const ServerConfig *									_server;
+		const std::pair<const std::string, ServerConfig *> *	_location;
 };
 
 } /** namespace webserv */
