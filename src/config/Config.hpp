@@ -31,6 +31,7 @@ class Config {
 		static const int						kBufferSize;
 		static const time_t						kTimeoutSec;
 		static const long						kNsecLoopDelay;
+		static const std::string				kEOL;
 		static const std::string::size_type		kLimitRequestLimit;
 
 		void load( const char* file );

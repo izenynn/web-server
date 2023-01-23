@@ -105,7 +105,7 @@ int Request::parse( const std::string & buffer ) {
 }
 
 int Request::parseRequestLine( void ) {
-	if ( std::string::npos != this->_buffer.find( "\r\n" ) ) {
+	if ( std::string::npos != this->_buffer.find( Config::kEOL ) ) {
 		// method
 		if ( std::string::npos == this->_buffer.find( ' ' ) || 0 == this->_buffer.find( ' ' ) ) {
 			return ( 400 ); // 400 bad request
@@ -145,19 +145,23 @@ int Request::parseRequestLine( void ) {
 		if ( 0 == this->_buffer.find( ' ' ) ) {
 			return ( 400 ); // 400 bad request
 		}
-		std::string::size_type last = this->_buffer.find( "\r\n" );
+		std::string::size_type last = this->_buffer.find( Config::kEOL );
 		token = this->_buffer.substr( 0, last );
 
 		if ( false == isSupportedVersion( token ) ) {
 			return ( 505 ); // 505 http version not supported
 		}
 		this->_version = token;
-		this->_buffer.erase( 0, last + 2 );
+		this->_buffer.erase( 0, last + Config::kEOL.length() );
 
 		// status
 		this->_status = this->kHeaders;
 	}
 	return ( 0 );
 }
+
+/*int parseHeaders( void ) {
+	;
+}*/
 
 } /** namespace webserv */
