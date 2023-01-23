@@ -231,7 +231,7 @@ int Request::parseHeaders( void ) {
 			continue ;
 		}
 		if ( key.length() >= Config::kLimitRequestLimit || value.length() >= Config::kLimitRequestLimit ) {
-			return ( 400 ); // 400 bad request
+			return ( 431 ); // 431 request header fields too large
 		}
 		this->_headers[key] = trim( value, " " );
 		if ( true == this->_headers[key].empty() ) {
