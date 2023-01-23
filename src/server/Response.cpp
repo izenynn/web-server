@@ -117,10 +117,10 @@ std::map<std::string, std::string> Response::initMimeTypes( void ) {
 	mime_types[".jsonld"]	= "application/ld+json";
 	mime_types[".mid"]		= "audio/midi";
 	mime_types[".midi"]		= "audio/midi";
-	mime_types[".mjs"] 		= "text/javascript";
-	mime_types[".mp3"] 		= "audio/mpeg";
-	mime_types[".mp4"] 		= "video/mp4";
-	mime_types[".mpeg"] 		= "video/mpeg";
+	mime_types[".mjs"]		= "text/javascript";
+	mime_types[".mp3"]		= "audio/mpeg";
+	mime_types[".mp4"]		= "video/mp4";
+	mime_types[".mpeg"]		= "video/mpeg";
 	mime_types[".mpkg"]		= "application/vnd.apple.installer+xml";
 	mime_types[".odp"]		= "application/vnd.oasis.opendocument.presentation";
 	mime_types[".ods"]		= "application/vnd.oasis.opendocument.spreadsheet";
@@ -151,8 +151,8 @@ std::map<std::string, std::string> Response::initMimeTypes( void ) {
 	mime_types[".webm"]		= "video/webm";
 	mime_types[".webp"]		= "image/webp";
 	mime_types[".woff"]		= "font/woff";
-	mime_types[".woff2"]		= "font/woff2";
-	mime_types[".xhtml"]		= "application/xhtml+xml";
+	mime_types[".woff2"]	= "font/woff2";
+	mime_types[".xhtml"]	= "application/xhtml+xml";
 	mime_types[".xls"]		= "application/vnd.ms-excel";
 	mime_types[".xlsx"]		= "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	mime_types[".xml"]		= "application/xml";
