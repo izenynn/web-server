@@ -64,8 +64,44 @@ std::string & RequestConfig::getMethod( void ) {
 	return ( this->_request._method );
 }
 
+const std::string & RequestConfig::getBody( void ) {
+	return ( this->_request._body );
+}
+
+const std::string & RequestConfig::getRequestUri( void ) {
+	return ( this->_request_uri );
+}
+
+const std::string & RequestConfig::getRequestRequestUri( void ) {
+	return ( this->_request._request_uri );
+}
+
+const std::string & RequestConfig::getVersion( void ) {
+	return ( this->_request._version );
+}
+
 const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) {
 	return ( this->_location->second->_error_page );
+}
+
+std::vector<std::string> & RequestConfig::getAllowedMethods( void ) {
+	return ( this->_location->second->_limit_except );
+}
+
+std::string::size_type RequestConfig::getMaxBodySize( void ) {
+	return ( this->_location->second->_client_max_body_size );
+}
+
+std::vector<std::string> & RequestConfig::getIndex( void ) {
+	return ( this->_location->second->_index );
+}
+
+bool RequestConfig::getAutoIndex( void ) {
+	return ( this->_location->second->_autoindex );
+}
+
+const std::string & RequestConfig::getLocationUri( void ) {
+	return ( this->_location->first );
 }
 
 const ServerConfig * RequestConfig::getRequestServer( void ) {

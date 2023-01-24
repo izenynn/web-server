@@ -60,7 +60,7 @@ namespace webserv {
 //: _id( -1 ), // FIXME
 ServerConfig::ServerConfig( void )
 		: _autoindex( false ),
-		  _client_max_body_size( 8196 ) {
+		  _client_max_body_size( Config::kClientMaxBodySize ) {
 	this->_serverDirectives["location"] =				&ServerConfig::parseLocation;
 	this->_serverDirectives["listen"] =					&ServerConfig::parseListen;
 	this->_serverDirectives["server_name"] =			&ServerConfig::parseServerName;

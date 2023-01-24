@@ -12,6 +12,7 @@
 # include <cstdio> // sscanf
 
 # include <types/nullptr_t.hpp>
+# include <config/Config.hpp>
 # include <config/Listen.hpp>
 
 /** CLASS -------------------------------------- */
@@ -69,7 +70,7 @@ class ServerConfig {
 		bool								_autoindex;
 		std::map<int, std::string>			_error_page;
 		std::vector<std::string>			_limit_except;
-		size_t								_client_max_body_size;
+		std::string::size_type				_client_max_body_size;
 	public:
 		class ServerConfigException : virtual public std::exception {
 			private:

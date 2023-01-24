@@ -7,6 +7,7 @@
 
 # include <map>
 # include <string>
+# include <iostream>
 
 # include <config/RequestConfig.hpp>
 
@@ -18,6 +19,8 @@ class Response {
 	public:
 		Response( RequestConfig & config, int statusCode );
 		~Response( void );
+
+		void build( void );
 
 		bool getRedirect( void );
 		std::string getRedirectUri( void );
@@ -36,15 +39,16 @@ class Response {
 		static std::map<int, std::string>			initStatusCodes( void );
 		static std::map<std::string, std::string>	initMimeTypes( void );
 
-		typedef int ( Response::*method )();
+		typedef int ( Response::*method )( void );
 
-		int GET( void );
-		int POST( void );
-		int PUT( void );
-		int DELETE( void );
+		int		process( void );
+		void	setResponse( void );
+
+		int methodGet( void );
+		int methodPost( void );
+		int methodPut( void );
+		int methodDelete( void );
 		std::map<std::string, Response::method> _methods;
-
-		int		_statusCode;
 
 		void generateErrorPage( int statusCode );
 
@@ -54,9 +58,12 @@ class Response {
 
 		std::string							_response;
 
+		int									_statusCode;
 		RequestConfig &						_requestConfig;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
+
+		File								_file;
 };
 
 } /** namespace webserv */

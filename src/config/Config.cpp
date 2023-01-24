@@ -15,6 +15,7 @@ const long						Config::kNsecLoopDelay = 500L * 1000L;
 const std::string				Config::kEOL = "\r\n";
 const std::string::size_type	Config::kLimitRequestLimit = 8190;
 const time_t					Config::kRequestTimeoutSec = 60;
+const size_t					Config::kClientMaxBodySize = 8196;
 
 const std::map<int, Client *>::size_type Config::kMaxClients = 1024;
 

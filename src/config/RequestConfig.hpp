@@ -23,8 +23,20 @@ class RequestConfig {
 
 		bool isValidMethod( const std::string & method );
 
-		std::string &						getMethod();
-		const std::map<int, std::string> &	getErrorPages();
+		// request related getters
+		std::string &						getMethod( void );
+		const std::string &					getBody( void );
+		const std::string &					getRequestUri( void );
+		const std::string &					getRequestRequestUri( void );
+		const std::string &					getVersion( void );
+
+		// server/location related getters
+		const std::map<int, std::string> &	getErrorPages( void );
+		std::vector<std::string> &			getAllowedMethods( void );
+		std::string::size_type				getMaxBodySize( void );
+		std::vector<std::string> &			getIndex( void );
+		bool								getAutoIndex( void );
+		const std::string &					getLocationUri( void );
 	private:
 		RequestConfig( void ); // not necessary
 

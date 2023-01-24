@@ -2,8 +2,28 @@
 
 #include <server/Response.hpp>
 #include <utils/log.hpp>
+#include <utils/utils.hpp>
 
 /** UTILS -------------------------------------- */
+
+namespace {
+
+std::string getDate( void ) {
+	struct timeval time;
+	char buffer[128];
+
+	gettimeofday( &time, NULL );
+
+	struct tm *htime;
+	htime = gmtime( &time.tv_sec );
+
+	// Example: Date: Tue, 24 Dec 2022 19:22:21 GMT
+	int length = strftime( buffer, 32, "%a, %d %b %Y %T GMT", htime );
+
+	return ( std::string( buffer, length ) );
+}
+
+}
 
 /** CLASS -------------------------------------- */
 
@@ -172,14 +192,50 @@ std::map<std::string, std::string>	Response::kMimeTypes = initMimeTypes();
 Response::Response( RequestConfig & config, int statusCode )
 		: _statusCode( statusCode ),
 		  _requestConfig( config ) {
-	this->_methods["GET"] = &Response::GET;
-	this->_methods["POST"] = &Response::POST;
-	this->_methods["PUT"] = &Response::PUT;
-	this->_methods["DELETE"] = &Response::DELETE;
+	this->_methods["GET"]		= &Response::methodGet;
+	this->_methods["POST"]		= &Response::methodPost;
+	this->_methods["PUT"]		= &Response::methodPut;
+	this->_methods["DELETE"]	= &Response::methodDelete;
 	return ;
 }
 
 Response::~Response( void ) {
+	return ;
+}
+
+void Response::build( void ) {
+	std::string & method = this->_requestConfig.getMethod();
+
+	// check for errors and process request if none
+	if ( false == this->_requestConfig.isValidMethod( method ) ) {
+		// set error code
+		this->_statusCode = 405; // 405 method not allowed
+		// set allow header
+		std::string allowedMethods;
+		for ( std::vector<std::string>::const_iterator it = this->_requestConfig.getAllowedMethods().begin(); it != this->_requestConfig.getAllowedMethods().end(); ) {
+			allowedMethods += *it;
+			++it;
+			if ( this->_requestConfig.getAllowedMethods().end() != it ) {
+				allowedMethods += ", ";
+			}
+		}
+		this->_headers["Allow"] = allowedMethods;
+	} else if ( this->_requestConfig.getBody().length() > this->_requestConfig.getMaxBodySize() ) {
+		this->_statusCode = 413; // 413 payload too large
+	} else {
+		this->_statusCode = this->process(); // process method
+	}
+
+	// check if error page needed
+	if ( this->_statusCode >= 300 && 0 == this->_body.length() ) {
+		this->generateErrorPage( this->_statusCode );
+	}
+
+	// check if not redirection
+	if ( false == this->_redirect ) {
+		this->setResponse();
+	}
+
 	return ;
 }
 
@@ -191,6 +247,88 @@ std::string Response::getRedirectUri( void ) {
 	return ( this->_redirect_uri );
 }
 
+int Response::process( void ) {
+	const std::string & method = this->_requestConfig.getMethod();
+
+	// get (get cant be cig)
+	if ( "GET" == method ) {
+		// directory, if index -> go to index, else if no index and no autoindex -> bad request
+		if ( true == this->_file.isDirectory() ) {
+			std::string index = this->_file.getIndex( this->_requestConfig.getIndex() );
+			if ( index.length() > 0 ) {
+				this->_redirect = true;
+				this->_redirect_uri = utils::sanitizePath( "/" + this->_requestConfig.getRequestUri() + "/" + index );
+				return ( 200 ); // 200 ok
+			} else if ( false == this->_requestConfig.getAutoIndex() ) {
+				return ( 404 ); // 404 bad request
+			}
+		// not directory
+		} else {
+			if ( false == this->_file.fileExists() ) {
+				return ( 404 ); // 404 bad request
+			}
+
+			// TODO getFile()
+			this->_file.getFile();
+
+			if ( this->_file.openFile() ) {
+				return ( 403 ); // 403 forbidden
+			}
+		}
+
+	}
+
+	// check cgi
+	// TODO cgi
+
+	// post / put
+	if ( "POST" == method || "PUT" == method ) {
+		//std::string path = this->_requestConfig.getLocationUri() + "/" + this->_requestConfig.getRequestUri();
+		this->_statusCode = 405; // 405 method not allowed
+	}
+
+	int ret = (this->*(Response::_methods[method]))();
+	return ( ret );
+}
+
+void Response::setResponse( void ) {
+	if ( this->_statusCode < 400 && this->_redirect_status_code != 0 ) {
+		this->_statusCode = this->_redirect_status_code;
+	}
+
+	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
+	this->_response += this->_requestConfig.getVersion() + " " + status + Config::kEOL;
+
+	this->_headers["Date"] = getDate();
+
+	for ( std::map<std::string, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it ) {
+		this->_response += it->first + ": " + it->second + Config::kEOL;
+	}
+
+	this->_response += Config::kEOL;
+
+	if ( false == this->_body.empty() ) {
+		this->_response += this->_body;
+		this->_body.clear();
+	}
+
+	return ;
+}
+
+int Response::methodGet( void ) {
+	// TODO autoindex
+	if ( true == this->_requestConfig.getAutoIndex() && true == this->_file.isDirectory() ) {
+		this->_body = this->_file.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
+	} else {
+		this->_body = this->_file.getContent();
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Content-Type"] = this->kMimeTypes[this->_file.getExtension()];
+	}
+	return ( 200 ); // 200 ok
+}
+
 void Response::generateErrorPage( int statusCode ) {
 	// check if theres a page for the status code
 	std::map<int, std::string> errorPages = this->_requestConfig.getErrorPages();
@@ -200,6 +338,7 @@ void Response::generateErrorPage( int statusCode ) {
 		this->_redirect = true;
 		this->_redirect_uri = errorPages[statusCode];
 		this->_redirect_status_code = statusCode;
+		this->_statusCode = 0; // FIXME
 	} else {
 		// generate the ultimate error page
 		this->_body = "<html><head><title>Error</title></head><body><h1>";
