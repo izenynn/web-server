@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <server/Response.hpp>
+#include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
 
@@ -165,10 +166,40 @@ std::map<std::string, std::string> Response::initMimeTypes( void ) {
 	return ( mime_types );
 }
 
-std::map<int, std::string>			Response::_status_codes = initStatusCodes();
-std::map<std::string, std::string>	Response::_mime_types = initMimeTypes();
+std::map<int, std::string>			Response::kStatusCodes = initStatusCodes();
+std::map<std::string, std::string>	Response::kMimeTypes = initMimeTypes();
 
-Response::Response( const RequestConfig & config, int status_code ) {
+Response::Response( RequestConfig & config, int statusCode )
+		: _statusCode( statusCode ),
+		  _requestConfig( config ) {
+	this->_methods["GET"] = &Response::GET;
+	this->_methods["POST"] = &Response::POST;
+	this->_methods["PUT"] = &Response::PUT;
+	this->_methods["DELETE"] = &Response::DELETE;
+	return ;
+}
+
+void Response::generateErrorPage( int statusCode ) {
+	// check if theres a page for the status code
+	std::map<int, std::string> errorPages = this->_requestConfig.getErrorPages();
+	if ( errorPages.end() != errorPages.find( statusCode ) ) {
+		// redirect to error page
+		this->_requestConfig.getMethod() = "GET";
+		this->_redirect = true;
+		this->_redirect_uri = errorPages[statusCode];
+		this->_redirect_status_code = statusCode;
+	} else {
+		// generate the ultimate error page
+		this->_body = "<html><head><title>Error</title></head><body><h1>";
+		this->_body += SSTR( statusCode );
+		this->_body += "</h1><br><p>";
+		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( statusCode ) ) {
+			this->_body += Response::kStatusCodes[ statusCode ];
+		} else {
+			this->_body += "Error";
+		}
+		this->_body += "</p></body></html>";
+	}
 	return ;
 }
 

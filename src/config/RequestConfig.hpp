@@ -21,6 +21,9 @@ class RequestConfig {
 		void initialize( void );
 
 		bool isValidMethod( const std::string & method );
+
+		std::string &						getMethod();
+		const std::map<int, std::string> &	getErrorPages();
 	private:
 		RequestConfig( void ); // not necessary
 

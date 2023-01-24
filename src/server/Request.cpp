@@ -12,7 +12,7 @@ bool isSupportedMethod( const std::string & method ) {
 	if ( "GET" == method ) ret = true;
 	else if ( "POST" == method ) ret = true;
 	else if ( "PUT" == method ) ret = true;
-	else if ( "HEAD" == method ) ret = true;
+	//else if ( "HEAD" == method ) ret = true; // FIXME
 	else if ( "DELETE" == method ) ret = true;
 
 	return ( ret );

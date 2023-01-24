@@ -16,18 +16,38 @@ namespace webserv {
 
 class Response {
 	public:
-		Response( const RequestConfig & config, int status_code );
+		Response( RequestConfig & config, int statusCode );
 		~Response( void );
 	private:
 		Response( void ); // not necessary
 		Response( const Response & other ); // not necessary
 		Response & operator=( const Response & other ); // not necessary
 
-		static std::map<int, std::string>			_status_codes;
-		static std::map<std::string, std::string>	_mime_types;
+		static std::map<int, std::string>			kStatusCodes;
+		static std::map<std::string, std::string>	kMimeTypes;
 
 		static std::map<int, std::string>			initStatusCodes( void );
 		static std::map<std::string, std::string>	initMimeTypes( void );
+
+		typedef int ( Response::*method )();
+
+		int GET( void );
+		int POST( void );
+		int PUT( void );
+		int DELETE( void );
+		std::map<std::string, Response::method> _methods;
+
+		int		_statusCode;
+
+		void generateErrorPage( int statusCode );
+
+		bool			_redirect;
+		std::string		_redirect_uri;
+		int				_redirect_status_code;
+
+		RequestConfig &						_requestConfig;
+		std::map<std::string, std::string>	_headers;
+		std::string							_body;
 };
 
 } /** namespace webserv */

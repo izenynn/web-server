@@ -41,6 +41,14 @@ bool RequestConfig::isValidMethod( const std::string & method ){
 	return ( false );
 }
 
+std::string & RequestConfig::getMethod( void ) {
+	return ( this->_request._method );
+}
+
+const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) {
+	return ( this->_location->second->_error_page );
+}
+
 const ServerConfig * RequestConfig::getRequestServer( void ) {
 	std::vector<ServerConfig *> matches;
 
