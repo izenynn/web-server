@@ -8,6 +8,7 @@
 # include <string>
 # include <map>
 # include <sstream>
+# include <sys/time.h>
 
 # include <config/Config.hpp>
 
@@ -21,7 +22,8 @@ class Request {
 		~Request( void );
 
 		int parse( const std::string & buffer );
-		int parse( char * buffer, int len );
+
+		const struct timeval & getTime( void );
 
 		friend class RequestConfig;
 	private:
@@ -47,6 +49,8 @@ class Request {
 		std::string		_buffer;
 
 		std::string::size_type	_length;
+
+		struct timeval _time;
 
 		enum Status {
 			kRequestLine = 0,

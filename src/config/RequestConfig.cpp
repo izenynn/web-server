@@ -21,10 +21,29 @@ RequestConfig::~RequestConfig( void ) {
 }
 
 void RequestConfig::initialize( void ) {
+	const ServerConfig *									newServer = webserv::nullptr_t;
+	const std::pair<const std::string, ServerConfig *> *	newLocation = webserv::nullptr_t;
+
 	this->_request_uri = this->_request._request_uri;
 
-	this->_server = this->getRequestServer();
-	this->_location = this->getRequestLocation();
+	newServer = this->getRequestServer();
+	newLocation = this->getRequestLocation();
+
+	this->_server = newServer;
+	this->_location = newLocation;
+}
+
+void RequestConfig::redirect( const std::string & uri ) {
+	const std::pair<const std::string, ServerConfig *> * newLocation = webserv::nullptr_t;
+
+	newLocation = this->getRequestLocation();
+
+	this->_request_uri = uri;
+	if ( webserv::nullptr_t != newLocation ) {
+		this->_location = newLocation;
+	}
+
+	return ;
 }
 
 bool RequestConfig::isValidMethod( const std::string & method ){

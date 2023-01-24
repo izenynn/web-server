@@ -5,8 +5,13 @@
 
 /** INCLUDES ----------------------------------- */
 
+# include <unistd.h>
+# include <sys/time.h>
+
 # include <config/Listen.hpp>
 # include <config/ServerConfig.hpp>
+# include <server/Request.hpp>
+# include <server/Response.hpp>
 
 /** CLASS -------------------------------------- */
 
@@ -14,11 +19,10 @@ namespace webserv {
 
 class Client {
 	public:
-		Client( int fd, Listen * host, bool disconnect );
+		Client( int fd, Listen & host, bool disconnect );
 		~Client( void );
 
-		void setConfig( std::vector<ServerConfig *> & servers );
-		void setResponse( std::vector<ServerConfig *> & servers, int error_code );
+		void initResponse( std::vector<ServerConfig *> & servers, int statusCode );
 
 		void clear( void );
 
@@ -26,20 +30,24 @@ class Client {
 		bool checkDisconnect( void );
 
 		int getFd( void );
-		Request *		getRequest( bool force );
+		Request *		getRequest( void );
 		Response *		getResponse( void );
-		RequestConfig *	getRequestConfig();
+		RequestConfig *	getRequestConfig( void );
 	private:
 		Client( void ); // not necessary
 		Client( const Client & other ); // not necessary
 		Client & operator=( const Client & other ); // not necessary
 
+		void initRequestConfig( std::vector<ServerConfig *> & servers );
+		void initRequest( void );
+
 		int				_fd;
 		Listen &		_host;
 		bool			_disconnect;
+
 		Request *		_request;
 		Response *		_response;
-		RequestConfig *	_config;
+		RequestConfig *	_requestConfig;
 };
 
 } /** namespace webserv */

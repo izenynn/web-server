@@ -18,6 +18,9 @@ class Response {
 	public:
 		Response( RequestConfig & config, int statusCode );
 		~Response( void );
+
+		bool getRedirect( void );
+		std::string getRedirectUri( void );
 	private:
 		Response( void ); // not necessary
 		Response( const Response & other ); // not necessary

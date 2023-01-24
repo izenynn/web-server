@@ -19,6 +19,7 @@ class RequestConfig {
 		~RequestConfig( void );
 
 		void initialize( void );
+		void redirect( const std::string & uri );
 
 		bool isValidMethod( const std::string & method );
 

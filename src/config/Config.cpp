@@ -15,6 +15,7 @@ const time_t					Config::kTimeoutSec = 5;
 const long						Config::kNsecLoopDelay = 500L * 1000L;
 const std::string				Config::kEOL = "\r\n";
 const std::string::size_type	Config::kLimitRequestLimit = 8190;
+const time_t					Config::kRequestTimeoutSec = 60;
 
 Config::Config( void ) {
 	return ;

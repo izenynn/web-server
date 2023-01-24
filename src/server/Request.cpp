@@ -97,6 +97,7 @@ bool fromHex(const std::string& hexValue, T& result) {
 namespace webserv {
 
 Request::Request( void ) {
+	gettimeofday( &(this->_time), NULL );
 	return ;
 }
 
@@ -111,6 +112,7 @@ int Request::parse( const std::string & buffer ) {
 	this->_buffer += buffer;
 	//buffer.clear();
 
+	this->_status = this->kRequestLine;
 	if ( this->kRequestLine == this->_status ) {
 		ret = this->parseRequestLine();
 	}
@@ -147,6 +149,10 @@ int Request::parse( const std::string & buffer ) {
 	}
 
 	return ( 1 ); // it will never get here
+}
+
+const struct timeval & Request::getTime( void ) {
+	return ( this->_time );
 }
 
 int Request::parseRequestLine( void ) {

@@ -179,6 +179,18 @@ Response::Response( RequestConfig & config, int statusCode )
 	return ;
 }
 
+Response::~Response( void ) {
+	return ;
+}
+
+bool Response::getRedirect( void ) {
+	return ( this->_redirect );
+}
+
+std::string Response::getRedirectUri( void ) {
+	return ( this->_redirect_uri );
+}
+
 void Response::generateErrorPage( int statusCode ) {
 	// check if theres a page for the status code
 	std::map<int, std::string> errorPages = this->_requestConfig.getErrorPages();
