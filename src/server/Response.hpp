@@ -63,7 +63,7 @@ class Response {
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
 
-		File								_file;
+		Uri									_uri;
 };
 
 } /** namespace webserv */

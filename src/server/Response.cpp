@@ -253,8 +253,8 @@ int Response::process( void ) {
 	// get (get cant be cig)
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
-		if ( true == this->_file.isDirectory() ) {
-			std::string index = this->_file.getIndex( this->_requestConfig.getIndex() );
+		if ( true == this->_uri.isDirectory() ) {
+			std::string index = this->_uri.getIndex( this->_requestConfig.getIndex() );
 			if ( index.length() > 0 ) {
 				this->_redirect = true;
 				this->_redirect_uri = utils::sanitizePath( "/" + this->_requestConfig.getRequestUri() + "/" + index );
@@ -264,14 +264,14 @@ int Response::process( void ) {
 			}
 		// not directory
 		} else {
-			if ( false == this->_file.fileExists() ) {
+			if ( false == this->_uri.fileExists() ) {
 				return ( 404 ); // 404 bad request
 			}
 
 			// TODO getFile()
-			this->_file.getFile();
+			this->_uri.getFile();
 
-			if ( this->_file.openFile() ) {
+			if ( this->_uri.openFile() ) {
 				return ( 403 ); // 403 forbidden
 			}
 		}
@@ -317,14 +317,14 @@ void Response::setResponse( void ) {
 
 int Response::methodGet( void ) {
 	// TODO autoindex
-	if ( true == this->_requestConfig.getAutoIndex() && true == this->_file.isDirectory() ) {
-		this->_body = this->_file.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
+	if ( true == this->_requestConfig.getAutoIndex() && true == this->_uri.isDirectory() ) {
+		this->_body = this->_uri.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 	} else {
-		this->_body = this->_file.getContent();
+		this->_body = this->_uri.getContent();
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
-		this->_headers["Content-Type"] = this->kMimeTypes[this->_file.getExtension()];
+		this->_headers["Content-Type"] = this->kMimeTypes[this->_uri.getExtension()];
 	}
 	return ( 200 ); // 200 ok
 }
