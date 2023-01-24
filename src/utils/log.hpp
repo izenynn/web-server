@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __PRINT_HPP__
-# define __PRINT_HPP__
+#ifndef __LOG_HPP__
+# define __LOG_HPP__
 
 /** INCLUDES ----------------------------------- */
 
@@ -137,9 +137,11 @@
 /** METHODS ------------------------------------ */
 
 namespace webserv {
+
 namespace colors {
 
 } // namespace colors
+
 namespace log {
 	void info(const std::string& msg);
 	void success(const std::string& msg);
@@ -147,6 +149,7 @@ namespace log {
 	void failure(const std::string& msg);
 	void error(const std::string& msg);
 } /** namespace log */
+
 } /** namespace webserv */
 
 #endif /** __PRINT_HPP__ */
