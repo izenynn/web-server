@@ -94,7 +94,7 @@ int Server::start( void ) {
 				if ( FD_ISSET( fd, &(this->_fdRead) ) ) {
 					int ret = this->clientRecv( fd );
 					// if error reading disconnect client
-					if ( 1 == ret ) {
+					if ( 0 != ret ) {
 						this->disconnectClient( fd );
 						continue ;
 					}
@@ -105,7 +105,7 @@ int Server::start( void ) {
 				if ( FD_ISSET( fd, &(this->_fdWrite) ) ) {
 					// if error sending disconnect client
 					int ret = this->clientSend( fd );
-					if ( 1 == ret ) {
+					if ( 0 != ret ) {
 						this->disconnectClient( fd );
 						continue ;
 					}
@@ -149,7 +149,7 @@ int Server::clientRecv( int fd ) {
 	std::string strBuffer( buffer, size );
 	int ret = request->parse( strBuffer );
 	// if error prepare response, if not, we will respond later :)
-	if ( ret > 0 ) { // FIXME
+	if ( ret >= 0 ) { // FIXME we can remove this i think
 		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
 		this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
 	}
@@ -157,7 +157,29 @@ int Server::clientRecv( int fd ) {
 	return ( 0 );
 }
 int Server::clientSend( int fd ) {
-	(void)fd;
+	Response * response = this->_clients[fd]->getResponse();
+
+	// remove fd from set
+	FD_CLR( fd, &(this->_fdWrite ) );
+
+	// check response exists
+	if ( webserv::nullptr_t == response ) {
+		return ( 0 );
+	}
+
+	// send response
+	int ret = send( fd, response->getResponse().c_str(), response->getResponse().length(), 0 );
+
+	if ( ret < 0 ) {
+		log::failure( "send() failed with return code: " + SSTR( ret ) );
+		return ( 1 );
+	}
+
+	bool disconnect = this->_clients[fd]->checkDisconnect() || response->isConnectionClose();
+	this->_clients[fd]->clear();
+	if ( true == disconnect ) return ( 1 );
+	else                      return ( 0 );
+
 	return ( 0 );
 }
 

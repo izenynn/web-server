@@ -13,11 +13,13 @@
 # include <algorithm> // std::find()
 # include <ctime> // nanosleep()
 
+# include <sys/types.h>
 # include <sys/socket.h> // socket()
 # include <sys/select.h> // select()
 # include <fcntl.h> // fcntl()
 # include <netinet/in.h> // sockaddr_in
-#include <arpa/inet.h> // inet_addr()
+# include <arpa/inet.h> // inet_addr()
+
 
 # include <types/nullptr_t.hpp>
 # include <config/Config.hpp>

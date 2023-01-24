@@ -22,11 +22,11 @@ class Client {
 		Client( int fd, Listen & host, bool disconnect );
 		~Client( void );
 
+		void clear( void );
+
 		void initRequest( void );
 		void initResponse( const std::vector<ServerConfig *> & servers, int statusCode );
 		void initRequestConfig( const std::vector<ServerConfig *> & servers );
-
-		void clear( void );
 
 		bool checkTimeout( void );
 		bool checkDisconnect( void );

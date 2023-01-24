@@ -32,6 +32,18 @@ Client::~Client( void ) {
 	return ;
 }
 
+void Client::clear( void ) {
+	if ( webserv::nullptr_t != this->_request ) {
+		delete this->_request;
+	}
+	if ( webserv::nullptr_t != this->_response ) {
+		delete this->_response;
+	}
+	if ( webserv::nullptr_t != this->_requestConfig ) {
+		delete this->_requestConfig;
+	}
+}
+
 void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
 	// generate request and request config if doesnt exists // FIXME necessary ???
 	if ( webserv::nullptr_t == this->_request ) {

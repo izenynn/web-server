@@ -21,6 +21,10 @@ class Response {
 
 		bool getRedirect( void );
 		std::string getRedirectUri( void );
+
+		const std::string & getResponse( void );
+
+		bool isConnectionClose( void );
 	private:
 		Response( void ); // not necessary
 		Response( const Response & other ); // not necessary
@@ -47,6 +51,8 @@ class Response {
 		bool			_redirect;
 		std::string		_redirect_uri;
 		int				_redirect_status_code;
+
+		std::string							_response;
 
 		RequestConfig &						_requestConfig;
 		std::map<std::string, std::string>	_headers;
