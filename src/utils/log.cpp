@@ -5,6 +5,7 @@
 /** METHODS ------------------------------------ */
 
 namespace webserv {
+
 namespace log {
 	void info(const std::string& msg) {
 		std::cout << "[" << C_BLUE << "*" << C_OFF << "] " << msg << std::endl;
@@ -27,4 +28,5 @@ namespace log {
 		return;
 	}
 } // namespace log
+
 } // namespace webserv
