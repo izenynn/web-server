@@ -39,8 +39,8 @@ class Server {
 		int start( void );
 
 		// FIXME from here to end move to private
-		bool clientRecv( int fd );
-		bool clientSend( int fd );
+		int clientRecv( int fd );
+		int clientSend( int fd );
 
 		void newClient( int fd );
 		void disconnectClient( int fd );

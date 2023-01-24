@@ -88,13 +88,13 @@ int Server::start( void ) {
 			}
 
 			// iterate clients to read/write
-			for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ++it, ++prev ) {
+			for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ++it ) {
 				int fd = it->first;
 				// check read fd and receive request
 				if ( FD_ISSET( fd, &(this->_fdRead) ) ) {
-					bool ret = this->clientRecv( fd );
+					int ret = this->clientRecv( fd );
 					// if error reading disconnect client
-					if ( false == ret ) {
+					if ( 1 == ret ) {
 						this->disconnectClient( fd );
 						continue ;
 					}
@@ -104,8 +104,8 @@ int Server::start( void ) {
 				// check write fd and send response
 				if ( FD_ISSET( fd, &(this->_fdWrite) ) ) {
 					// if error sending disconnect client
-					bool ret = this->clientSend( fd );
-					if ( false == ret ) {
+					int ret = this->clientSend( fd );
+					if ( 1 == ret ) {
 						this->disconnectClient( fd );
 						continue ;
 					}
@@ -127,10 +127,45 @@ int Server::start( void ) {
 	return ( 0 );
 }
 
+int Server::clientRecv( int fd ) {
+	// get request
+	Request * request = this->_clients[fd]->getRequest();
+	if ( webserv::nullptr_t == this->_clients[fd] ) {
+		this->_clients[fd]->initRequest();
+		request = this->_clients[fd]->getRequest();
+	}
+
+	// remove fd from set
+	FD_CLR( fd, &(this->_fdRead ) );
+
+	// read socket
+	char buffer[Config::kBufferSize];
+	int size = recv( fd, buffer, Config::kBufferSize, 0 );
+	if ( size <= 0 ) {
+		return ( 1 ); // disconnect
+	}
+
+	// parse request into request class
+	std::string strBuffer( buffer, size );
+	int ret = request->parse( strBuffer );
+	// if error prepare response, if not, we will respond later :)
+	if ( ret > 0 ) { // FIXME
+		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
+		this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
+	}
+
+	return ( 0 );
+}
+int Server::clientSend( int fd ) {
+	(void)fd;
+	return ( 0 );
+}
+
 void Server::newClient( int fd ) {
 	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof( addr );
 
+	// remove from read fd set
 	FD_CLR( fd, &(this->_fdRead) );
 
 	int sockfd = ::accept( fd, reinterpret_cast<struct sockaddr *>(&addr), &addr_len );
