@@ -22,7 +22,7 @@ class Client {
 		Client( int fd, Listen & host, bool disconnect );
 		~Client( void );
 
-		void initResponse( std::vector<ServerConfig *> & servers, int statusCode );
+		void initResponse( const std::vector<ServerConfig *> & servers, int statusCode );
 
 		void clear( void );
 
@@ -38,7 +38,7 @@ class Client {
 		Client( const Client & other ); // not necessary
 		Client & operator=( const Client & other ); // not necessary
 
-		void initRequestConfig( std::vector<ServerConfig *> & servers );
+		void initRequestConfig( const std::vector<ServerConfig *> & servers );
 		void initRequest( void );
 
 		int				_fd;

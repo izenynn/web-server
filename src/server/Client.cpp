@@ -32,7 +32,7 @@ Client::~Client( void ) {
 	return ;
 }
 
-void Client::initResponse( std::vector<ServerConfig *> & servers, int statusCode ) {
+void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
 	// generate request and request config if doesnt exists // FIXME necessary ???
 	if ( webserv::nullptr_t == this->_request ) {
 		this->initRequest();
@@ -63,7 +63,7 @@ void Client::initResponse( std::vector<ServerConfig *> & servers, int statusCode
 	}
 }
 
-void Client::initRequestConfig( std::vector<ServerConfig *> & servers ) {
+void Client::initRequestConfig( const std::vector<ServerConfig *> & servers ) {
 	this->_requestConfig = new RequestConfig( *(this->_request), this->_host, *this, servers );
 	this->_requestConfig->initialize();
 	return ;

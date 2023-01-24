@@ -18,6 +18,8 @@
 
 namespace webserv {
 
+class Client;
+
 class Config {
 	private:
 		typedef std::vector<std::string> token_type;
@@ -27,13 +29,14 @@ class Config {
 
 		static const char *						kDefaultPath;
 		static const int						kBacklogSize; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
-		static const int						kMaxClients;
 		static const int						kBufferSize;
 		static const time_t						kTimeoutSec;
 		static const long						kNsecLoopDelay;
 		static const std::string				kEOL;
 		static const std::string::size_type		kLimitRequestLimit;
 		static const time_t						kRequestTimeoutSec;
+
+		static const std::map<int, Client *>::size_type kMaxClients;
 
 		void load( const char* file );
 

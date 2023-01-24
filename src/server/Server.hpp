@@ -21,7 +21,7 @@
 
 # include <types/nullptr_t.hpp>
 # include <config/Config.hpp>
-//# include <server/Client.hpp>
+# include <server/Client.hpp>
 
 /** CLASS -------------------------------------- */
 
@@ -38,37 +38,30 @@ class Server {
 
 		int start( void );
 
-		bool recv( int fd );
-		bool send( int fd );
+		// FIXME from here to end move to private
+		bool clientRecv( int fd );
+		bool clientSend( int fd );
 
 		void newClient( int fd );
 		void disconnectClient( int fd );
-		void closeClient( int fd );
-		//void timeoutClient( Client * client );
+		void checkDisconnectClient( Client * client );
 
 		void addToFdSet( int fd );
 		void delFromFdSet( int fd );
 	private:
 		Server & operator=( const Server & other); // not necessary
 
-		/*static const char *		k_default_path;
-		static const int		k_backlog_size; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
-		static const int		k_max_clients;
-		static const int		k_buffer_size;
-		static const time_t		k_timeout_sec;
-		static const long		k_nsec_loop_delay;*/
-
 		Config *							_config;
-		const std::vector<ServerConfig *> *	_server_configs;
+		const std::vector<ServerConfig *> *	_serverConfigs;
 
-		std::map<int, Listen *>					_servers;
-		//std::map<int, Client *>				_clients;
+		std::map<int, Listen *>				_servers;
+		std::map<int, Client *>				_clients;
 
-		std::list<int>	_fd_list;
-		fd_set			_fd_set;
-		fd_set			_fd_read;
-		fd_set			_fd_write;
-		int				_fd_max;
+		std::list<int>	_fdList;
+		fd_set			_fdSet;
+		fd_set			_fdRead;
+		fd_set			_fdWrite;
+		int				_fdMax;
 
 		int initialize( void );
 };

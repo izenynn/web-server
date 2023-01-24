@@ -10,10 +10,11 @@ namespace webserv {
 
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
-		  _server_configs( webserv::nullptr_t ) {
-	FD_ZERO( &(this->_fd_set) );
-	FD_ZERO( &(this->_fd_read) );
-	FD_ZERO( &(this->_fd_write) );
+		  _serverConfigs( webserv::nullptr_t ),
+		  _fdMax( 0 ) {
+	FD_ZERO( &(this->_fdSet) );
+	FD_ZERO( &(this->_fdRead) );
+	FD_ZERO( &(this->_fdWrite) );
 	return ;
 }
 
@@ -25,10 +26,10 @@ Server::~Server( void ) {
 		delete it->second;
 		this->_servers.erase( it++ );
 	}
-	/*for ( std::map<int, Clients *>::iterator it = this->_clients.begin(); it != this->_clients.end(); ) {
+	for ( std::map<int, Client *>::iterator it = this->_clients.begin(); it != this->_clients.end(); ) {
 		delete it->second;
 		this->_clients.erase( it++ );
-	}*/
+	}
 	return ;
 }
 
@@ -36,7 +37,7 @@ void Server::load( const char* file ) {
 	this->_config = new Config();
 	this->_config->load( file );
 
-	this->_server_configs = this->_config->getServers();
+	this->_serverConfigs = this->_config->getServers();
 
 	return ;
 }
@@ -69,10 +70,10 @@ int Server::start( void ) {
 	loop_delay.tv_nsec = Config::kNsecLoopDelay;
 
 	while ( true ) {
-		this->_fd_read	= this->_fd_set;
-		this->_fd_write	= this->_fd_set;
+		this->_fdRead	= this->_fdSet;
+		this->_fdWrite	= this->_fdSet;
 
-		ret = select( this->_fd_max + 1, &(this->_fd_read), &(this->_fd_write), NULL, &timeout );
+		ret = select( this->_fdMax + 1, &(this->_fdRead), &(this->_fdWrite), NULL, &timeout );
 
 		if ( -1 == ret ) {
 			log::failure( "select() failed with return code: -1" );
@@ -80,15 +81,47 @@ int Server::start( void ) {
 			// iterate our listeners
 			for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
 				// check if listener fd is on read set (if we need to read from that fd)
-				if ( 0 != FD_ISSET( it->first, &(this->_fd_read) ) ) {
+				if ( 0 != FD_ISSET( it->first, &(this->_fdRead) ) ) {
 					// create a new client!
 					this->newClient( it->first );
 				}
 			}
-			// TODO stuff
+
+			// iterate clients to read/write
+			for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ++it, ++prev ) {
+				int fd = it->first;
+				// check read fd and receive request
+				if ( FD_ISSET( fd, &(this->_fdRead) ) ) {
+					bool ret = this->clientRecv( fd );
+					// if error reading disconnect client
+					if ( false == ret ) {
+						this->disconnectClient( fd );
+						continue ;
+					}
+				}
+				// check if timeout or need to disconnect first
+				this->checkDisconnectClient( it->second );
+				// check write fd and send response
+				if ( FD_ISSET( fd, &(this->_fdWrite) ) ) {
+					// if error sending disconnect client
+					bool ret = this->clientSend( fd );
+					if ( false == ret ) {
+						this->disconnectClient( fd );
+						continue ;
+					}
+				}
+			}
+		} else {
+			log::error( "select() failed with unexpected return code: " + SSTR( ret ) );
+			return ( 1 );
 		}
 
 		while ( nanosleep( &loop_delay, &loop_delay ) );
+	}
+
+	// disconnect all clients on exit
+	for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ++it ) {
+		this->disconnectClient( it->first );
 	}
 
 	return ( 0 );
@@ -96,49 +129,73 @@ int Server::start( void ) {
 
 void Server::newClient( int fd ) {
 	struct sockaddr_storage addr;
-	socklen_t addr_len = sizeof( client );
+	socklen_t addr_len = sizeof( addr );
 
-	FD_CLR( fd, &(this->_fd_read) );
+	FD_CLR( fd, &(this->_fdRead) );
 
 	int sockfd = ::accept( fd, reinterpret_cast<struct sockaddr *>(&addr), &addr_len );
 	if ( -1 == sockfd ) {
 		log::failure( "accept() failed with return code: -1" );
 		return ;
 	}
-	log::info( "new connection on " + this->_servers[fd]->ip + ":" + SSTR( this->_servers[fd]->port ) );
+	log::info( "new connection with fd: " + SSTR( sockfd ) + " on " + this->_servers[fd]->ip + ":" + SSTR( this->_servers[fd]->port ) );
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-	this->_clients[sockfd] = new Client( sockfd, this->_servers[fd], this->_clients.size() >= Config::kMaxClients );
+	this->_clients[sockfd] = new Client( sockfd, *(this->_servers[fd]), this->_clients.size() >= Config::kMaxClients );
 
 	this->addToFdSet( sockfd );
 
 	return ;
 }
 
+void Server::disconnectClient( int fd ) {
+	this->delFromFdSet( fd );
+
+	if ( this->_clients.end() == this->_clients.find( fd ) ) {
+		log::failure( "tried to close non registered connection with fd: " + SSTR( fd ) );
+		return ;
+	}
+
+	delete this->_clients[fd];
+	this->_clients.erase( fd );
+	log::info( "closed connection with fd: " + SSTR( fd ) );
+
+	return ;
+}
+
+void Server::checkDisconnectClient( Client * client ) {
+	if ( true == client->checkTimeout() ) {
+		client->initResponse( *(this->_serverConfigs), 408 ); // 408 request timeout
+	}
+	if ( true == client->checkDisconnect() ) {
+		client->initResponse( *(this->_serverConfigs), 503 ); // 503 service unavailable
+	}
+}
+
 void Server::addToFdSet( int fd ) {
-	this->_fd_list.push_back( fd );
-	this->_fd_list.sort();
+	this->_fdList.push_back( fd );
+	this->_fdList.sort();
 
-	FD_SET( fd, &(this->_fd_set) );
+	FD_SET( fd, &(this->_fdSet) );
 
-	if ( fd > this->_fd_max ) {
-		this->_fd_max = fd;
+	if ( fd > this->_fdMax ) {
+		this->_fdMax = fd;
 	}
 
 	return ;
 }
 
 void Server::delFromFdSet( int fd ) {
-	for ( std::list<int>::iterator it = this->_fd_list.begin(); it != this->_fd_list.end(); ++it ) {
-		if ( fd == *it ) this->_fd_list.erase( it );
+	for ( std::list<int>::iterator it = this->_fdList.begin(); it != this->_fdList.end(); ++it ) {
+		if ( fd == *it ) this->_fdList.erase( it );
 		break ;
 	}
 
-	FD_CLR( fd, &(this->_fd_set) );
+	FD_CLR( fd, &(this->_fdSet) );
 
-	if ( fd == this->_fd_max ) {
-		this->_fd_max = *(this->_fd_list.rbegin() );
+	if ( fd == this->_fdMax ) {
+		this->_fdMax = *(this->_fdList.rbegin() );
 	}
 
 	return ;
@@ -149,7 +206,7 @@ int Server::initialize( void ) {
 	std::vector<Listen> binded;
 
 	// setup sockets, iterate each ServerConfig
-	for ( std::vector<ServerConfig *>::const_iterator it = this->_server_configs->begin(); it != this->_server_configs->end(); ++it ) {
+	for ( std::vector<ServerConfig *>::const_iterator it = this->_serverConfigs->begin(); it != this->_serverConfigs->end(); ++it ) {
 		// set default listen if server doesnt have one
 		std::vector<Listen *> & listens = (*it)->getListen();
 		if ( true == listens.empty() ) {
