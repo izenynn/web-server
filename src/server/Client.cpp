@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <server/Client.hpp>
+#include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
 
@@ -21,12 +22,15 @@ Client::Client( int fd, Listen & host, bool disconnect )
 Client::~Client( void ) {
 	if ( webserv::nullptr_t != this->_request ) {
 		delete this->_request;
+		this->_request = webserv::nullptr_t;
 	}
 	if ( webserv::nullptr_t != this->_response ) {
 		delete this->_response;
+		this->_response = webserv::nullptr_t;
 	}
 	if ( webserv::nullptr_t != this->_requestConfig ) {
 		delete this->_requestConfig;
+		this->_requestConfig = webserv::nullptr_t;
 	}
 	close( this->_fd );
 	return ;
@@ -35,12 +39,15 @@ Client::~Client( void ) {
 void Client::clear( void ) {
 	if ( webserv::nullptr_t != this->_request ) {
 		delete this->_request;
+		this->_request = webserv::nullptr_t;
 	}
 	if ( webserv::nullptr_t != this->_response ) {
 		delete this->_response;
+		this->_response = webserv::nullptr_t;
 	}
 	if ( webserv::nullptr_t != this->_requestConfig ) {
 		delete this->_requestConfig;
+		this->_requestConfig = webserv::nullptr_t;
 	}
 }
 
@@ -87,6 +94,7 @@ void Client::initRequest( void ) {
 
 bool Client::checkTimeout( void ) {
 	if ( this->_request != webserv::nullptr_t ) {
+		log::warning("check timeout");
 		struct timeval time;
 		gettimeofday( &time, NULL );
 		if ( time.tv_sec - this->_request->getTime().tv_sec > Config::kRequestTimeoutSec ) {

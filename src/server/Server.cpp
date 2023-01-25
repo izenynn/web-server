@@ -100,6 +100,7 @@ int Server::start( void ) {
 					}
 				}
 				// check if timeout or need to disconnect first
+				log::warning("c"); // DEBUG
 				this->checkDisconnectClient( it->second );
 				// check write fd and send response
 				if ( FD_ISSET( fd, &(this->_fdWrite) ) ) {
@@ -128,6 +129,7 @@ int Server::start( void ) {
 }
 
 int Server::clientRecv( int fd ) {
+	log::warning("recv..."); // DEBUG
 	// get request
 	Request * request = this->_clients[fd]->getRequest();
 	if ( webserv::nullptr_t == request ) {
@@ -163,6 +165,7 @@ int Server::clientRecv( int fd ) {
 	return ( 0 );
 }
 int Server::clientSend( int fd ) {
+	log::warning("send..."); // DEBUG
 	Response * response = this->_clients[fd]->getResponse();
 
 	// remove fd from set
@@ -174,6 +177,7 @@ int Server::clientSend( int fd ) {
 	}
 
 	// send response
+	std::cout << "\nRESPONSE:\nlenght: " << response->getResponseBody().length() << "\n" << response->getResponseBody() << std::endl; // DEBUG
 	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {
