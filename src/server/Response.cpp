@@ -194,9 +194,9 @@ Response::Response( RequestConfig & config, int statusCode )
 		: _statusCode( statusCode ),
 		  _requestConfig( config ) {
 	this->_methods["GET"]		= &Response::methodGet;
-	this->_methods["POST"]		= &Response::methodPost;
-	this->_methods["PUT"]		= &Response::methodPut;
-	this->_methods["DELETE"]	= &Response::methodDelete;
+	//this->_methods["POST"]		= &Response::methodPost;
+	//this->_methods["PUT"]		= &Response::methodPut;
+	//this->_methods["DELETE"]	= &Response::methodDelete;
 	return ;
 }
 
@@ -240,6 +240,10 @@ void Response::build( void ) {
 	}
 
 	return ;
+}
+
+const std::string & Response::getResponse( void ) {
+	return ( this->_response );
 }
 
 bool Response::getRedirect( void ) {

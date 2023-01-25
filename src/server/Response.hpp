@@ -22,11 +22,10 @@ class Response {
 		~Response( void );
 
 		void build( void );
+		const std::string & getResponse( void );
 
 		bool getRedirect( void );
 		std::string getRedirectUri( void );
-
-		const std::string & getResponse( void );
 
 		bool isConnectionClose( void );
 	private:
