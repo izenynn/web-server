@@ -11,6 +11,7 @@
 # include <unistd.h> // close()
 # include <sys/stat.h> // stat()
 # include <stdlib.h> // malloc()
+# include <dirent.h> // opendir()
 
 /** CLASS -------------------------------------- */
 
@@ -32,7 +33,7 @@ class Uri {
 		//bool deleteFile(...);
 		void closeFile();
 
-		std::string getIndex( std::vector<std::string> & indexes );
+		const std::string getIndex( std::vector<std::string> & indexes );
 		//void getFile( void ); // FIXME remove this line!!!
 
 		bool isDirectory( void );

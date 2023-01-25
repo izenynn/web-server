@@ -55,6 +55,35 @@ void Uri::closeFile( void ) {
 	return ;
 }
 
+const std::string Uri::getIndex( std::vector<std::string> & indexes ) {
+	std::string ret;
+	DIR * d;
+	struct dirent * e;
+
+	d = opendir( this->_path.c_str() );
+	if ( NULL != d ) {
+		while ( true ) {
+			e = readdir( d );
+			if ( NULL == e ) {
+				break ;
+			}
+
+			for ( std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); ++it ) {
+				if ( e->d_name == *it ) {
+					ret = "/" + std::string( e->d_name );
+					closedir( d );
+					return ( ret );
+				}
+			}
+		}
+	} else {
+		log::failure( "opendir() failed with return code -1" );
+	}
+
+	ret = "";
+	return ( ret );
+}
+
 bool Uri::isDirectory( void ) {
 	struct stat statbuf;
 	stat( this->_path.c_str(), &statbuf );
