@@ -52,7 +52,7 @@ void Uri::closeFile( void ) {
 	close( this->_fd );
 	this->_fd = 0;
 
-return ;
+	return ;
 }
 
 bool Uri::isDirectory( void ) {
