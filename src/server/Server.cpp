@@ -153,6 +153,7 @@ int Server::clientRecv( int fd ) {
 
 	// parse request into request class
 	int ret = request->parse( strBuffer );
+	request->print(); // DEBUG
 	// if error prepare response, if not, we will respond later :)
 	if ( ret >= 0 ) { // FIXME we can remove this i think
 		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );

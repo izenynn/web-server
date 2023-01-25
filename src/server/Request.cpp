@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <server/Request.hpp>
+#include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
 
@@ -103,6 +104,22 @@ Request::Request( void ) {
 
 Request::~Request( void ) {
 	return ;
+}
+
+void Request::print( void ) {
+	std::string i = "    ";
+	std::cout << std::endl <<"REQUEST:" << std::endl;
+	std::cout << i << "method:  " << this->_method << std::endl;
+	std::cout << i << "uri:     " << this->_request_uri << std::endl;
+	std::cout << i << "version: " << this->_version << std::endl;
+
+	std::cout << i << "headers:" << std::endl;
+	for ( std::map<std::string, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it ) {
+		std::cout << i << i << it->first << ": " << it->second << std::endl;
+	}
+
+	std::cout << i << "body:" << std::endl;
+	std::cout << i << this->_body << std::endl;
 }
 
 int Request::parse( const std::string & buffer ) {

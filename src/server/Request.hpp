@@ -21,6 +21,8 @@ class Request {
 		Request( void );
 		~Request( void );
 
+		void print( void );
+
 		int parse( const std::string & buffer );
 
 		const struct timeval & getTime( void );

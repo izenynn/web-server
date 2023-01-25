@@ -100,6 +100,8 @@ ServerConfig::~ServerConfig( void ) {
 }
 
 void ServerConfig::print( const std::string & indent ) {
+	std::cout << std::endl <<"CONFIG:" << std::endl;
+
 	std::cout << indent << "listen:" << std::endl;
 	for ( std::vector<Listen *>::const_iterator it = this->_listen.begin(); it != this->_listen.end(); ++it ) {
 		std::cout << indent << "    " << "ip: " << (*it)->ip << " port: " << (*it)->port << std::endl;
