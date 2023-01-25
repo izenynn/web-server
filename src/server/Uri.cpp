@@ -82,7 +82,7 @@ const std::string & Uri::getExtension( void ) {
 	return ( this->_fileExtension );
 }
 
-const std::string Uri::getContent( void ) {
+const std::string Uri::getFileContent( void ) {
 	std::string content;
 	char * buffer = reinterpret_cast<char *>( malloc( ( Uri::kReadBuffer + 1 ) * sizeof( char ) ) );
 

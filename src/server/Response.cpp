@@ -338,7 +338,7 @@ int Response::methodGet( void ) {
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 	} else {
-		this->_body = this->_uri.getContent();
+		this->_body = this->_uri.getFileContent();
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[this->_uri.getExtension()];
 	}

@@ -40,7 +40,7 @@ class Uri {
 
 		std::string getAutoIndex( const std::string & uri );
 		const std::string & getExtension( void );
-		const std::string getContent( void );
+		const std::string getFileContent( void );
 	private:
 		Uri( const Uri & other ); // not necessary
 		Uri & operator=( const Uri & other ); // not necessary
