@@ -266,9 +266,9 @@ int Request::parseBody( void ) {
 			return ( 400 ); // 400 bad request
 		}
 		std::string::size_type length = atoi( this->_headers["Content-Length"].c_str() );
-		if ( length < 0 ) {
+		/*if ( length < 0 ) { // FIXME remove this probably
 			return ( 400 ); // 400 bad request
-		}
+		}*/
 		this->_length = length;
 	// no body
 	} else {

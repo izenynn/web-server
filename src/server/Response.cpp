@@ -18,7 +18,8 @@ std::string getDate( void ) {
 	htime = gmtime( &time.tv_sec );
 
 	// Example: Date: Tue, 24 Dec 2022 19:22:21 GMT
-	int length = strftime( buffer, 32, "%a, %d %b %Y %T GMT", htime );
+	//int length = strftime( buffer, 32, "%a, %d %b %Y %T GMT", htime );
+	int length = strftime( buffer, 32, "%a, %d %b %Y %H:%M:%S GMT", htime );
 
 	return ( std::string( buffer, length ) );
 }
