@@ -13,11 +13,15 @@ RequestConfig::RequestConfig( Request & request, Listen & host, Client & client,
 		: _request( request ),
 		  _host( host ),
 		  _client( client ),
-		  _servers( servers ) {
+		  _servers( servers ),
+		  _locationAllocated( false ) {
 	return ;
 }
 
 RequestConfig::~RequestConfig( void ) {
+	if ( true == this->_locationAllocated ) {
+		delete this->_location;
+	}
 	return ;
 }
 
@@ -38,7 +42,7 @@ void RequestConfig::print( void ) const {
 }
 
 void RequestConfig::initialize( void ) {
-	const ServerConfig *									newServer = webserv::nullptr_t;
+	ServerConfig *											newServer = webserv::nullptr_t;
 	const std::pair<const std::string, ServerConfig *> *	newLocation = webserv::nullptr_t;
 
 	this->_request_uri = this->_request._request_uri;
@@ -46,8 +50,20 @@ void RequestConfig::initialize( void ) {
 	newServer = this->getRequestServer();
 	newLocation = this->getRequestLocation( newServer );
 
+	// assign server
 	this->_server = newServer;
-	this->_location = newLocation;
+	// delete previus location
+	if ( webserv::nullptr_t != this->_location && true == this->_locationAllocated ) {
+		delete this->_location;
+		this->_locationAllocated = false;
+	}
+	// assign location
+	if ( webserv::nullptr_t != newLocation ) {
+		this->_location = newLocation;
+	} else {
+		this->_location = new std::pair<const std::string, ServerConfig *>( std::string( newServer->_root ), newServer );
+		this->_locationAllocated = true;
+	}
 }
 
 void RequestConfig::redirect( const std::string & uri ) {
@@ -125,7 +141,7 @@ const std::string & RequestConfig::getRoot( void ) {
 	return ( this->_location->second->_root );
 }
 
-const ServerConfig * RequestConfig::getRequestServer( void ) {
+ServerConfig * RequestConfig::getRequestServer( void ) {
 	std::vector<ServerConfig *> matches;
 
 	// match server with same ip:port

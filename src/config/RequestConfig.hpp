@@ -43,7 +43,7 @@ class RequestConfig {
 	private:
 		RequestConfig( void ); // not necessary
 
-		const ServerConfig *									getRequestServer( void );
+		ServerConfig *											getRequestServer( void );
 		const std::pair<const std::string, ServerConfig *> *	getRequestLocation( const ServerConfig * const server );
 
 		std::string							_request_uri;
@@ -56,6 +56,7 @@ class RequestConfig {
 
 		const ServerConfig *									_server;
 		const std::pair<const std::string, ServerConfig *> *	_location;
+		bool													_locationAllocated;
 };
 
 } /** namespace webserv */
