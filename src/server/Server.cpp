@@ -139,14 +139,19 @@ int Server::clientRecv( int fd ) {
 	FD_CLR( fd, &(this->_fdRead ) );
 
 	// read socket
-	char buffer[Config::kBufferSize];
+	//char buffer[Config::kBufferSize];
+	char * buffer = reinterpret_cast<char *>( malloc( Config::kBufferSize * sizeof( char ) ) );
 	int size = recv( fd, buffer, Config::kBufferSize, 0 );
 	if ( size <= 0 ) {
+		free( buffer );
 		return ( 1 ); // disconnect
 	}
 
-	// parse request into request class
+	// convert to string
 	std::string strBuffer( buffer, size );
+	free( buffer );
+
+	// parse request into request class
 	int ret = request->parse( strBuffer );
 	// if error prepare response, if not, we will respond later :)
 	if ( ret >= 0 ) { // FIXME we can remove this i think
