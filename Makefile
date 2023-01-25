@@ -67,50 +67,17 @@ OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
 SRC_ROOT	=	main.cpp
 
-SRC_CONFIG	=	Config.cpp 			ServerConfig.cpp
+SRC_CONFIG	=	Config.cpp			ServerConfig.cpp	RequestConfig.cpp
 
-SRC_SERVER	=	Server.cpp
+SRC_SERVER	=	Server.cpp			Client.cpp			Request.cpp			\
+				Response.cpp		Uri.cpp
 
-SRC_UTILS	=	log.cpp
-
-#SRC_MAIN = 		handle_line.c
-#
-#SRC_BUILTIN =	cd.c				echo.c				env.c				\
-#				exit.c				export.c			pwd.c				\
-#				unset.c				cd_error.c			export_utils.c		\
-#				cd_utils.c			unset_utils.c
-#
-#SRC_EXEC =		exec.c				exec_ast.c			exec_cmd.c			\
-#				utils.c				exec_heredoc.c		heredoc.c			\
-#				handle_zombies.c	redir.c				redir_types.c		\
-#				path.c
-#
-#SRC_LEXER =		lexer.c				utils_1.c			utils_2.c			\
-#				pc_gen_st.c			pc_other_st.c		process_tokens.c	\
-#				token_utils.c		handle_expand.c		expand.c			\
-#				wildcards.c			wc_match.c			wc_match_frag.c		\
-#				wc_utils.c			wc_check.c
-#
-#SRC_PARSER =	parser.c			parser_utils.c		ast_utils_1.c		\
-#				ast_utils_2.c		parse_cmd_line.c	parse_and_or_1.c	\
-#				parse_and_or_2.c	parse_job.c			parse_cmd.c			\
-#				parse_tok_lst.c		parse_redir.c		parse_redir_in.c	\
-#				parse_redir_out.c
-#
-#SRC_PROMPT =	prompt.c
+SRC_UTILS	=	log.cpp				utils.cpp
 
 SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\
 			$(addprefix $(SRC_DIR_SERVER)/, $(SRC_SERVER))					\
 			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
-
-#SRC_NAME =	$(SRC_ROOT)														\
-#			$(addprefix $(SRC_DIR_MAIN)/, $(SRC_MAIN))						\
-#			$(addprefix $(SRC_DIR_BUILTIN)/, $(SRC_BUILTIN))				\
-#			$(addprefix $(SRC_DIR_EXEC)/, $(SRC_EXEC))						\
-#			$(addprefix $(SRC_DIR_LEXER)/, $(SRC_LEXER))					\
-#			$(addprefix $(SRC_DIR_PARSER)/, $(SRC_PARSER))					\
-#			$(addprefix $(SRC_DIR_PROMPT)/, $(SRC_PROMPT))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
 DEP_NAME = $(SRC_NAME:%.cpp=%.d)
@@ -135,7 +102,7 @@ $(NAME): $(OBJ)
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
 
 PHONY += install
-install: $(NAME) ## install binary on the system
+install: $(NAME)
 	install $(NAME) $(BIN_DIR)
 
 PHONY += sanitize
@@ -145,11 +112,11 @@ endif
 ifeq ($(UNAME_S),Darwin)
 sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address
 endif
-sanitize: $(NAME) ## compile with pedantic, debug symbol, and a bunch of sanitizes
+sanitize: $(NAME)
 
 PHONY += thread
 thread: CXXFLAGS += -g3 -fsanitize=thread
-thread: $(NAME) ## compile with thread sanitize
+thread: $(NAME)
 
 # OBJ
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp | $(OBJ_PATH) $(OBJ_DIRS)
@@ -168,19 +135,19 @@ $(OBJ_PATH):
 	@printf "${NOCOL}"
 
 PHONY += clean
-clean: ## clean objects and dependencies
+clean:
 	@printf "${RED}"
 	rm -rf $(OBJ_PATH)
 	@printf "${NOCOL}"
 
 PHONY += fclean
-fclean: clean ## clean everything
+fclean: clean
 	@printf "${RED}"
 	rm -rf $(NAME)
 	@printf "${NOCOL}"
 
 PHONY += re
-re: fclean all ## redo all
+re: fclean all
 
 -include $(DEP)
 
