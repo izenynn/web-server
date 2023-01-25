@@ -10,6 +10,7 @@
 # include <fcntl.h> // open()
 # include <unistd.h> // close()
 # include <sys/stat.h> // stat()
+# include <stdlib.h> // malloc()
 
 /** CLASS -------------------------------------- */
 
@@ -20,6 +21,8 @@ class Uri {
 		Uri( void );
 		Uri( const std::string & path );
 		~Uri( void );
+
+		static const size_t kReadBuffer;
 
 		void setPath( const std::string & path );
 
@@ -37,18 +40,17 @@ class Uri {
 
 		std::string getAutoIndex( const std::string & uri );
 		const std::string & getExtension( void );
-		const std::string & getContent( void );
+		const std::string getContent( void );
 	private:
 		Uri( const Uri & other ); // not necessary
 		Uri & operator=( const Uri & other ); // not necessary
 
-		void parseExtension( void );
+		void parseFileName( void );
 
 		std::string		_path;
 
 		int				_fd;
 		std::string		_fileName;
-		//std::string		_fileNameNoExt;
 		std::string		_fileExtension;
 };
 
