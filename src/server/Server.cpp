@@ -173,7 +173,7 @@ int Server::clientSend( int fd ) {
 	}
 
 	// send response
-	int ret = send( fd, response->getResponse().c_str(), response->getResponse().length(), 0 );
+	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {
 		log::failure( "send() failed with return code: " + SSTR( ret ) );

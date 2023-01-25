@@ -242,7 +242,7 @@ void Response::build( void ) {
 	return ;
 }
 
-const std::string & Response::getResponse( void ) {
+const std::string & Response::getResponseBody( void ) {
 	return ( this->_response );
 }
 
@@ -252,6 +252,15 @@ bool Response::getRedirect( void ) {
 
 std::string Response::getRedirectUri( void ) {
 	return ( this->_redirect_uri );
+}
+
+bool Response::isConnectionClose( void ) {
+	if ( this->_headers.end() != this->_headers.find( "Connection" ) ) {
+		if ( "close" == this->_headers["Connection"] ) {
+			return ( true );
+		}
+	}
+	return ( false );
 }
 
 int Response::process( void ) {

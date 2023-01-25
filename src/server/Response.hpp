@@ -22,8 +22,8 @@ class Response {
 		~Response( void );
 
 		void build( void );
-		const std::string & getResponse( void );
 
+		const std::string & getResponseBody( void );
 		bool getRedirect( void );
 		std::string getRedirectUri( void );
 
