@@ -315,8 +315,8 @@ void Response::setResponse( void ) {
 	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
 	this->_response += this->_requestConfig.getVersion() + " " + status + Config::kEOL;
 
+	this->_headers["Server"] = "mini-webserv";
 	this->_headers["Date"] = getDate();
-
 	for ( std::map<std::string, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it ) {
 		this->_response += it->first + ": " + it->second + Config::kEOL;
 	}
