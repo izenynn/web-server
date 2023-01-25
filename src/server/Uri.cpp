@@ -47,6 +47,7 @@ void Uri::setPath( const std::string & path ) {
 }
 
 bool Uri::openFile( void ) {
+	log::warning("### opening file..."); // DEBUG
 	// close any open file
 	this->closeFile();
 
@@ -64,6 +65,7 @@ void Uri::closeFile( void ) {
 		return ;
 	}
 
+	log::warning("### closing file..."); // DEBUG
 	close( this->_fd );
 	this->_fd = 0;
 
@@ -136,8 +138,9 @@ const std::string Uri::getFileContent( void ) {
 	}
 
 	lseek( this->_fd, 0, SEEK_SET );
+	std::cout << "### fd: " << this->_fd << std::endl;
 	while ( true ) {
-		int ret = read( this->_fd, &buffer, Uri::kReadBuffer );
+		int ret = read( this->_fd, buffer, Uri::kReadBuffer );
 		if ( 0 == ret ) {
 			break ;
 		}
@@ -149,6 +152,7 @@ const std::string Uri::getFileContent( void ) {
 		}
 		buffer[ret] = '\0';
 		content.insert( content.length(), buffer, ret );
+		std::cout << "### readed: " << buffer << std::endl;
 	}
 
 	free ( buffer );
