@@ -12,9 +12,9 @@
 namespace webserv {
 
 namespace utils {
-	std::string sanitizePath( const std::string & path );
+	std::string sanitizePath( std::string path );
 } /** namespace utils */
 
 } /** namespace webserv */
 
-#endif /** __PRINT_HPP__ */
+#endif /** __UTILS_HPP__ */

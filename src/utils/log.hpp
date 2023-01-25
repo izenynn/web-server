@@ -140,7 +140,7 @@ namespace webserv {
 
 namespace colors {
 
-} // namespace colors
+} /** namespace colors */
 
 namespace log {
 	void info(const std::string& msg);
@@ -152,4 +152,4 @@ namespace log {
 
 } /** namespace webserv */
 
-#endif /** __PRINT_HPP__ */
+#endif /** __LOG_HPP__ */

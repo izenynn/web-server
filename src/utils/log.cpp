@@ -27,6 +27,6 @@ namespace log {
 		std::cout << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << std::endl;
 		return;
 	}
-} // namespace log
+} /** namespace log */
 
-} // namespace webserv
+} /** namespace webserv */

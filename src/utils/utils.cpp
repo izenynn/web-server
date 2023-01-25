@@ -1,6 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
-#include <utils/log.hpp>
+# include <utils/utils.hpp>
 
 /** METHODS ------------------------------------ */
 
@@ -21,6 +21,6 @@ namespace utils {
 		}
 		return ( path );
 	}
-} // namespace log
+} /** namespace utils */
 
-} // namespace webserv
+} /** namespace webserv */
