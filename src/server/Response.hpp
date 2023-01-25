@@ -10,6 +10,7 @@
 # include <iostream>
 
 # include <config/RequestConfig.hpp>
+# include <server/Uri.hpp>
 
 /** CLASS -------------------------------------- */
 

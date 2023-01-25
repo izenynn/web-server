@@ -58,11 +58,11 @@ class Request {
 			kBody,
 			kChunk,
 			kComplete,
-			kError,
+			kError
 		};
 		enum ChunkStatus {
 			kChunkBody = 0,
-			kChunkSize,
+			kChunkSize
 		};
 
 		Status			_status;
