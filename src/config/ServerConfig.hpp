@@ -12,7 +12,6 @@
 # include <cstdio> // sscanf
 
 # include <types/nullptr_t.hpp>
-# include <config/Config.hpp>
 # include <config/Listen.hpp>
 
 /** CLASS -------------------------------------- */
@@ -24,7 +23,9 @@ class ServerConfig {
 		typedef std::vector<std::string> token_type;
 	public:
 		ServerConfig( void );
-		virtual ~ServerConfig( void );
+		~ServerConfig( void );
+
+		static const std::string::size_type kClientMaxBodySize;
 
 		void print( const std::string & indent ); // FIXME just to test, remove this
 		void parser( token_type::const_iterator & it );

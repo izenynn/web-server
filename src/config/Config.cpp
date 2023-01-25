@@ -3,9 +3,9 @@
 #include <config/Config.hpp>
 #include <utils/log.hpp>
 
-namespace webserv {
-
 /** CLASS -------------------------------------- */
+
+namespace webserv {
 
 const char *					Config::kDefaultPath = "/etc/aps/aps.conf";
 const int						Config::kBacklogSize = 1024;
@@ -15,7 +15,6 @@ const long						Config::kNsecLoopDelay = 500L * 1000L;
 const std::string				Config::kEOL = "\r\n";
 const std::string::size_type	Config::kLimitRequestLimit = 8190;
 const time_t					Config::kRequestTimeoutSec = 60;
-const size_t					Config::kClientMaxBodySize = 8196;
 
 const std::map<int, Client *>::size_type Config::kMaxClients = 1024;
 

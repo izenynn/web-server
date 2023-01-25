@@ -35,7 +35,6 @@ class Config {
 		static const std::string				kEOL;
 		static const std::string::size_type		kLimitRequestLimit;
 		static const time_t						kRequestTimeoutSec;
-		static const std::string::size_type		kClientMaxBodySize;
 
 		static const std::map<int, Client *>::size_type kMaxClients;
 
