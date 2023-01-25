@@ -129,7 +129,7 @@ int Server::start( void ) {
 }
 
 int Server::clientRecv( int fd ) {
-	log::warning("recv..."); // DEBUG
+	log::warning("receiving on fd: " + SSTR( fd ) ); // DEBUG
 	// get request
 	Request * request = this->_clients[fd]->getRequest();
 	if ( webserv::nullptr_t == request ) {
@@ -159,13 +159,14 @@ int Server::clientRecv( int fd ) {
 	// if error prepare response, if not, we will respond later :)
 	if ( ret >= 0 ) { // FIXME we can remove this i think
 		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
+		this->_clients[fd]->getRequestConfig()->print(); // DEBUG
 		this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
+		this->_clients[fd]->getResponse()->print(); // DEBUG
 	}
 
 	return ( 0 );
 }
 int Server::clientSend( int fd ) {
-	log::warning("send..."); // DEBUG
 	Response * response = this->_clients[fd]->getResponse();
 
 	// remove fd from set
@@ -175,6 +176,8 @@ int Server::clientSend( int fd ) {
 	if ( webserv::nullptr_t == response ) {
 		return ( 0 );
 	}
+
+	log::warning("sending on fd: " + SSTR( fd ) ); // DEBUG
 
 	// send response
 	std::cout << "\nRESPONSE:\nlenght: " << response->getResponseBody().length() << "\n" << response->getResponseBody() << std::endl; // DEBUG

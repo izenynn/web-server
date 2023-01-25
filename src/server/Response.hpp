@@ -21,6 +21,8 @@ class Response {
 		Response( RequestConfig & config, int statusCode );
 		~Response( void );
 
+		void print( void ) const;
+
 		void build( void );
 
 		const std::string & getResponseBody( void );

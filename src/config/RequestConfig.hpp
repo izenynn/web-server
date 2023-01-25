@@ -18,6 +18,8 @@ class RequestConfig {
 		RequestConfig( Request & request, Listen & host, Client & client, const std::vector<ServerConfig *> & servers );
 		~RequestConfig( void );
 
+		void print( void ) const;
+
 		void initialize( void );
 		void redirect( const std::string & uri );
 

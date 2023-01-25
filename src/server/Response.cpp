@@ -204,6 +204,11 @@ Response::~Response( void ) {
 	return ;
 }
 
+void Response::print( void ) const {
+	std::cout << "\nRESPONSE:" << std::endl;
+	std::cout << "todo..." << std::endl;
+}
+
 void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 

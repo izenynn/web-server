@@ -108,7 +108,7 @@ Request::~Request( void ) {
 
 void Request::print( void ) const {
 	std::string i = "    ";
-	std::cout << std::endl <<"REQUEST:" << std::endl;
+	std::cout << "\nREQUEST:" << std::endl;
 	std::cout << i << "method:  " << this->_method << std::endl;
 	std::cout << i << "uri:     " << this->_request_uri << std::endl;
 	std::cout << i << "version: " << this->_version << std::endl;
@@ -120,6 +120,8 @@ void Request::print( void ) const {
 
 	std::cout << i << "body:" << std::endl;
 	std::cout << i << this->_body << std::endl;
+
+	return ;
 }
 
 int Request::parse( const std::string & buffer ) {

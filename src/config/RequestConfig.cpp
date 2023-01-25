@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
-# include <config/RequestConfig.hpp>
+#include <config/RequestConfig.hpp>
+#include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
 
@@ -17,6 +18,22 @@ RequestConfig::RequestConfig( Request & request, Listen & host, Client & client,
 }
 
 RequestConfig::~RequestConfig( void ) {
+	return ;
+}
+
+void RequestConfig::print( void ) const {
+	std::string i = "    ";
+	std::cout << "\nREQUEST CONFIG:" << std::endl;
+
+	std::cout << i << "SERVER:" << std::endl;
+	this->_server->print( i + "    " );
+
+	if ( webserv::nullptr_t != this->_location ) {
+		std::cout << i << "LOCATION:" << std::endl;
+		std::cout << i << "location: " << this->_location->first << std::endl;
+		this->_location->second->print( i + "    " );
+	}
+
 	return ;
 }
 
