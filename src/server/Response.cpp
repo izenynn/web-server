@@ -285,9 +285,9 @@ int Response::process( void ) {
 			}
 
 			// TODO getFile()
-			this->_uri.getFile();
+			//this->_uri.getFile(); // FIXME remove this line!!!
 
-			if ( this->_uri.openFile() ) {
+			if ( false == this->_uri.openFile() ) {
 				return ( 403 ); // 403 forbidden
 			}
 		}

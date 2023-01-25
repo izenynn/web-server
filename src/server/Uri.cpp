@@ -52,10 +52,6 @@ void Uri::closeFile( void ) {
 	return ;
 }
 
-void getFile( void ) {
-	;
-}
-
 bool Uri::isDirectory( void ) {
 	struct stat statbuf;
 	stat( this->_path.c_str(), &statbuf );

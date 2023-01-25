@@ -30,7 +30,7 @@ class Uri {
 		void closeFile();
 
 		std::string getIndex( std::vector<std::string> & indexes );
-		void getFile( void );
+		//void getFile( void ); // FIXME remove this line!!!
 
 		bool isDirectory( void );
 		bool fileExists( void );
@@ -48,7 +48,7 @@ class Uri {
 
 		int				_fd;
 		std::string		_fileName;
-		std::string		_fileFullName;
+		//std::string		_fileNameNoExt;
 		std::string		_fileExtension;
 };
 
