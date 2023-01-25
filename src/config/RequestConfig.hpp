@@ -37,6 +37,7 @@ class RequestConfig {
 		std::vector<std::string> &			getIndex( void );
 		bool								getAutoIndex( void );
 		const std::string &					getLocationUri( void );
+		const std::string &					getRoot( void );
 	private:
 		RequestConfig( void ); // not necessary
 

@@ -206,6 +206,8 @@ Response::~Response( void ) {
 void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 
+	this->_uri.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
+
 	// check for errors and process request if none
 	if ( false == this->_requestConfig.isValidMethod( method ) ) {
 		// set error code

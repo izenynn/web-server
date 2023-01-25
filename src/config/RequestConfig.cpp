@@ -104,6 +104,10 @@ const std::string & RequestConfig::getLocationUri( void ) {
 	return ( this->_location->first );
 }
 
+const std::string & RequestConfig::getRoot( void ) {
+	return ( this->_location->second->_root );
+}
+
 const ServerConfig * RequestConfig::getRequestServer( void ) {
 	std::vector<ServerConfig *> matches;
 
