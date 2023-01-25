@@ -24,6 +24,7 @@ int main( int argc, char * argv[] ) {
 	// web server
 	server = new webserv::Server();
 
+	webserv::log::info( "loading config..." );
 	try {
 		if ( argc == 2 ) server->load( argv[1] );
 		else             server->load();
@@ -35,6 +36,7 @@ int main( int argc, char * argv[] ) {
 
 	//server->print();
 
+	webserv::log::info( "starting..." );
 	ret = server->start();
 
 	delete server;

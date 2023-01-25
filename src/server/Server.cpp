@@ -130,7 +130,7 @@ int Server::start( void ) {
 int Server::clientRecv( int fd ) {
 	// get request
 	Request * request = this->_clients[fd]->getRequest();
-	if ( webserv::nullptr_t == this->_clients[fd] ) {
+	if ( webserv::nullptr_t == request ) {
 		this->_clients[fd]->initRequest();
 		request = this->_clients[fd]->getRequest();
 	}
