@@ -25,12 +25,12 @@ void RequestConfig::print( void ) const {
 	std::string i = "    ";
 	std::cout << "\nREQUEST CONFIG:" << std::endl;
 
-	std::cout << i << "SERVER:" << std::endl;
+	std::cout << i << "server:" << std::endl;
 	this->_server->print( i + "    " );
 
 	if ( webserv::nullptr_t != this->_location ) {
-		std::cout << i << "LOCATION:" << std::endl;
-		std::cout << i << "location: " << this->_location->first << std::endl;
+		std::cout << i << "location:" << std::endl;
+		std::cout << i << "location uri: " << this->_location->first << std::endl;
 		this->_location->second->print( i + "    " );
 	}
 

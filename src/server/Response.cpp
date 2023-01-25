@@ -191,7 +191,9 @@ std::map<int, std::string>			Response::kStatusCodes = initStatusCodes();
 std::map<std::string, std::string>	Response::kMimeTypes = initMimeTypes();
 
 Response::Response( RequestConfig & config, int statusCode )
-		: _statusCode( statusCode ),
+		: _redirect( false ),
+		  _redirect_status_code( 0 ),
+		  _statusCode( statusCode ),
 		  _requestConfig( config ) {
 	this->_methods["GET"]		= &Response::methodGet;
 	//this->_methods["POST"]		= &Response::methodPost;
@@ -205,8 +207,31 @@ Response::~Response( void ) {
 }
 
 void Response::print( void ) const {
+	std::string i = "    ";
 	std::cout << "\nRESPONSE:" << std::endl;
-	std::cout << "todo..." << std::endl;
+
+	std::cout << i << "redirect:     " << std::boolalpha << this->_redirect << std::endl;
+	std::cout << i << "redirect uri: " << this->_redirect_uri << std::endl;
+	std::cout << i << "redirect st:  " << this->_redirect_status_code << std::endl;
+	std::cout << i << "status code:  " << this->_statusCode << std::endl;
+	std::cout << i << "headers:" << std::endl;
+	for ( std::map<std::string, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it ) {
+		std::cout << i << i << it->first << ": " << it->second << std::endl;
+	}
+
+	std::cout << i << "body:" << std::endl;
+	std::cout << i << this->_body << std::endl;
+
+	std::cout << i << "response:" << std::endl;
+	std::cout << i << this->_response << std::endl;
+
+	std::cout << i << "request config:" << std::endl;
+	this->_requestConfig.print();
+
+	std::cout << i << "uri:" << std::endl;
+	this->_uri.print();
+
+	return ;
 }
 
 void Response::build( void ) {

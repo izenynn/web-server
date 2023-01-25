@@ -25,6 +25,8 @@ class Uri {
 
 		static const size_t kReadBuffer;
 
+		void print( void ) const;
+
 		void setPath( const std::string & path );
 
 		bool openFile();
@@ -36,8 +38,8 @@ class Uri {
 		const std::string getIndex( std::vector<std::string> & indexes );
 		//void getFile( void ); // FIXME remove this line!!!
 
-		bool isDirectory( void );
-		bool fileExists( void );
+		bool isDirectory( void ) const;
+		bool fileExists( void ) const;
 
 		std::string getAutoIndex( const std::string & uri );
 		const std::string & getExtension( void );

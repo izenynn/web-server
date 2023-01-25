@@ -23,6 +23,21 @@ Uri::~Uri() {
 	return ;
 }
 
+void Uri::print( void ) const {
+	std::string i = "        ";
+	std::cout << "    " << "\nRESPONSE URI:" << std::endl;
+
+	std::cout << i << "path:      " << this->_path << std::endl;
+	std::cout << i << "fd:        " << this->_fd << std::endl;
+	std::cout << i << "file name: " << this->_fileName << std::endl;
+	std::cout << i << "file ext:  " << this->_fileExtension << std::endl;
+
+	std::cout << i << "is dir:    " << std::boolalpha << this->isDirectory() << std::endl;
+	std::cout << i << "exists:    " << std::boolalpha << this->fileExists() << std::endl;
+
+	return ;
+}
+
 void Uri::setPath( const std::string & path ) {
 	this->_path = utils::sanitizePath( path );
 
@@ -84,13 +99,13 @@ const std::string Uri::getIndex( std::vector<std::string> & indexes ) {
 	return ( ret );
 }
 
-bool Uri::isDirectory( void ) {
+bool Uri::isDirectory( void ) const {
 	struct stat statbuf;
 	stat( this->_path.c_str(), &statbuf );
 	return ( S_ISDIR( statbuf.st_mode ) );
 }
 
-bool Uri::fileExists( void ) {
+bool Uri::fileExists( void ) const {
 	struct stat statbuf;
 	int ret = stat( this->_path.c_str(), &statbuf );
 	if ( ret == 0 ) {
