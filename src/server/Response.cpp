@@ -237,10 +237,14 @@ void Response::print( void ) const {
 void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 
+	log::warning("> inside build");
 	this->_uri.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
+	log::warning("> uri set path to: " + this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri());
 
 	// check for errors and process request if none
+	log::warning("> checking for errors...");
 	if ( false == this->_requestConfig.isValidMethod( method ) ) {
+		log::warning("> 405");
 		// set error code
 		this->_statusCode = 405; // 405 method not allowed
 		// set allow header
@@ -254,21 +258,27 @@ void Response::build( void ) {
 		}
 		this->_headers["Allow"] = allowedMethods;
 	} else if ( this->_requestConfig.getBody().length() > this->_requestConfig.getMaxBodySize() ) {
+		log::warning("> 413");
 		this->_statusCode = 413; // 413 payload too large
 	} else {
+		log::warning("> no errors... processing method...");
 		this->_statusCode = this->process(); // process method
 	}
 
+	log::warning("> method processed!");
 	// check if error page needed
 	if ( this->_statusCode >= 300 && 0 == this->_body.length() ) {
+		log::warning("> generating error page...");
 		this->generateErrorPage( this->_statusCode );
 	}
 
 	// check if not redirection
 	if ( false == this->_redirect ) {
+		log::warning("> setting response...");
 		this->setResponse();
 	}
 
+	log::warning("> finish build!");
 	return ;
 }
 

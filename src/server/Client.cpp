@@ -52,6 +52,7 @@ void Client::clear( void ) {
 }
 
 void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
+	log::warning("- init respose...");
 	// generate request and request config if doesnt exists // FIXME necessary ???
 	if ( webserv::nullptr_t == this->_request ) {
 		this->initRequest();
@@ -61,10 +62,14 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 	}
 
 	// generate response
+	log::warning("- new response...");
 	this->_response = new Response( *(this->_requestConfig), statusCode );
+	log::warning("- new response ready");
 
 	// build response
-	for ( int tries = 0, redo = 0; redo != 0; ++tries ) {
+	log::warning("- building...");
+	for ( int tries = 0, redo = 1; redo != 0; ++tries ) {
+		log::warning("- for iteration");
 		redo = 0;
 		this->_response->build();
 		if ( true == this->_response->getRedirect() ) {
