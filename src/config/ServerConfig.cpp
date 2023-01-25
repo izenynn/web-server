@@ -99,7 +99,7 @@ ServerConfig::~ServerConfig( void ) {
 	return ;
 }
 
-void ServerConfig::print( const std::string & indent ) {
+void ServerConfig::print( const std::string & indent ) const {
 	std::cout << std::endl <<"CONFIG:" << std::endl;
 
 	std::cout << indent << "listen:" << std::endl;

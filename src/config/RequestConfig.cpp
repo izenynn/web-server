@@ -27,7 +27,7 @@ void RequestConfig::initialize( void ) {
 	this->_request_uri = this->_request._request_uri;
 
 	newServer = this->getRequestServer();
-	newLocation = this->getRequestLocation();
+	newLocation = this->getRequestLocation( newServer );
 
 	this->_server = newServer;
 	this->_location = newLocation;
@@ -36,7 +36,7 @@ void RequestConfig::initialize( void ) {
 void RequestConfig::redirect( const std::string & uri ) {
 	const std::pair<const std::string, ServerConfig *> * newLocation = webserv::nullptr_t;
 
-	newLocation = this->getRequestLocation();
+	newLocation = this->getRequestLocation( this->_server );
 
 	this->_request_uri = uri;
 	if ( webserv::nullptr_t != newLocation ) {
@@ -137,11 +137,11 @@ const ServerConfig * RequestConfig::getRequestServer( void ) {
 	return ( matches.front() );
 }
 
-const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLocation( void ) {
+const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLocation( const ServerConfig * const server ) {
 	const std::pair<const std::string, ServerConfig *> * match = webserv::nullptr_t;
 
 	// find location with longest match
-	for ( std::map<std::string, ServerConfig *>::const_iterator it = this->_server->_location.begin(); it != this->_server->_location.end(); ++it ) {
+	for ( std::map<std::string, ServerConfig *>::const_iterator it = server->_location.begin(); it != server->_location.end(); ++it ) {
 		if ( this->_request_uri.find( it->first ) ) {
 			if ( webserv::nullptr_t == match ) {
 				match = &(*it);
@@ -151,7 +151,7 @@ const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLo
 		}
 	}
 
-	return match;
+	return ( match );
 }
 
 } /** namespace webserv */

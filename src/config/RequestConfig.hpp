@@ -42,7 +42,7 @@ class RequestConfig {
 		RequestConfig( void ); // not necessary
 
 		const ServerConfig *									getRequestServer( void );
-		const std::pair<const std::string, ServerConfig *> *	getRequestLocation( void );
+		const std::pair<const std::string, ServerConfig *> *	getRequestLocation( const ServerConfig * const server );
 
 		std::string							_request_uri;
 

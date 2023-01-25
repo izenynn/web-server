@@ -21,7 +21,7 @@ class Request {
 		Request( void );
 		~Request( void );
 
-		void print( void );
+		void print( void ) const;
 
 		int parse( const std::string & buffer );
 

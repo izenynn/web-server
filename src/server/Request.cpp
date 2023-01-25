@@ -106,7 +106,7 @@ Request::~Request( void ) {
 	return ;
 }
 
-void Request::print( void ) {
+void Request::print( void ) const {
 	std::string i = "    ";
 	std::cout << std::endl <<"REQUEST:" << std::endl;
 	std::cout << i << "method:  " << this->_method << std::endl;
