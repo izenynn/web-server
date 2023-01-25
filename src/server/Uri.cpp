@@ -114,6 +114,11 @@ const std::string & Uri::getExtension( void ) {
 const std::string Uri::getFileContent( void ) {
 	std::string content;
 	char * buffer = reinterpret_cast<char *>( malloc( ( Uri::kReadBuffer + 1 ) * sizeof( char ) ) );
+	if ( NULL == buffer ) {
+		log::failure( "malloc() failed with return code -1" );
+		content = "";
+		return ( content );
+	}
 
 	lseek( this->_fd, 0, SEEK_SET );
 	while ( true ) {
@@ -123,6 +128,7 @@ const std::string Uri::getFileContent( void ) {
 		}
 		if ( -1 == ret ) {
 			log::failure( "read() failed with return code -1" );
+			free( buffer );
 			content = "";
 			return ( content );
 		}
@@ -130,6 +136,7 @@ const std::string Uri::getFileContent( void ) {
 		content.insert( content.length(), buffer, ret );
 	}
 
+	free ( buffer );
 	return ( content );
 }
 
