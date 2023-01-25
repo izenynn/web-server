@@ -239,7 +239,7 @@ void Response::build( void ) {
 
 	log::warning("> inside build");
 	this->_uri.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
-	log::warning("> uri set path to: " + this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri());
+	log::warning("> uri set path to: " + utils::sanitizePath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() ) );
 
 	// check for errors and process request if none
 	log::warning("> checking for errors...");
