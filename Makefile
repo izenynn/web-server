@@ -72,7 +72,7 @@ SRC_CONFIG	=	Config.cpp			ServerConfig.cpp	RequestConfig.cpp
 SRC_SERVER	=	Server.cpp			Client.cpp			Request.cpp			\
 				Response.cpp		Uri.cpp
 
-SRC_UTILS	=	log.cpp				utils.cpp
+SRC_UTILS	=	utils.cpp
 
 SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\

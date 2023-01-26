@@ -143,11 +143,30 @@ namespace colors {
 } /** namespace colors */
 
 namespace log {
-	void info(const std::string& msg);
-	void success(const std::string& msg);
-	void warning(const std::string& msg);
-	void failure(const std::string& msg);
-	void error(const std::string& msg);
+	inline void info( const std::string & msg ) {
+		std::cout << "[" << C_BLUE << "*" << C_OFF << "] " << msg << std::endl;
+		return;
+	}
+	inline void success( const std::string & msg) {
+		std::cout << "[" << C_GREEN << "+" << C_OFF << "] " << msg << std::endl;
+		return;
+	}
+	inline void warning( const std::string & msg) {
+		std::cout << "[" << C_YELLOW << "!" << C_OFF << "] " << msg << std::endl;
+		return;
+	}
+	inline void failure( const std::string & msg) {
+		std::cerr << "[" << C_RED << "-" << C_OFF << "] " << msg << std::endl;
+		return;
+	}
+	inline void error( const std::string & msg) {
+		std::clog << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << std::endl;
+		return;
+	}
+	inline void debug( const std::string & msg ) {
+		std::clog << "[" << CBACK_YELLOW_WHITE << "DEBUG" << C_OFF << "] " << msg << std::endl;
+		return;
+	}
 } /** namespace log */
 
 } /** namespace webserv */
