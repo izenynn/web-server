@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __URI_HPP__
-# define __URI_HPP__
+#ifndef __RESPONSE_DATA_HPP__
+# define __RESPONSE_DATA_HPP__
 
 /** INCLUDES ----------------------------------- */
 
@@ -17,11 +17,11 @@
 
 namespace webserv {
 
-class Uri {
+class ResponseData {
 	public:
-		Uri( void );
-		Uri( const std::string & path );
-		~Uri( void );
+		ResponseData( void );
+		ResponseData( const std::string & path );
+		~ResponseData( void );
 
 		static const size_t kReadBuffer;
 
@@ -45,8 +45,8 @@ class Uri {
 		const std::string & getExtension( void );
 		const std::string getFileContent( void );
 	private:
-		Uri( const Uri & other ); // not necessary
-		Uri & operator=( const Uri & other ); // not necessary
+		ResponseData( const ResponseData & other ); // not necessary
+		ResponseData & operator=( const ResponseData & other ); // not necessary
 
 		void parseFileName( void );
 
@@ -59,4 +59,4 @@ class Uri {
 
 } /** namespace webserv */
 
-#endif /** __URI_HPP__ */
+#endif /** __RESPONSE_DATA_HPP__ */

@@ -53,30 +53,34 @@ CXXFLAGS += -I ./$(SRC_PATH)
 #                                   SOURCES                                    #
 # **************************************************************************** #
 
-SRC_DIR_CONFIG	= config
-SRC_DIR_SERVER	= server
-SRC_DIR_UTILS	= utils
+SRC_DIR_CONFIG		= config
+SRC_DIR_SERVER		= server
+SRC_DIR_REQUEST		= request
+SRC_DIR_RESPONSE	= response
+SRC_DIR_UTILS		= utils
 
-OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)	$(SRC_DIR_SERVER)	$(SRC_DIR_UTILS)
-
-#OBJ_DIRS_NAME =	$(SRC_DIR_MAIN)		$(SRC_DIR_BUILTIN)	$(SRC_DIR_EXEC)		\
-				$(SRC_DIR_LEXER)	$(SRC_DIR_PARSER)	$(SRC_DIR_PROMPT)	\
-				$(SRC_DIR_UTILS)
+OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)	$(SRC_DIR_SERVER)	$(SRC_DIR_REQUEST)	\
+				$(SRC_DIR_RESPONSE)	$(SRC_DIR_UTILS)
 
 OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
-SRC_ROOT	=	main.cpp
+SRC_ROOT		=	main.cpp
 
-SRC_CONFIG	=	Config.cpp			ServerConfig.cpp	RequestConfig.cpp
+SRC_CONFIG		=	Config.cpp			ServerConfig.cpp
 
-SRC_SERVER	=	Server.cpp			Client.cpp			Request.cpp			\
-				Response.cpp		Uri.cpp
+SRC_SERVER		=	Server.cpp			Client.cpp
 
-SRC_UTILS	=	utils.cpp
+SRC_REQUEST		=	Request.cpp			RequestConfig.cpp
+
+SRC_RESPONSE	=	Response.cpp		ResponseData.cpp
+
+SRC_UTILS		=	utils.cpp
 
 SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\
 			$(addprefix $(SRC_DIR_SERVER)/, $(SRC_SERVER))					\
+			$(addprefix $(SRC_DIR_REQUEST)/, $(SRC_REQUEST))				\
+			$(addprefix $(SRC_DIR_RESPONSE)/, $(SRC_RESPONSE))				\
 			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)

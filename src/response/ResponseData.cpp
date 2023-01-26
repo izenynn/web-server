@@ -1,6 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
-#include <server/Uri.hpp>
+#include <response/ResponseData.hpp>
 #include <utils/utils.hpp>
 #include <utils/log.hpp>
 #include <types/nullptr_t.hpp>
@@ -11,19 +11,19 @@
 
 namespace webserv {
 
-const size_t Uri::kReadBuffer = 8192;
+const size_t ResponseData::kReadBuffer = 8192;
 
-Uri::Uri()
+ResponseData::ResponseData()
 		: _fd( 0 ) {
 	return ;
 }
 
-Uri::~Uri() {
+ResponseData::~ResponseData() {
 	this->closeFile();
 	return ;
 }
 
-void Uri::print( void ) const {
+void ResponseData::print( void ) const {
 	std::string i = "        ";
 	std::cout << "    " << "\nRESPONSE URI:" << std::endl;
 
@@ -38,7 +38,7 @@ void Uri::print( void ) const {
 	return ;
 }
 
-void Uri::setPath( const std::string & path ) {
+void ResponseData::setPath( const std::string & path ) {
 	this->_path = utils::sanitizePath( path );
 
 	this->parseFileName();
@@ -46,7 +46,7 @@ void Uri::setPath( const std::string & path ) {
 	return ;
 }
 
-bool Uri::openFile( void ) {
+bool ResponseData::openFile( void ) {
 	log::warning("### opening file..."); // DEBUG
 	// close any open file
 	this->closeFile();
@@ -60,7 +60,7 @@ bool Uri::openFile( void ) {
 	}
 }
 
-void Uri::closeFile( void ) {
+void ResponseData::closeFile( void ) {
 	if ( this->_fd <= 0 ) {
 		return ;
 	}
@@ -72,7 +72,7 @@ void Uri::closeFile( void ) {
 	return ;
 }
 
-const std::string Uri::getIndex( std::vector<std::string> & indexes ) {
+const std::string ResponseData::getIndex( std::vector<std::string> & indexes ) {
 	std::string ret;
 	DIR * d;
 	struct dirent * e;
@@ -101,13 +101,13 @@ const std::string Uri::getIndex( std::vector<std::string> & indexes ) {
 	return ( ret );
 }
 
-bool Uri::isDirectory( void ) const {
+bool ResponseData::isDirectory( void ) const {
 	struct stat statbuf;
 	stat( this->_path.c_str(), &statbuf );
 	return ( S_ISDIR( statbuf.st_mode ) );
 }
 
-bool Uri::fileExists( void ) const {
+bool ResponseData::fileExists( void ) const {
 	struct stat statbuf;
 	int ret = stat( this->_path.c_str(), &statbuf );
 	if ( ret == 0 ) {
@@ -117,20 +117,20 @@ bool Uri::fileExists( void ) const {
 	}
 }
 
-std::string Uri::getAutoIndex( const std::string & uri ) {
+std::string ResponseData::getAutoIndex( const std::string & uri ) {
 	// TODO autoindex
 	(void)uri;
 	std::string body = "<html><head><title>TODO</title></head><body><h1>TODO</h1></body></html>";
 	return ( body );
 }
 
-const std::string & Uri::getExtension( void ) {
+const std::string & ResponseData::getExtension( void ) {
 	return ( this->_fileExtension );
 }
 
-const std::string Uri::getFileContent( void ) {
+const std::string ResponseData::getFileContent( void ) {
 	std::string content;
-	char * buffer = reinterpret_cast<char *>( malloc( ( Uri::kReadBuffer + 1 ) * sizeof( char ) ) );
+	char * buffer = reinterpret_cast<char *>( malloc( ( ResponseData::kReadBuffer + 1 ) * sizeof( char ) ) );
 	if ( NULL == buffer ) {
 		log::failure( "malloc() failed with return code -1" );
 		content = "";
@@ -140,7 +140,7 @@ const std::string Uri::getFileContent( void ) {
 	lseek( this->_fd, 0, SEEK_SET );
 	std::cout << "### fd: " << this->_fd << std::endl;
 	while ( true ) {
-		int ret = read( this->_fd, buffer, Uri::kReadBuffer );
+		int ret = read( this->_fd, buffer, ResponseData::kReadBuffer );
 		if ( 0 == ret ) {
 			break ;
 		}
@@ -159,7 +159,7 @@ const std::string Uri::getFileContent( void ) {
 	return ( content );
 }
 
-void Uri::parseFileName( void ) {
+void ResponseData::parseFileName( void ) {
 	std::string fileName = this->_path.substr( this->_path.find_last_of( "/" ) + 1 );
 	if ( true == fileName.empty() ) {
 		// is a directory

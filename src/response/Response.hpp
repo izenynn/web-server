@@ -9,8 +9,8 @@
 # include <string>
 # include <iostream>
 
-# include <config/RequestConfig.hpp>
-# include <server/Uri.hpp>
+# include <request/RequestConfig.hpp>
+# include <response/ResponseData.hpp>
 
 /** CLASS -------------------------------------- */
 
@@ -65,7 +65,7 @@ class Response {
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
 
-		Uri									_uri;
+		ResponseData						_responseData;
 };
 
 } /** namespace webserv */

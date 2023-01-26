@@ -10,8 +10,8 @@
 
 # include <config/Listen.hpp>
 # include <config/ServerConfig.hpp>
-# include <server/Request.hpp>
-# include <server/Response.hpp>
+# include <request/Request.hpp>
+# include <response/Response.hpp>
 
 /** CLASS -------------------------------------- */
 

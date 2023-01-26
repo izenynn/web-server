@@ -1,6 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
-#include <server/Response.hpp>
+#include <response/Response.hpp>
 #include <utils/log.hpp>
 #include <utils/utils.hpp>
 
@@ -229,7 +229,7 @@ void Response::print( void ) const {
 	this->_requestConfig.print();
 
 	std::cout << i << "uri:" << std::endl;
-	this->_uri.print();
+	this->_responseData.print();
 
 	return ;
 }
@@ -238,7 +238,7 @@ void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 
 	log::warning("> inside build");
-	this->_uri.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
+	this->_responseData.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
 	log::warning("> uri set path to: " + utils::sanitizePath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() ) );
 
 	// check for errors and process request if none
@@ -310,8 +310,8 @@ int Response::process( void ) {
 	// get (get cant be cig)
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
-		if ( true == this->_uri.isDirectory() ) {
-			std::string index = this->_uri.getIndex( this->_requestConfig.getIndex() );
+		if ( true == this->_responseData.isDirectory() ) {
+			std::string index = this->_responseData.getIndex( this->_requestConfig.getIndex() );
 			if ( index.length() > 0 ) {
 				this->_redirect = true;
 				this->_redirect_uri = utils::sanitizePath( "/" + this->_requestConfig.getRequestUri() + "/" + index );
@@ -321,14 +321,14 @@ int Response::process( void ) {
 			}
 		// not directory
 		} else {
-			if ( false == this->_uri.fileExists() ) {
+			if ( false == this->_responseData.fileExists() ) {
 				return ( 404 ); // 404 bad request
 			}
 
 			// TODO getFile()
 			//this->_uri.getFile(); // FIXME remove this line!!!
 
-			if ( false == this->_uri.openFile() ) {
+			if ( false == this->_responseData.openFile() ) {
 				return ( 403 ); // 403 forbidden
 			}
 		}
@@ -374,14 +374,14 @@ void Response::setResponse( void ) {
 
 int Response::methodGet( void ) {
 	// TODO autoindex
-	if ( true == this->_requestConfig.getAutoIndex() && true == this->_uri.isDirectory() ) {
-		this->_body = this->_uri.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
+	if ( true == this->_requestConfig.getAutoIndex() && true == this->_responseData.isDirectory() ) {
+		this->_body = this->_responseData.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 	} else {
-		this->_body = this->_uri.getFileContent();
+		this->_body = this->_responseData.getFileContent();
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
-		this->_headers["Content-Type"] = this->kMimeTypes[this->_uri.getExtension()];
+		this->_headers["Content-Type"] = this->kMimeTypes[this->_responseData.getExtension()];
 	}
 	return ( 200 ); // 200 ok
 }

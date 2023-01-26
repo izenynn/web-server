@@ -1,6 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
-#include <config/RequestConfig.hpp>
+#include <request/RequestConfig.hpp>
 #include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
