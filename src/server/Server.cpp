@@ -333,7 +333,21 @@ int Server::initialize( void ) {
 				addr.sin_family = AF_INET;
 				addr.sin_addr.s_addr = inet_addr( (*it2)->ip.c_str() );
 				addr.sin_port = htons( (*it2)->port );
-				if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>(&addr), sizeof( addr ) ) ) {
+
+				struct timespec loop_delay;
+				loop_delay.tv_sec = 10;
+				loop_delay.tv_nsec = 0;
+				bool isBinded = false;
+				for ( int tries = 0; tries < 10; ++tries ) {
+					if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>(&addr), sizeof( addr ) ) ) {
+						log::failure( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1, retrying..." );
+					} else {
+						isBinded = true;
+						break ;
+					}
+					while ( nanosleep( &loop_delay, &loop_delay ) );
+				}
+				if ( false == isBinded ) {
 					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 					return ( -1 );
 				}
