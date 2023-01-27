@@ -23,6 +23,7 @@ class Response {
 
 		void print( void ) const;
 
+		void clear( void );
 		void build( void );
 
 		const std::string & getResponseBody( void );

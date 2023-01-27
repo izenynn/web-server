@@ -68,14 +68,8 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 
 	// build response
 	log::warning("- building...");
-	for ( int tries = 0, redo = 1; redo != 0; ++tries ) {
+	for ( int tries = 1, redo = 1; redo != 0; ++tries ) {
 		log::warning("- for iteration");
-		redo = 0;
-		this->_response->build();
-		if ( true == this->_response->getRedirect() ) {
-			this->_requestConfig->redirect( this->_response->getRedirectUri() );
-			redo = 1;
-		}
 		if ( tries > 10 ) {
 			if ( webserv::nullptr_t != this->_response ) {
 				delete this->_response;
@@ -83,6 +77,13 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 			this->_response = new Response( *(this->_requestConfig), 500 );
 			this->_response->build();
 			break ;
+		}
+		redo = 0;
+		this->_response->build();
+		if ( true == this->_response->getRedirect() ) {
+			this->_requestConfig->redirect( this->_response->getRedirectUri() );
+			this->_response->clear();
+			redo = 1;
 		}
 	}
 }

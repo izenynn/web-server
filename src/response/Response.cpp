@@ -234,6 +234,15 @@ void Response::print( void ) const {
 	return ;
 }
 
+void Response::clear( void ) {
+	this->_redirect = false;
+	this->_statusCode = 0;
+	this->_redirect_status_code = 0;
+	this->_headers.clear();
+	this->_body.clear();
+	this->_response.clear();
+}
+
 void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 
