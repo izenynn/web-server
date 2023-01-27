@@ -416,6 +416,9 @@ void Response::generateErrorPage( int statusCode ) {
 			this->_body += "Error";
 		}
 		this->_body += "</p></body></html>";
+		// set headers
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 	}
 	return ;
 }
