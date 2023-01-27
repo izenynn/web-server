@@ -7,6 +7,7 @@
 
 # include <unistd.h>
 # include <sys/time.h>
+# include <sys/socket.h>
 
 # include <config/Listen.hpp>
 # include <config/ServerConfig.hpp>

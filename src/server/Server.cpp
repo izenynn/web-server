@@ -3,10 +3,13 @@
 #include <ctime>
 #include <server/Server.hpp>
 #include <utils/log.hpp>
+#include <utils/signals.hpp>
 
 /** CLASS -------------------------------------- */
 
 namespace webserv {
+
+bool Server::_run = false;
 
 Server::Server( void ) 
 		: _config( webserv::nullptr_t ),
@@ -59,8 +62,6 @@ int Server::start( void ) {
 		return ( ret );
 	}
 
-	log::info( "starting server..." );
-
 	struct timeval timeout;
 	timeout.tv_sec = Config::kTimeoutSec;
 	timeout.tv_usec = 0;
@@ -69,7 +70,11 @@ int Server::start( void ) {
 	loop_delay.tv_sec = 0;
 	loop_delay.tv_nsec = Config::kNsecLoopDelay;
 
-	while ( true ) {
+	signals::handle_signals();
+	this->_run = true;
+	log::info( "starting server..." );
+
+	while ( true == Server::_run ) {
 		this->_fdRead	= this->_fdSet;
 		this->_fdWrite	= this->_fdSet;
 
@@ -100,7 +105,6 @@ int Server::start( void ) {
 					}
 				}
 				// check if timeout or need to disconnect first
-				log::warning("c"); // DEBUG
 				this->checkDisconnectClient( it->second );
 				// check write fd and send response
 				if ( FD_ISSET( fd, &(this->_fdWrite) ) ) {
@@ -125,6 +129,16 @@ int Server::start( void ) {
 		this->disconnectClient( it->first );
 	}
 
+	// disconnect all servers on exit
+	for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
+		this->disconnectServer( it->first );
+	}
+
+	return ( 0 );
+}
+
+int Server::stop( void ) {
+	Server::_run = false;
 	return ( 0 );
 }
 
@@ -228,7 +242,9 @@ void Server::disconnectClient( int fd ) {
 	}
 
 	delete this->_clients[fd];
+
 	this->_clients.erase( fd );
+
 	log::info( "closed connection with fd: " + SSTR( fd ) );
 
 	return ;
@@ -241,6 +257,24 @@ void Server::checkDisconnectClient( Client * client ) {
 	if ( true == client->checkDisconnect() ) {
 		client->initResponse( *(this->_serverConfigs), 503 ); // 503 service unavailable
 	}
+}
+
+void Server::disconnectServer( int fd ) {
+	this->delFromFdSet( fd );
+
+	if ( this->_servers.end() == this->_servers.find( fd ) ) {
+		log::failure( "tried to close non registered server with fd: " + SSTR( fd ) );
+		return ;
+	}
+
+	delete this->_servers[fd];
+	close( fd );
+
+	this->_servers.erase( fd );
+
+	log::info( "closed server with fd: " + SSTR( fd ) );
+
+	return ;
 }
 
 void Server::addToFdSet( int fd ) {
@@ -316,7 +350,7 @@ int Server::initialize( void ) {
 				this->addToFdSet( sockfd );
 				binded.push_back( **it2 );
 
-				log::info( "started listening on " + (*it2)->ip + ":" + SSTR( (*it2)->port ) );
+				log::info( "started listening on " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " with fd: " + SSTR( sockfd ) );
 			}
 		}
 	}

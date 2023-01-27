@@ -39,6 +39,7 @@ class Server {
 		void print( void );
 
 		int start( void );
+		static int stop( void );
 
 		// FIXME from here to end move to private
 		int clientRecv( int fd );
@@ -48,10 +49,14 @@ class Server {
 		void disconnectClient( int fd );
 		void checkDisconnectClient( Client * client );
 
+		void disconnectServer( int fd );
+
 		void addToFdSet( int fd );
 		void delFromFdSet( int fd );
 	private:
 		Server & operator=( const Server & other); // not necessary
+
+		static bool _run;
 
 		Config *							_config;
 		const std::vector<ServerConfig *> *	_serverConfigs;

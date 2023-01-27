@@ -3,6 +3,7 @@
 #include <types/nullptr_t.hpp>
 #include <server/Server.hpp>
 #include <utils/log.hpp>
+#include <utils/signals.hpp>
 
 int main( int argc, char * argv[] ) {
 	int					ret = 0;
@@ -40,6 +41,8 @@ int main( int argc, char * argv[] ) {
 	ret = server->start();
 
 	delete server;
+
+	//system( "sleep 3600" );
 
 	return ( ret );
 }

@@ -74,7 +74,7 @@ SRC_REQUEST		=	Request.cpp			RequestConfig.cpp
 
 SRC_RESPONSE	=	Response.cpp		ResponseData.cpp
 
-SRC_UTILS		=	utils.cpp
+SRC_UTILS		=	utils.cpp			signals.cpp
 
 SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\
