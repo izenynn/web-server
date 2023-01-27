@@ -98,7 +98,6 @@ bool fromHex(const std::string& hexValue, T& result) {
 namespace webserv {
 
 Request::Request( void ) {
-	gettimeofday( &(this->_time), NULL );
 	return ;
 }
 
@@ -127,6 +126,8 @@ void Request::print( void ) const {
 int Request::parse( const std::string & buffer ) {
 	// FIXME we really need to return 0 or 1 ????
 	int ret;
+
+	gettimeofday( &(this->_time), NULL );
 
 	this->_buffer += buffer;
 	//buffer.clear();
