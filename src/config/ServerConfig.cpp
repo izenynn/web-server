@@ -182,12 +182,12 @@ std::map<std::string, ServerConfig *> & ServerConfig::getLocation( void ) {
 ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 	ServerConfig * location = new ServerConfig();
 
-	location->_root					= this->_root;
-	location->_index				= this->_index;
-	location->_autoindex			= this->_autoindex;
-	location->_error_page			= this->_error_page;
-	location->_limit_except			= this->_limit_except;
-	location->_client_max_body_size	= this->_client_max_body_size;
+	location->_root					= this->_root; // inherited, but replaced if present
+	location->_index				= this->_index; // inherited, but replaced if present
+	location->_autoindex			= this->_autoindex; // inherited, but replaced if present
+	location->_error_page			= this->_error_page; // inherited, added if present
+	location->_limit_except			= this->_limit_except; // inherited, replaced if present
+	location->_client_max_body_size	= this->_client_max_body_size; // inherited, replaced if present
 	// TODO cgi on server block ??? i dont think so
 	//location->_cgi_param = this->_cgi_param;
 	//location->_cgi_pass = this->_cgi_pass;
@@ -353,6 +353,8 @@ void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'index'" );
 	}
 
+	// clear previous values
+	this->_index.clear();
 	// iterate server names
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
@@ -442,6 +444,8 @@ void ServerConfig::parseLimitExcept( token_type::const_iterator & it ) {
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'limit_except'" );
 	}
 
+	// clear previous values
+	this->_limit_except.clear();
 	// iterate allowed methods
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
