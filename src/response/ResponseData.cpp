@@ -93,6 +93,7 @@ const std::string ResponseData::getIndex( std::vector<std::string> & indexes ) {
 				}
 			}
 		}
+		closedir( d );
 	} else {
 		log::failure( "opendir() failed with return code -1" );
 	}
@@ -118,9 +119,40 @@ bool ResponseData::fileExists( void ) const {
 }
 
 std::string ResponseData::getAutoIndex( const std::string & uri ) {
-	// TODO autoindex
-	(void)uri;
-	std::string body = "<html><head><title>TODO</title></head><body><h1>TODO</h1></body></html>";
+	std::string body;
+	DIR * d;
+	struct dirent * e;
+	struct stat statbuf;
+
+	body = "<html><head><title>index of " + uri + "</title></head>";
+	body += "<body><h1>index of " + uri + "</h1><hr>";
+
+	d = opendir( this->_path.c_str() );
+	if ( NULL != d ) {
+		// TODO parent dir
+		// dir content
+		std::string path = uri + "/";
+		while ( true ) {
+			e = readdir( d );
+			if ( NULL == e ) {
+				break ;
+			}
+
+			std::string file = path + e->d_name;
+			stat( file.c_str(), &statbuf );
+
+			body += "<a href=\"" + utils::sanitizePath( uri + "/" + e->d_name ) + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" ) + "\">";
+			body += e->d_name + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" );
+			body += "</a>";
+		}
+		closedir( d );
+	} else {
+		log::failure( "opendir() failed with return code -1" );
+		body += "something went wrong reading thi directory"; // TODO empty ???
+	}
+
+	body += "<hr></body></html>";
+
 	return ( body );
 }
 
