@@ -175,10 +175,12 @@ const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLo
 
 	// find location with longest match
 	for ( std::map<std::string, ServerConfig *>::const_iterator it = server->_location.begin(); it != server->_location.end(); ++it ) {
-		if ( this->_request_uri.find( it->first ) ) {
+		if ( 0 == this->_request_uri.find( it->first ) ) {
 			if ( webserv::nullptr_t == match ) {
+				log::debug( "first match! " + it->first + " and " + this->_request_uri );
 				match = &(*it);
 			} else if ( it->first > match->first ) {
+				log::debug( "match! " + it->first + " and " + this->_request_uri );
 				match = &(*it);
 			}
 		}
