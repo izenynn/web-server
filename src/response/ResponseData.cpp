@@ -131,16 +131,17 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 	if ( NULL != d ) {
 		// TODO parent dir
 		// dir content
-		std::string path = uri + "/";
 		while ( true ) {
 			e = readdir( d );
 			if ( NULL == e ) {
 				break ;
 			}
 
-			std::string file = path + e->d_name;
+			std::string file = this->_path + "/" + e->d_name;
+			log::debug( "file: " + file );
 			stat( file.c_str(), &statbuf );
 
+			log::debug( file + " is dir: " + SSTR( S_ISDIR( statbuf.st_mode ) ) );
 			body += "<p><a href=\"" + utils::sanitizePath( uri + "/" + e->d_name ) + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" ) + "\">";
 			body += e->d_name + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" );
 			body += "</a></p>";
