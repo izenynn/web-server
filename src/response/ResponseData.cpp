@@ -129,7 +129,8 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 
 	d = opendir( this->_path.c_str() );
 	if ( NULL != d ) {
-		// TODO parent dir
+		std::map<std::string, std::string> files; // <file name, html tag>
+		std::string tag;
 		// dir content
 		while ( true ) {
 			e = readdir( d );
@@ -138,13 +139,16 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 			}
 
 			std::string file = this->_path + "/" + e->d_name;
-			log::debug( "file: " + file );
 			stat( file.c_str(), &statbuf );
 
-			log::debug( file + " is dir: " + SSTR( S_ISDIR( statbuf.st_mode ) ) );
-			body += "<p><a href=\"" + utils::sanitizePath( uri + "/" + e->d_name ) + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" ) + "\">";
-			body += e->d_name + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" );
-			body += "</a></p>";
+			tag = "<p><a href=\"" + utils::sanitizePath( uri + "/" + e->d_name ) + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" ) + "\">";
+			tag += e->d_name + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" );
+			tag += "</a></p>";
+
+			files[e->d_name] = tag;
+		}
+		for ( std::map<std::string, std::string>::const_iterator it = files.begin(); it != files.end(); ++it ) {
+			body += it->second;
 		}
 		closedir( d );
 	} else {

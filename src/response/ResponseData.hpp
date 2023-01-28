@@ -7,6 +7,7 @@
 
 # include <string>
 # include <vector>
+# include <map>
 # include <fcntl.h> // open()
 # include <unistd.h> // close()
 # include <sys/stat.h> // stat()
