@@ -1,11 +1,13 @@
-#include <iostream>
+#include <cstring> // std::strcmp()
 
 #include <types/nullptr_t.hpp>
-#include <server/ServerManager.hpp>
+#include <server/Server.hpp>
 #include <utils/log.hpp>
+#include <utils/signals.hpp>
 
 int main( int argc, char * argv[] ) {
-	webserv::ServerManager * manager = webserv::nullptr_t;
+	int					ret = 0;
+	webserv::Server *	server = webserv::nullptr_t;
 
 	// too many args
 	if ( argc > 2 ) {
@@ -15,26 +17,32 @@ int main( int argc, char * argv[] ) {
 	}
 
 	// help message
-	if ( argc == 2 && ( 0 == strcmp( "-h", argv[1] ) || 0 == strcmp( "--help", argv[1] ) ) ) {
+	if ( argc == 2 && ( 0 == std::strcmp( "-h", argv[1] ) || 0 == std::strcmp( "--help", argv[1] ) ) ) {
 		webserv::log::info( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
 		return ( 0 );
 	}
 
 	// web server
-	manager = new webserv::ServerManager();
+	server = new webserv::Server();
 
+	webserv::log::info( "loading config..." );
 	try {
-		if ( argc == 2 ) manager->load( argv[1] );
-		else             manager->load();
+		if ( argc == 2 ) server->load( argv[1] );
+		else             server->load();
 	} catch ( std::exception & e ) {
-		delete manager;
+		delete server;
 		webserv::log::error( e.what() );
 		return ( 1 );
 	}
 
-	manager->run();
+	//server->print();
 
-	delete manager;
+	webserv::log::info( "starting..." );
+	ret = server->start();
 
-	return ( 0 );
+	delete server;
+
+	//system( "sleep 3600" );
+
+	return ( ret );
 }

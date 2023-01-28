@@ -18,12 +18,16 @@
 
 namespace webserv {
 
+class Client;
+
 class Config {
 	private:
 		typedef std::vector<std::string> token_type;
 	public:
 		Config( void );
 		virtual ~Config( void );
+
+		void print( void );
 
 		void load( const char* file );
 

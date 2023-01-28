@@ -23,18 +23,25 @@ class ServerConfig {
 		typedef std::vector<std::string> token_type;
 	public:
 		ServerConfig( void );
-		virtual ~ServerConfig( void );
+		~ServerConfig( void );
 
-		void print( const std::string & indent ); // FIXME just to test, remove this
+		void print( const std::string & indent ) const; // FIXME just to test, remove this
 		void parser( token_type::const_iterator & it );
 
-		const int & getId( void ) const;
-		void setId( const int & id );
+		// FIXME
+		//const int & getId( void ) const;
+		//void setId( const int & id );
+
+		std::vector<Listen *> &					getListen( void );
+		std::vector<std::string> &				getServerName( void );
+		std::map<std::string, ServerConfig *> &	getLocation( void );
+
+		friend class RequestConfig;
 	private:
 		ServerConfig( const ServerConfig & other ); // not necessary
 		ServerConfig & operator=( const ServerConfig & other ); // not necessary
 
-		int _id;
+		//int _id; // FIXME
 
 		void			clear( void ); // FIXME not used
 		ServerConfig *	createLocationServerConfig( void );
@@ -62,7 +69,7 @@ class ServerConfig {
 		bool								_autoindex;
 		std::map<int, std::string>			_error_page;
 		std::vector<std::string>			_limit_except;
-		size_t								_client_max_body_size;
+		std::string::size_type				_client_max_body_size;
 	public:
 		class ServerConfigException : virtual public std::exception {
 			private:

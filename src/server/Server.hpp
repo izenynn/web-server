@@ -5,13 +5,25 @@
 
 /** INCLUDES ----------------------------------- */
 
-# include <map> // std::map
 # include <string> // std::string
-# include <netinet/in.h> // sockaddr_in
-# include <unistd.h> // close()
-# include <fcntl.h> // fcntl()
+//# include <cstring> // std::memcpy()
+# include <map>
+# include <list>
+# include <vector>
+# include <algorithm> // std::find()
+# include <ctime> // nanosleep()
 
-# include <config/Listen.hpp>
+# include <sys/types.h>
+# include <sys/socket.h> // socket()
+# include <sys/select.h> // select()
+# include <fcntl.h> // fcntl()
+# include <netinet/in.h> // sockaddr_in
+# include <arpa/inet.h> // inet_addr()
+
+
+# include <types/nullptr_t.hpp>
+# include <config/Config.hpp>
+# include <server/Client.hpp>
 
 /** CLASS -------------------------------------- */
 
@@ -19,31 +31,46 @@ namespace webserv {
 
 class Server {
 	public:
-		Server( const Listen & listen );
-		virtual ~Server( void );
+		Server( void );
+		~Server( void );
 
-		int		getFd( void );
+		void load( void ); // default path
+		void load( const char* file );
+		void print( void );
 
-		void	start( void );
-		void	end( void );
+		int start( void );
+		static int stop( void );
 
-		int		accept( void );
-		int		send( int socket );
-		int		recv( int socket );
-		void	close( int socket );
+		// FIXME from here to end move to private
+		int clientRecv( int fd );
+		int clientSend( int fd );
 
-		void	process( int socket );
+		void newClient( int fd );
+		void disconnectClient( int fd );
+		void checkDisconnectClient( Client * client );
+
+		void disconnectServer( int fd );
+
+		void addToFdSet( int fd );
+		void delFromFdSet( int fd );
 	private:
-		Server( void ); // not necessary
-		Server( const Server & other ); // not necessary
-		Server &operator=( const Server& other ); // not necessary
+		Server & operator=( const Server & other); // not necessary
 
-		static const size_t k_recv_size;
+		static bool _run;
 
-		int							_sockfd;
-		struct sockaddr_in			_addr;
-		Listen						_host;
-		std::map<int, std::string>	_requests;
+		Config *							_config;
+		const std::vector<ServerConfig *> *	_serverConfigs;
+
+		std::map<int, Listen *>				_servers;
+		std::map<int, Client *>				_clients;
+
+		std::list<int>	_fdList;
+		fd_set			_fdSet;
+		fd_set			_fdRead;
+		fd_set			_fdWrite;
+		int				_fdMax;
+
+		int initialize( void );
 };
 
 } /** namespace webserv */

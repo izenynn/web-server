@@ -1,62 +1,68 @@
 /** INCLUDES ----------------------------------- */
 
 #include <config/ServerConfig.hpp>
+#include <config/constants.hpp>
 #include <utils/log.hpp>
 
+/** UTILS -------------------------------------- */
+
 namespace {
-	bool isValidPort( const std::string & port ) {
-		// check is all digits
-		if ( std::string::npos != port.find_first_not_of( "0123456789" ) ) {
-			return ( false );
-		}
-		// check not all 0 and skip them
-		std::string::size_type start = port.find_first_not_of( "0" );
-		if ( std::string::npos == start ) {
-			return ( false );
-		}
-		// check lenght: valid range: 1 - 65535
-		std::string number = port.substr( start );
-		if ( number.length() < 1 || number.length() > 5 ) {
-			return ( false );
-		}
-		if ( number.length() == 5 && number > "65535" ) {
-			return ( false );
-		}
-		// true
-		return ( true );
+
+bool isValidPort( const std::string & port ) {
+	// check is all digits
+	if ( std::string::npos != port.find_first_not_of( "0123456789" ) ) {
+		return ( false );
 	}
-	bool isValidIp( const std::string & ip ) {
-		// check is all digits and dots
-		if ( std::string::npos != ip.find_first_not_of( ".0123456789" ) ) {
-			return ( false );
-		}
-		// check there are no more than 3 dots
-		if ( 3 != std::count( ip.begin(), ip.end(), '.' ) ) {
-			return ( false );
-		}
-		// scanf will check format and save numbers
-		unsigned int n[4];
-		if ( sscanf( ip.c_str(),"%u.%u.%u.%u", &(n[0]), &(n[1]), &(n[2]), &(n[3]) ) != 4 ) {
-			return ( false );
-		}
-		// check all digits
-		for ( int i = 0; i < 4; ++i ) {
-			if ( n[i] > 255 ) {
-				return ( false );
-			}
-		}
-		return ( true );
+	// check not all 0 and skip them
+	std::string::size_type start = port.find_first_not_of( "0" );
+	if ( std::string::npos == start ) {
+		return ( false );
 	}
+	// check lenght: valid range: 1 - 65535
+	std::string number = port.substr( start );
+	if ( number.length() < 1 || number.length() > 5 ) {
+		return ( false );
+	}
+	if ( number.length() == 5 && number > "65535" ) {
+		return ( false );
+	}
+	// true
+	return ( true );
+}
+bool isValidIp( const std::string & ip ) {
+	// check is all digits and dots
+	if ( std::string::npos != ip.find_first_not_of( ".0123456789" ) ) {
+		return ( false );
+	}
+	// check there are no more than 3 dots
+	if ( 3 != std::count( ip.begin(), ip.end(), '.' ) ) {
+		return ( false );
+	}
+	// scanf will check format and save numbers
+	unsigned int n[4];
+	if ( sscanf( ip.c_str(),"%u.%u.%u.%u", &(n[0]), &(n[1]), &(n[2]), &(n[3]) ) != 4 ) {
+		return ( false );
+	}
+	// check all digits
+	for ( int i = 0; i < 4; ++i ) {
+		if ( n[i] > 255 ) {
+			return ( false );
+		}
+	}
+	return ( true );
 }
 
-namespace webserv {
+} /** namespace */
 
 /** CLASS -------------------------------------- */
 
+namespace webserv {
+
+//: _id( -1 ), // FIXME
+// TODO defualt root in constructor, now defualt root is "/"
 ServerConfig::ServerConfig( void )
-		: _id( -1 ),
-		  _autoindex( false ),
-		  _client_max_body_size( 8196 ) {
+		: _autoindex( false ),
+		  _client_max_body_size( kClientMaxBodySize ) {
 	this->_serverDirectives["location"] =				&ServerConfig::parseLocation;
 	this->_serverDirectives["listen"] =					&ServerConfig::parseListen;
 	this->_serverDirectives["server_name"] =			&ServerConfig::parseServerName;
@@ -93,7 +99,9 @@ ServerConfig::~ServerConfig( void ) {
 	return ;
 }
 
-void ServerConfig::print( const std::string & indent ) {
+void ServerConfig::print( const std::string & indent ) const {
+	std::cout << indent << "SERVER CONFIG:" << std::endl;
+
 	std::cout << indent << "listen:" << std::endl;
 	for ( std::vector<Listen *>::const_iterator it = this->_listen.begin(); it != this->_listen.end(); ++it ) {
 		std::cout << indent << "    " << "ip: " << (*it)->ip << " port: " << (*it)->port << std::endl;
@@ -161,15 +169,25 @@ void ServerConfig::parser( token_type::const_iterator & it ) {
 	return ;
 }
 
+std::vector<Listen *> & ServerConfig::getListen( void ) {
+	return ( this->_listen );
+}
+std::vector<std::string> & ServerConfig::getServerName( void ) {
+	return ( this->_server_name );
+}
+std::map<std::string, ServerConfig *> & ServerConfig::getLocation( void ) {
+	return ( this->_location );
+}
+
 ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 	ServerConfig * location = new ServerConfig();
 
-	location->_root					= this->_root;
-	location->_index				= this->_index;
-	location->_autoindex			= this->_autoindex;
-	location->_error_page			= this->_error_page;
-	location->_limit_except			= this->_limit_except;
-	location->_client_max_body_size	= this->_client_max_body_size;
+	location->_root					= this->_root; // inherited, but replaced if present
+	location->_index				= this->_index; // inherited, but replaced if present
+	location->_autoindex			= this->_autoindex; // inherited, but replaced if present
+	location->_error_page			= this->_error_page; // inherited, added if present
+	location->_limit_except			= this->_limit_except; // inherited, replaced if present
+	location->_client_max_body_size	= this->_client_max_body_size; // inherited, replaced if present
 	// TODO cgi on server block ??? i dont think so
 	//location->_cgi_param = this->_cgi_param;
 	//location->_cgi_pass = this->_cgi_pass;
@@ -335,6 +353,8 @@ void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'index'" );
 	}
 
+	// clear previous values
+	this->_index.clear();
 	// iterate server names
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
@@ -424,6 +444,8 @@ void ServerConfig::parseLimitExcept( token_type::const_iterator & it ) {
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'limit_except'" );
 	}
 
+	// clear previous values
+	this->_limit_except.clear();
 	// iterate allowed methods
 	for ( ; ";" != *it; ++it ) {
 		// if token is '}' that means the ';' is missing
