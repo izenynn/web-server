@@ -156,7 +156,7 @@ int Server::clientRecv( int fd ) {
 
 	// read socket
 	//char buffer[Config::kBufferSize];
-	char * buffer = reinterpret_cast<char *>( malloc( Config::kBufferSize * sizeof( char ) ) );
+	char * buffer = reinterpret_cast<char *>( malloc( ServerConfig::kClientMaxBodySize * sizeof( char ) ) );
 	int size = recv( fd, buffer, Config::kBufferSize, 0 );
 	if ( size <= 0 ) {
 		free( buffer );
@@ -173,8 +173,11 @@ int Server::clientRecv( int fd ) {
 	// if error prepare response, if not, we will respond later :)
 	if ( ret >= 0 ) { // FIXME we can remove this i think
 		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
+		log::debug( "RECV -> REQUEST CONFIG" );
 		this->_clients[fd]->getRequestConfig()->print(); // DEBUG
+
 		this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
+		log::debug( "RECV -> RESPONSE" );
 		this->_clients[fd]->getResponse()->print(); // DEBUG
 	}
 
