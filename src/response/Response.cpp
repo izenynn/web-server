@@ -1,8 +1,9 @@
 /** INCLUDES ----------------------------------- */
 
 #include <response/Response.hpp>
-#include <utils/log.hpp>
+#include <config/constants.hpp>
 #include <utils/utils.hpp>
+#include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
 
@@ -363,15 +364,15 @@ void Response::setResponse( void ) {
 	}
 
 	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
-	this->_response += this->_requestConfig.getVersion() + " " + status + Config::kEOL;
+	this->_response += this->_requestConfig.getVersion() + " " + status + kEOL;
 
 	//this->_headers["Server"] = "web-server"; // is not secure to tell a client the server software and/or version
 	this->_headers["Date"] = getDate();
 	for ( std::map<std::string, std::string>::const_iterator it = this->_headers.begin(); it != this->_headers.end(); ++it ) {
-		this->_response += it->first + ": " + it->second + Config::kEOL;
+		this->_response += it->first + ": " + it->second + kEOL;
 	}
 
-	this->_response += Config::kEOL;
+	this->_response += kEOL;
 
 	if ( false == this->_body.empty() ) {
 		this->_response += this->_body;

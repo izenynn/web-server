@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <config/ServerConfig.hpp>
+#include <config/constants.hpp>
 #include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
@@ -57,13 +58,11 @@ bool isValidIp( const std::string & ip ) {
 
 namespace webserv {
 
-const size_t ServerConfig::kClientMaxBodySize = 8196;
-
 //: _id( -1 ), // FIXME
 // TODO defualt root in constructor, now defualt root is "/"
 ServerConfig::ServerConfig( void )
 		: _autoindex( false ),
-		  _client_max_body_size( ServerConfig::kClientMaxBodySize ) {
+		  _client_max_body_size( kClientMaxBodySize ) {
 	this->_serverDirectives["location"] =				&ServerConfig::parseLocation;
 	this->_serverDirectives["listen"] =					&ServerConfig::parseListen;
 	this->_serverDirectives["server_name"] =			&ServerConfig::parseServerName;

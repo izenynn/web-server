@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <server/Client.hpp>
+#include <config/constants.hpp>
 #include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
@@ -103,7 +104,7 @@ bool Client::checkTimeout( void ) {
 		log::warning("check timeout");
 		struct timeval time;
 		gettimeofday( &time, NULL );
-		if ( time.tv_sec - this->_request->getTime().tv_sec > Config::kRequestTimeoutSec ) {
+		if ( time.tv_sec - this->_request->getTime().tv_sec > kRequestTimeoutSec ) {
 			return ( true );
 		} else {
 			return ( false );

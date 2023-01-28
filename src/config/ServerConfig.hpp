@@ -25,8 +25,6 @@ class ServerConfig {
 		ServerConfig( void );
 		~ServerConfig( void );
 
-		static const std::string::size_type kClientMaxBodySize;
-
 		void print( const std::string & indent ) const; // FIXME just to test, remove this
 		void parser( token_type::const_iterator & it );
 

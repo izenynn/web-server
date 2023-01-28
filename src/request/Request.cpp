@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <request/Request.hpp>
+#include <config/constants.hpp>
 #include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
@@ -176,7 +177,7 @@ const struct timeval & Request::getTime( void ) {
 }
 
 int Request::parseRequestLine( void ) {
-	if ( std::string::npos != this->_buffer.find( Config::kEOL ) ) {
+	if ( std::string::npos != this->_buffer.find( kEOL ) ) {
 		// method
 		if ( std::string::npos == this->_buffer.find( ' ' ) || 0 == this->_buffer.find( ' ' ) ) {
 			return ( 400 ); // 400 bad request
@@ -200,7 +201,7 @@ int Request::parseRequestLine( void ) {
 		if ( true == isForbiddenUri( token ) ) {
 			return ( 403 ); // 403 forbidden
 		}
-		if ( token.length() >= Config::kLimitRequestLimit ) {
+		if ( token.length() >= kRequestUriLimit ) {
 			return ( 414 ); // 414 uri too long
 		}
 		this->_request_uri = token;
@@ -216,14 +217,14 @@ int Request::parseRequestLine( void ) {
 		if ( 0 == this->_buffer.find( ' ' ) ) {
 			return ( 400 ); // 400 bad request
 		}
-		std::string::size_type last = this->_buffer.find( Config::kEOL );
+		std::string::size_type last = this->_buffer.find( kEOL );
 		token = this->_buffer.substr( 0, last );
 
 		if ( false == isSupportedVersion( token ) ) {
 			return ( 505 ); // 505 http version not supported
 		}
 		this->_version = token;
-		this->_buffer.erase( 0, last + Config::kEOL.length() );
+		this->_buffer.erase( 0, last + kEOL.length() );
 
 		// status
 		this->_status = this->kHeaders;
@@ -236,10 +237,10 @@ int Request::parseHeaders( void ) {
 	std::string::size_type sep;
 
 	// iterate lines until body
-	for ( std::string::size_type eol = this->_buffer.find( Config::kEOL ); eol != std::string::npos; eol = this->_buffer.find( Config::kEOL ) ) {
+	for ( std::string::size_type eol = this->_buffer.find( kEOL ); eol != std::string::npos; eol = this->_buffer.find( kEOL ) ) {
 		// if no more headers (two consecutive new lines)
 		if ( 0 == eol ) {
-			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			this->_buffer.erase( 0, eol + kEOL.length() );
 			this->_status = this->kBody;
 			break ;
 		}
@@ -253,10 +254,10 @@ int Request::parseHeaders( void ) {
 		value	= this->_buffer.substr( sep + 1, eol - sep - 1 );
 		if ( this->_headers.end() != this->_headers.find( key ) ) {
 			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
-			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			this->_buffer.erase( 0, eol + kEOL.length() );
 			continue ;
 		}
-		if ( key.length() >= Config::kLimitRequestLimit || value.length() >= Config::kLimitRequestLimit ) {
+		if ( key.length() >= kRequestHeaderKeyLimit || value.length() >= kRequestHeaderValueLimit ) {
 			return ( 431 ); // 431 request header fields too large
 		}
 		this->_headers[key] = trim( value, " " );
@@ -264,7 +265,7 @@ int Request::parseHeaders( void ) {
 			this->_headers.erase( key );
 		}
 
-		this->_buffer.erase( 0, eol + Config::kEOL.length() );
+		this->_buffer.erase( 0, eol + kEOL.length() );
 	}
 
 	// check host is present
@@ -314,13 +315,13 @@ int Request::parseChunk( void ) {
 	this->_chunkStatus = this->kChunkSize;
 	std::string::size_type size = 0;
 
-	for ( std::string::size_type eol = this->_buffer.find( Config::kEOL ); eol != std::string::npos; eol = this->_buffer.find( Config::kEOL ) ) {
+	for ( std::string::size_type eol = this->_buffer.find( kEOL ); eol != std::string::npos; eol = this->_buffer.find( kEOL ) ) {
 		if ( this->kChunkSize == this->_chunkStatus ) {
 			std::string hex = this->_buffer.substr( 0, eol );
 			if ( false == fromHex( hex, size ) ) {
 				return ( 400 ); // 400 bad request
 			}
-			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+			this->_buffer.erase( 0, eol + kEOL.length() );
 			this->_chunkStatus = this->kChunkBody;
 		} else if ( this->kChunkBody == this->_chunkStatus ) {
 			if ( 0 == size ) {
@@ -336,7 +337,7 @@ int Request::parseChunk( void ) {
 			size = 0;
 			this->_chunkStatus = this->kChunkSize;*/
 			this->_body += this->_buffer.substr( 0, size );
-			this->_buffer.erase( 0, size + Config::kEOL.length() );
+			this->_buffer.erase( 0, size + kEOL.length() );
 			size = 0;
 			this->_chunkStatus = this->kChunkSize;
 		}
@@ -349,10 +350,10 @@ int Request::parseChunkTrailer( void ) {
 	std::string key, value;
 	std::string::size_type sep;
 
-	for ( std::string::size_type eol = this->_buffer.find( Config::kEOL ); eol != std::string::npos; eol = this->_buffer.find( Config::kEOL ) ) {
+	for ( std::string::size_type eol = this->_buffer.find( kEOL ); eol != std::string::npos; eol = this->_buffer.find( kEOL ) ) {
 		// chunk trailer ends on line with only "\r\n"
-		if ( 0 == this->_buffer.find( Config::kEOL ) ) {
-			this->_buffer.erase( 0, eol + Config::kEOL.length() );
+		if ( 0 == this->_buffer.find( kEOL ) ) {
+			this->_buffer.erase( 0, eol + kEOL.length() );
 			break ;
 		}
 		// parse trailer
@@ -365,7 +366,7 @@ int Request::parseChunkTrailer( void ) {
 		if ( this->_headers.end() != this->_headers.find( key ) ) {
 			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
 		} else {
-			if ( key.length() >= Config::kLimitRequestLimit || value.length() >= Config::kLimitRequestLimit ) {
+			if ( key.length() >= kRequestHeaderKeyLimit || value.length() >= kRequestHeaderValueLimit ) {
 				return ( 400 ); // 400 bad request
 			}
 			this->_headers[key] = trim( value, " " );
@@ -373,7 +374,7 @@ int Request::parseChunkTrailer( void ) {
 				this->_headers.erase( key );
 			}
 		}
-		this->_buffer.erase( 0, eol + Config::kEOL.length() );
+		this->_buffer.erase( 0, eol + kEOL.length() );
 	}
 
 	//return ( 1 );

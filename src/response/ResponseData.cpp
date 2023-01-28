@@ -1,9 +1,9 @@
 /** INCLUDES ----------------------------------- */
 
 #include <response/ResponseData.hpp>
+#include <types/nullptr_t.hpp>
 #include <utils/utils.hpp>
 #include <utils/log.hpp>
-#include <types/nullptr_t.hpp>
 
 /** UTILS -------------------------------------- */
 
@@ -141,14 +141,14 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 			std::string file = path + e->d_name;
 			stat( file.c_str(), &statbuf );
 
-			body += "<a href=\"" + utils::sanitizePath( uri + "/" + e->d_name ) + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" ) + "\">";
+			body += "<p><a href=\"" + utils::sanitizePath( uri + "/" + e->d_name ) + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" ) + "\">";
 			body += e->d_name + std::string( S_ISDIR( statbuf.st_mode ) ? "/" : "" );
-			body += "</a>";
+			body += "</a></p>";
 		}
 		closedir( d );
 	} else {
 		log::failure( "opendir() failed with return code -1" );
-		body += "something went wrong reading thi directory"; // TODO empty ???
+		body += "error: could not open: " + uri;
 	}
 
 	body += "<hr></body></html>";

@@ -2,21 +2,11 @@
 
 #include <config/Config.hpp>
 #include <utils/log.hpp>
+#include <config/constants.hpp>
 
 /** CLASS -------------------------------------- */
 
 namespace webserv {
-
-const char *					Config::kDefaultPath = "/etc/aps/aps.conf";
-const int						Config::kBacklogSize = 1024;
-const int						Config::kBufferSize = 16384;
-const time_t					Config::kTimeoutSec = 1; // select timeout in seconds
-const long						Config::kNsecLoopDelay = 500L * 1000L;
-const std::string				Config::kEOL = "\r\n";
-const std::string::size_type	Config::kLimitRequestLimit = 8190;
-const time_t					Config::kRequestTimeoutSec = 60;
-
-const std::map<int, Client *>::size_type Config::kMaxClients = 1024;
 
 Config::Config( void ) {
 	return ;
@@ -30,8 +20,16 @@ Config::~Config( void ) {
 	return ;
 }
 
-const std::vector<ServerConfig *> * Config::getServers( void ) const {
-	return ( &( this->_server ) );
+void Config::print( void ) {
+	log::info( "TOKENS: " );
+	for ( std::vector<std::string>::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
+		std::cout << *it << std::endl;
+	}
+
+	log::info( "CONFIG CLASS INFO AFTER PARSER: " );
+	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
+		(*it)->print( "" );
+	}
 }
 
 void Config::load(const char * const file) {
@@ -43,16 +41,8 @@ void Config::load(const char * const file) {
 	return ;
 }
 
-void Config::print( void ) {
-	log::info( "TOKENS: " );
-	for ( std::vector<std::string>::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
-		std::cout << *it << std::endl;
-	}
-
-	log::info( "CONFIG CLASS INFO AFTER PARSER: " );
-	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
-		(*it)->print( "" );
-	}
+const std::vector<ServerConfig *> * Config::getServers( void ) const {
+	return ( &( this->_server ) );
 }
 
 // tokenize and check for extra or missing '{}'

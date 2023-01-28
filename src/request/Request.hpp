@@ -32,8 +32,6 @@ class Request {
 		Request( const Request & other ); // not necessary
 		Request & operator=( const Request & other ); // not necessary
 
-		static const int kLimitRequestLimit;
-
 		int parseRequestLine( void );
 		int parseHeaders( void );
 		int parseBody( void );

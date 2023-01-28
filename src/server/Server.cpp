@@ -1,7 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
-#include <ctime>
 #include <server/Server.hpp>
+#include <config/constants.hpp>
 #include <utils/log.hpp>
 #include <utils/signals.hpp>
 
@@ -45,7 +45,7 @@ void Server::load( const char* file ) {
 	return ;
 }
 void Server::load() {
-	this->load( Config::kDefaultPath );
+	this->load( kDefaultPath );
 	return ;
 }
 
@@ -63,12 +63,12 @@ int Server::start( void ) {
 	}
 
 	struct timeval timeout;
-	timeout.tv_sec = Config::kTimeoutSec;
+	timeout.tv_sec = kTimeoutSec;
 	timeout.tv_usec = 0;
 
 	struct timespec loop_delay;
 	loop_delay.tv_sec = 0;
-	loop_delay.tv_nsec = Config::kNsecLoopDelay;
+	loop_delay.tv_nsec = kNsecLoopDelay;
 
 	signals::handle_signals();
 	this->_run = true;
@@ -156,8 +156,8 @@ int Server::clientRecv( int fd ) {
 
 	// read socket
 	//char buffer[Config::kBufferSize];
-	char * buffer = reinterpret_cast<char *>( malloc( ServerConfig::kClientMaxBodySize * sizeof( char ) ) );
-	int size = recv( fd, buffer, Config::kBufferSize, 0 );
+	char * buffer = reinterpret_cast<char *>( malloc( kClientMaxBodySize * sizeof( char ) ) );
+	int size = recv( fd, buffer, kBufferSize, 0 );
 	if ( size <= 0 ) {
 		free( buffer );
 		return ( 1 ); // disconnect
@@ -229,7 +229,7 @@ void Server::newClient( int fd ) {
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-	this->_clients[sockfd] = new Client( sockfd, *(this->_servers[fd]), this->_clients.size() >= Config::kMaxClients );
+	this->_clients[sockfd] = new Client( sockfd, *(this->_servers[fd]), this->_clients.size() >= kMaxClients );
 
 	this->addToFdSet( sockfd );
 
@@ -358,7 +358,7 @@ int Server::initialize( void ) {
 				//int option_value = 1;
 				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 
-				if ( -1 == listen( sockfd, Config::kBacklogSize ) ) {
+				if ( -1 == listen( sockfd, kBacklogSize ) ) {
 					log::error( "listen() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
 					return ( -1 );
 				}
