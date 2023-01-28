@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <request/RequestConfig.hpp>
+#include <config/constants.hpp>
 #include <utils/log.hpp>
 
 /** UTILS -------------------------------------- */
@@ -110,6 +111,9 @@ const std::string & RequestConfig::getRequestRequestUri( void ) {
 }
 
 const std::string & RequestConfig::getVersion( void ) {
+	if ( true == this->_request._version.empty() ) {
+		return ( kDefaultVersion );
+	}
 	return ( this->_request._version );
 }
 

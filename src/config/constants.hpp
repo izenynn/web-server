@@ -25,6 +25,7 @@ namespace webserv {
 	extern const std::string::size_type	kRequestHeaderValueLimit;
 	extern const time_t					kRequestTimeoutSec;
 	extern const size_t					kClientMaxBodySize;
+	extern const std::string			kDefaultVersion;
 
 	extern const std::map<int, Client *>::size_type kMaxClients;
 } /** namespace webserv */

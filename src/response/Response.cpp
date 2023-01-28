@@ -245,6 +245,7 @@ void Response::clear( void ) {
 }
 
 void Response::build( void ) {
+	log::debug( "STATUS CODE: " + SSTR( this->_statusCode ) );
 	std::string & method = this->_requestConfig.getMethod();
 
 	log::warning("> inside build");
@@ -253,27 +254,29 @@ void Response::build( void ) {
 
 	// check for errors and process request if none
 	log::warning("> checking for errors...");
-	if ( false == this->_requestConfig.isValidMethod( method ) ) {
-		log::warning("> 405");
-		// set error code
-		this->_statusCode = 405; // 405 method not allowed
-		// set allow header
-		std::string allowedMethods;
-		for ( std::vector<std::string>::const_iterator it = this->_requestConfig.getAllowedMethods().begin(); it != this->_requestConfig.getAllowedMethods().end(); ) {
-			allowedMethods += *it;
-			++it;
-			if ( this->_requestConfig.getAllowedMethods().end() != it ) {
-				allowedMethods += ", ";
+	if ( 0 == this->_statusCode ) {
+		if ( false == this->_requestConfig.isValidMethod( method ) ) {
+			log::warning("> 405");
+			// set error code
+			this->_statusCode = 405; // 405 method not allowed
+			// set allow header
+			std::string allowedMethods;
+			for ( std::vector<std::string>::const_iterator it = this->_requestConfig.getAllowedMethods().begin(); it != this->_requestConfig.getAllowedMethods().end(); ) {
+				allowedMethods += *it;
+				++it;
+				if ( this->_requestConfig.getAllowedMethods().end() != it ) {
+					allowedMethods += ", ";
+				}
 			}
+			this->_headers["Allow"] = allowedMethods;
+		} else if ( this->_requestConfig.getBody().length() > this->_requestConfig.getMaxBodySize() ) {
+			log::warning("> 413");
+			this->_statusCode = 413; // 413 payload too large
+		} else {
+			log::warning("> no errors... processing method...");
+			// FIXME de aqui no sale
+			this->_statusCode = this->process(); // process method
 		}
-		this->_headers["Allow"] = allowedMethods;
-	} else if ( this->_requestConfig.getBody().length() > this->_requestConfig.getMaxBodySize() ) {
-		log::warning("> 413");
-		this->_statusCode = 413; // 413 payload too large
-	} else {
-		log::warning("> no errors... processing method...");
-		// FIXME de aqui no sale
-		this->_statusCode = this->process(); // process method
 	}
 
 	log::warning("> method processed!");
