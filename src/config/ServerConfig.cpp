@@ -60,6 +60,7 @@ namespace webserv {
 const size_t ServerConfig::kClientMaxBodySize = 8196;
 
 //: _id( -1 ), // FIXME
+// TODO defualt root in constructor, now defualt root is "/"
 ServerConfig::ServerConfig( void )
 		: _autoindex( false ),
 		  _client_max_body_size( ServerConfig::kClientMaxBodySize ) {
