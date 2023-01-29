@@ -78,7 +78,7 @@ ServerConfig::ServerConfig( void )
 	//this->_serverDirectives["cgi_param"] =				&ServerConfig::parseCgiParam;
 	//this->_serverDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
 
-	this->_locationDirectives["alias"]					= &ServerConfig::parseRoot; // only location block
+	this->_locationDirectives["alias"]					= &ServerConfig::parseAlias; // only location block
 	this->_locationDirectives["root"]					= &ServerConfig::parseRoot;
 	this->_locationDirectives["index"]					= &ServerConfig::parseIndex;
 	this->_locationDirectives["autoindex"]				= &ServerConfig::parseAutoindex;

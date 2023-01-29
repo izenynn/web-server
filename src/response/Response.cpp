@@ -25,6 +25,18 @@ std::string getDate( void ) {
 	return ( std::string( buffer, length ) );
 }
 
+std::string removeLocationFromUri( std::string uri, const std::string & locationUri ) {
+	// check request is not the base directory
+	uri.erase( 0, locationUri.length() );
+
+	// put '/' at the start if it was removed
+	if ( '/' != uri[0] ) {
+		uri.insert( 0, "/" );
+	}
+
+	return ( uri );
+}
+
 }
 
 /** CLASS -------------------------------------- */
@@ -248,8 +260,14 @@ void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 
 	log::warning("> inside build");
-	this->_responseData.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
-	log::warning("> uri set path to: " + utils::sanitizePath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() ) );
+	// set path depending if 'alias' directive is present on location
+	if ( false == this->_requestConfig.getAlias().empty() ) {
+		this->_responseData.setPath( this->_requestConfig.getAlias() + "/" + removeLocationFromUri( this->_requestConfig.getRequestUri(), this->_requestConfig.getLocationUri() ) );
+		log::warning("> set path to alias: " + this->_requestConfig.getAlias() + "/" + removeLocationFromUri( this->_requestConfig.getRequestUri(), this->_requestConfig.getLocationUri() ) );
+	} else {
+		this->_responseData.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
+		log::warning("> set path to root: " + this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
+	}
 
 	// check for errors and process request if none
 	log::warning("> checking for errors...");

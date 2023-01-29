@@ -40,6 +40,7 @@ class RequestConfig {
 		bool								getAutoIndex( void );
 		const std::string &					getLocationUri( void );
 		const std::string &					getRoot( void );
+		const std::string &					getAlias( void );
 		const std::string &					getUploadStore( void );
 	private:
 		RequestConfig( void ); // not necessary
