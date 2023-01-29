@@ -61,7 +61,8 @@ namespace webserv {
 //: _id( -1 ), // FIXME
 // TODO defualt root in constructor, now defualt root is "/"
 ServerConfig::ServerConfig( void )
-		: _autoindex( false ),
+		: _root( kDefaultRoot ),
+		  _autoindex( false ),
 		  _client_max_body_size( kClientMaxBodySize ) {
 	this->_serverDirectives["location"]				= &ServerConfig::parseLocation; // only server block
 	this->_serverDirectives["listen"]				= &ServerConfig::parseListen; // only server block

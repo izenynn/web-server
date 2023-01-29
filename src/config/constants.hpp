@@ -15,6 +15,7 @@ namespace webserv {
 	class Client;
 
 	extern const char *					kDefaultPath;
+	extern const std::string			kDefaultRoot;
 	extern const int					kBacklogSize;
 	extern const int					kBufferSize;
 	extern const time_t					kTimeoutSec;

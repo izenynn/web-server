@@ -26,7 +26,7 @@ A brief explanetion of server block only directives:
 
 A brief explanetion of server/location blocks directives:
 
-- `root`: root folder for the server files.
+- `root`: root folder for the server files, defualt is `/var/www/`.
 - `index`: index file that should be returnde when client makes a GET request to the directory
 - `autoindex`: `on/off`: autoindex page when requesting a directory; defualt is `off`.
 - `error_page`: `404 example.html`: specify a custom html file for an error code.
