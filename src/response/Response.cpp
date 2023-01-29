@@ -197,8 +197,8 @@ Response::Response( RequestConfig & config, int statusCode )
 		  _statusCode( statusCode ),
 		  _requestConfig( config ) {
 	this->_methods["GET"]		= &Response::methodGet;
-	//this->_methods["POST"]		= &Response::methodPost;
-	//this->_methods["PUT"]		= &Response::methodPut;
+	this->_methods["POST"]		= &Response::methodPost;
+	this->_methods["PUT"]		= &Response::methodPut;
 	//this->_methods["DELETE"]	= &Response::methodDelete;
 	return ;
 }
@@ -353,9 +353,15 @@ int Response::process( void ) {
 
 	// post / put
 	if ( "POST" == method || "PUT" == method ) {
-		//std::string path = this->_requestConfig.getLocationUri() + "/" + this->_requestConfig.getRequestUri();
 		this->_statusCode = 405; // 405 method not allowed
+
+		// if upload_store change set upload path
+		if ( false == this->_requestConfig.getUploadStore().empty() ) {
+			;
+		}
 	}
+
+	// delete doesnt need any pre process
 
 	int ret = (this->*(Response::_methods[method]))();
 	return ( ret );

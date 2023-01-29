@@ -145,6 +145,10 @@ const std::string & RequestConfig::getRoot( void ) {
 	return ( this->_location->second->_root );
 }
 
+const std::string & RequestConfig::getUploadStore( void ) {
+	return ( this->_location->second->_upload_store );
+}
+
 ServerConfig * RequestConfig::getRequestServer( void ) {
 	std::vector<ServerConfig *> matches;
 
