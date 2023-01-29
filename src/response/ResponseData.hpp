@@ -31,8 +31,8 @@ class ResponseData {
 		void setPath( const std::string & path );
 
 		bool openFile();
-		//bool createFile(...);
-		//bool appendFile(...);
+		void createFile( const std::string & data );
+		void appendFile( const std::string & data );
 		void deleteFile( void );
 		void closeFile( void );
 

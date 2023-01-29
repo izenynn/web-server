@@ -197,8 +197,8 @@ Response::Response( RequestConfig & config, int statusCode )
 		  _statusCode( statusCode ),
 		  _requestConfig( config ) {
 	this->_methods["GET"]		= &Response::methodGet;
-	//this->_methods["POST"]		= &Response::methodPost;
-	//this->_methods["PUT"]		= &Response::methodPut;
+	this->_methods["POST"]		= &Response::methodPost;
+	this->_methods["PUT"]		= &Response::methodPut;
 	this->_methods["DELETE"]	= &Response::methodDelete;
 	return ;
 }
@@ -353,15 +353,57 @@ int Response::process( void ) {
 
 	// post / put
 	if ( "POST" == method || "PUT" == method ) {
-		this->_statusCode = 405; // 405 method not allowed
+		// check request is not the base directory
+		std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
+		std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+		if ( '/' == location[location.length() - 1] ) {
+			location.erase( location.length() - 1 );
+		}
+		if ( '/' == request[request.length() - 1] ) {
+			request.erase( request.length() - 1 );
+		}
+		if ( request == location ) {
+			return ( 405 ); // 405 method not allowed
+		}
 
 		// if upload_store change set upload path
-		/*if ( false == this->_requestConfig.getUploadStore().empty() ) {
-			;
-		}*/
+		if ( false == this->_requestConfig.getUploadStore().empty() ) {
+			std::string uploadPath = this->_requestConfig.getRoot() + "/" + this->_requestConfig.getUploadStore();
+
+			bool fileExists = false;
+			bool isDir = false;
+			struct stat statbuf;
+			if ( 0 == stat( uploadPath.c_str(), &statbuf ) ) {
+				fileExists = true;
+			}
+			if ( S_ISDIR( statbuf.st_mode ) ) {
+				isDir = true;
+			}
+
+			if ( false == fileExists || false == isDir ) {
+				log::failure( "POST/PUT failed because upload path: " + uploadPath + "does not exists or is not a directory" );
+				return ( 500 ); // 500 internal server error
+			}
+
+			this->_responseData.setPath( uploadPath + "/" + this->_requestConfig.getRequestUri() );
+		}
 	}
 
-	// delete doesnt need any pre process
+	// delete
+	if ( "DELETE" == method ) {
+		// check request is not the base directory
+		std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
+		std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+		if ( '/' == location[location.length() - 1] ) {
+			location.erase( location.length() - 1 );
+		}
+		if ( '/' == request[request.length() - 1] ) {
+			request.erase( request.length() - 1 );
+		}
+		if ( request == location ) {
+			return ( 405 ); // 405 method not allowed
+		}
+	}
 
 	int ret = (this->*(Response::_methods[method]))();
 	return ( ret );
@@ -402,6 +444,38 @@ int Response::methodGet( void ) {
 		this->_headers["Content-Type"] = this->kMimeTypes[this->_responseData.getExtension()];
 	}
 	return ( 200 ); // 200 ok
+}
+
+int Response::methodPost( void ) {
+	const std::string & data = this->_requestConfig.getBody();
+
+	if ( true == this->_responseData.fileExists() ) {
+		this->_responseData.appendFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		return ( 200 ); // 200 ok
+	} else {
+		this->_responseData.createFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Location"] = this->_requestConfig.getRequestUri();
+		return ( 201 ); // 201 created
+	}
+}
+
+int Response::methodPut( void ) {
+	const std::string & data = this->_requestConfig.getBody();
+
+	if ( true == this->_responseData.fileExists() ) {
+		this->_responseData.createFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		return ( 200 ); // 200 ok
+	} else {
+		this->_responseData.createFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Location"] = this->_requestConfig.getRequestUri();
+		return ( 201 ); // 201 created
+	}
+
+	return ( 200 );
 }
 
 int Response::methodDelete( void ) {
