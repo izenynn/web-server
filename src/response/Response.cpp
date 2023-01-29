@@ -417,7 +417,7 @@ void Response::generateErrorPage( int statusCode ) {
 		this->_statusCode = 0; // FIXME
 	} else {
 		// generate the ultimate error page
-		this->_body = "<html><head><title>error</title></head><body><h1>";
+		this->_body = "<!DOCTYPE html><html><head><title>error</title></head><body><h1>";
 		this->_body += SSTR( statusCode );
 		this->_body += "</h1><p>";
 		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( statusCode ) ) {
