@@ -238,7 +238,6 @@ void Response::print( void ) const {
 void Response::clear( void ) {
 	this->_redirect = false;
 	this->_statusCode = 0;
-	this->_redirect_status_code = 0;
 	this->_headers.clear();
 	this->_body.clear();
 	this->_response.clear();
@@ -429,6 +428,7 @@ int Response::process( void ) {
 void Response::setResponse( void ) {
 	if ( this->_statusCode < 400 && this->_redirect_status_code != 0 ) {
 		this->_statusCode = this->_redirect_status_code;
+		this->_redirect_status_code = 0;
 	}
 
 	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
