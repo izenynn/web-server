@@ -60,6 +60,48 @@ bool ResponseData::openFile( void ) {
 	}
 }
 
+void ResponseData::createFile( const std::string & data ) {
+	this->closeFile();
+
+	this->_fd = open( this->_path.c_str(), O_RDWR | O_CREAT | O_TRUNC, 00644 );
+	if ( this->_fd <= 0 ) {
+		log::failure( "open() failed with return code -1 when opening: " + this->_path );
+		return ;
+	}
+
+	if ( 0 == data.length() ) {
+		return ;
+	}
+
+	int ret = write( this->_fd, data.c_str(), data.length() );
+	if ( -1 == ret ) {
+		log::failure( "write() failed with return code -1 when writing to: " + this->_path );
+	}
+
+	return ;
+}
+
+void ResponseData::appendFile( const std::string & data ) {
+	this->closeFile();
+
+	this->_fd = open( this->_path.c_str(), O_RDWR | O_APPEND );
+	if ( this->_fd <= 0 ) {
+		log::failure( "open() failed with return code -1 when opening: " + this->_path );
+		return ;
+	}
+
+	if ( 0 == data.length() ) {
+		return ;
+	}
+
+	int ret = write( this->_fd, data.c_str(), data.length() );
+	if ( -1 == ret ) {
+		log::failure( "write() failed with return code -1 when writing to: " + this->_path );
+	}
+
+	return ;
+}
+
 void ResponseData::closeFile( void ) {
 	if ( this->_fd <= 0 ) {
 		return ;
@@ -68,6 +110,19 @@ void ResponseData::closeFile( void ) {
 	log::warning("### closing file..."); // DEBUG
 	close( this->_fd );
 	this->_fd = 0;
+
+	return ;
+}
+
+void ResponseData::deleteFile( void ) {
+	if ( false == this->fileExists() ) {
+		return ;
+	}
+
+	int ret = unlink( this->_path.c_str() );
+	if ( -1 == ret ) {
+		log::failure( "unlink() failed with return code -1 when unlinking: " + this->_path );
+	}
 
 	return ;
 }
@@ -124,7 +179,7 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 	struct dirent * e;
 	struct stat statbuf;
 
-	body = "<html><head><title>index of " + uri + "</title></head>";
+	body = "<!DOCTYPE html><html><head><title>index of " + uri + "</title></head>";
 	body += "<body><h1>index of " + uri + "</h1><hr>";
 
 	d = opendir( this->_path.c_str() );

@@ -197,9 +197,9 @@ Response::Response( RequestConfig & config, int statusCode )
 		  _statusCode( statusCode ),
 		  _requestConfig( config ) {
 	this->_methods["GET"]		= &Response::methodGet;
-	//this->_methods["POST"]		= &Response::methodPost;
-	//this->_methods["PUT"]		= &Response::methodPut;
-	//this->_methods["DELETE"]	= &Response::methodDelete;
+	this->_methods["POST"]		= &Response::methodPost;
+	this->_methods["PUT"]		= &Response::methodPut;
+	this->_methods["DELETE"]	= &Response::methodDelete;
 	return ;
 }
 
@@ -238,7 +238,6 @@ void Response::print( void ) const {
 void Response::clear( void ) {
 	this->_redirect = false;
 	this->_statusCode = 0;
-	this->_redirect_status_code = 0;
 	this->_headers.clear();
 	this->_body.clear();
 	this->_response.clear();
@@ -353,8 +352,73 @@ int Response::process( void ) {
 
 	// post / put
 	if ( "POST" == method || "PUT" == method ) {
-		//std::string path = this->_requestConfig.getLocationUri() + "/" + this->_requestConfig.getRequestUri();
-		this->_statusCode = 405; // 405 method not allowed
+		// check request is not the base directory
+		{
+			std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
+			std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+			if ( '/' == location[location.length() - 1] ) {
+				location.erase( location.length() - 1 );
+			}
+			if ( '/' == request[request.length() - 1] ) {
+				request.erase( request.length() - 1 );
+			}
+			if ( request == location ) {
+				return ( 405 ); // 405 method not allowed
+			}
+		}
+
+		// if upload_store change set upload path
+		if ( false == this->_requestConfig.getUploadStore().empty() ) {
+			std::string uploadPath = this->_requestConfig.getRoot() + "/" + this->_requestConfig.getUploadStore();
+
+			bool fileExists = false;
+			bool isDir = false;
+			struct stat statbuf;
+			if ( 0 == stat( uploadPath.c_str(), &statbuf ) ) {
+				fileExists = true;
+			}
+			if ( S_ISDIR( statbuf.st_mode ) ) {
+				isDir = true;
+			}
+
+			if ( false == fileExists || false == isDir ) {
+				log::failure( "POST/PUT failed because upload path: " + uploadPath + " does not exists or is not a directory" );
+				return ( 500 ); // 500 internal server error
+			}
+
+			// romove location uri from request uri
+			std::string file;
+			if ( 0 == uploadPath.find( this->_requestConfig.getRoot() ) ) {
+				// remove '/' at the end, it shouldn't have, that would mean it's a dir ande we check that before, but just in case to avoid errors
+				std::string request = this->_requestConfig.getRequestUri();
+				if ( '/' == request[request.length() - 1] ) {
+					request.erase( request.length() - 1 );
+				}
+				file = request.substr( request.find_last_of( "/" ), request.npos );
+			}
+			if ( true == file.empty() ) {
+				log::failure( "unexpected error on POST/PUT, no file specified on request uri: " + this->_requestConfig.getRequestUri() + " does not exists or is not a directory" );
+				return ( 400 ); // 400 bad request
+			}
+			this->_responseData.setPath( uploadPath + "/" + file );
+			//this->_responseData.setPath( uploadPath + "/" + this->_requestConfig.getRequestUri() );
+		}
+	}
+
+	// delete
+	if ( "DELETE" == method ) {
+		// check request is not the base directory
+		std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
+		std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+		if ( '/' == location[location.length() - 1] ) {
+			location.erase( location.length() - 1 );
+		}
+		if ( '/' == request[request.length() - 1] ) {
+			request.erase( request.length() - 1 );
+		}
+		if ( request == location ) {
+			return ( 405 ); // 405 method not allowed
+		}
 	}
 
 	int ret = (this->*(Response::_methods[method]))();
@@ -364,6 +428,7 @@ int Response::process( void ) {
 void Response::setResponse( void ) {
 	if ( this->_statusCode < 400 && this->_redirect_status_code != 0 ) {
 		this->_statusCode = this->_redirect_status_code;
+		this->_redirect_status_code = 0;
 	}
 
 	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
@@ -386,7 +451,6 @@ void Response::setResponse( void ) {
 }
 
 int Response::methodGet( void ) {
-	// TODO autoindex
 	if ( true == this->_requestConfig.getAutoIndex() && true == this->_responseData.isDirectory() ) {
 		this->_body = this->_responseData.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
@@ -396,6 +460,52 @@ int Response::methodGet( void ) {
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[this->_responseData.getExtension()];
 	}
+	return ( 200 ); // 200 ok
+}
+
+int Response::methodPost( void ) {
+	const std::string & data = this->_requestConfig.getBody();
+
+	if ( true == this->_responseData.fileExists() ) {
+		this->_responseData.appendFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		return ( 200 ); // 200 ok
+	} else {
+		this->_responseData.createFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Location"] = this->_requestConfig.getRequestUri();
+		return ( 201 ); // 201 created
+	}
+}
+
+int Response::methodPut( void ) {
+	const std::string & data = this->_requestConfig.getBody();
+
+	if ( true == this->_responseData.fileExists() ) {
+		this->_responseData.createFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		return ( 200 ); // 200 ok
+	} else {
+		this->_responseData.createFile( data );
+		this->_headers["Content-Length"] = SSTR( this->_body.length() );
+		this->_headers["Location"] = this->_requestConfig.getRequestUri();
+		return ( 201 ); // 201 created
+	}
+
+	return ( 200 );
+}
+
+int Response::methodDelete( void ) {
+	if ( false == this->_responseData.fileExists() ) {
+		return ( 404 ); // 404 not found
+	}
+
+	this->_responseData.deleteFile();
+
+	this->_body = "<!DOCTYPE html><html><body><h1>File deleted.</h1></body></html>";
+	this->_headers["Content-Length"] = SSTR( this->_body.length() );
+	this->_headers["Content-Type"] = this->kMimeTypes[".html"];
+
 	return ( 200 ); // 200 ok
 }
 
@@ -411,7 +521,7 @@ void Response::generateErrorPage( int statusCode ) {
 		this->_statusCode = 0; // FIXME
 	} else {
 		// generate the ultimate error page
-		this->_body = "<html><head><title>error</title></head><body><h1>";
+		this->_body = "<!DOCTYPE html><html><head><title>error</title></head><body><h1>";
 		this->_body += SSTR( statusCode );
 		this->_body += "</h1><p>";
 		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( statusCode ) ) {

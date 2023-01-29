@@ -31,10 +31,10 @@ class ResponseData {
 		void setPath( const std::string & path );
 
 		bool openFile();
-		//bool createFile(...);
-		//bool appendFile(...);
-		//bool deleteFile(...);
-		void closeFile();
+		void createFile( const std::string & data );
+		void appendFile( const std::string & data );
+		void deleteFile( void );
+		void closeFile( void );
 
 		const std::string getIndex( std::vector<std::string> & indexes );
 		//void getFile( void ); // FIXME remove this line!!!

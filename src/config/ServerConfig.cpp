@@ -63,25 +63,27 @@ namespace webserv {
 ServerConfig::ServerConfig( void )
 		: _autoindex( false ),
 		  _client_max_body_size( kClientMaxBodySize ) {
-	this->_serverDirectives["location"] =				&ServerConfig::parseLocation;
-	this->_serverDirectives["listen"] =					&ServerConfig::parseListen;
-	this->_serverDirectives["server_name"] =			&ServerConfig::parseServerName;
-	this->_serverDirectives["root"] =					&ServerConfig::parseRoot;
-	this->_serverDirectives["index"] =					&ServerConfig::parseIndex;
-	this->_serverDirectives["autoindex"] =				&ServerConfig::parseAutoindex;
-	this->_serverDirectives["error_page"] =				&ServerConfig::parseErrorPage;
-	this->_serverDirectives["limit_except"] =			&ServerConfig::parseLimitExcept;
-	this->_serverDirectives["client_max_body_size"] =	&ServerConfig::parseClientMaxBodySize;
+	this->_serverDirectives["location"]				= &ServerConfig::parseLocation;
+	this->_serverDirectives["listen"]				= &ServerConfig::parseListen;
+	this->_serverDirectives["server_name"]			= &ServerConfig::parseServerName;
+	this->_serverDirectives["root"]					= &ServerConfig::parseRoot;
+	this->_serverDirectives["index"]				= &ServerConfig::parseIndex;
+	this->_serverDirectives["autoindex"]			= &ServerConfig::parseAutoindex;
+	this->_serverDirectives["error_page"]			= &ServerConfig::parseErrorPage;
+	this->_serverDirectives["limit_except"]			= &ServerConfig::parseLimitExcept;
+	this->_serverDirectives["client_max_body_size"]	= &ServerConfig::parseClientMaxBodySize;
+	this->_serverDirectives["upload_store"]			= &ServerConfig::parseUploadStore;
 	// TODO cgi on server block ??? i dont think so
 	//this->_serverDirectives["cgi_param"] =				&ServerConfig::parseCgiParam;
 	//this->_serverDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
 
-	this->_locationDirectives["root"] =					&ServerConfig::parseRoot;
-	this->_locationDirectives["index"] =				&ServerConfig::parseIndex;
-	this->_locationDirectives["autoindex"] =			&ServerConfig::parseAutoindex;
-	this->_locationDirectives["error_page"] =			&ServerConfig::parseErrorPage;
-	this->_locationDirectives["limit_except"] =			&ServerConfig::parseLimitExcept;
-	this->_locationDirectives["client_max_body_size"] =	&ServerConfig::parseClientMaxBodySize;
+	this->_locationDirectives["root"]					= &ServerConfig::parseRoot;
+	this->_locationDirectives["index"]					= &ServerConfig::parseIndex;
+	this->_locationDirectives["autoindex"]				= &ServerConfig::parseAutoindex;
+	this->_locationDirectives["error_page"]				= &ServerConfig::parseErrorPage;
+	this->_locationDirectives["limit_except"]			= &ServerConfig::parseLimitExcept;
+	this->_locationDirectives["client_max_body_size"]	= &ServerConfig::parseClientMaxBodySize;
+	this->_locationDirectives["upload_store"]			= &ServerConfig::parseUploadStore;
 	//this->_locationDirectives["cgi_param"] =				&ServerConfig::parseCgiParam;
 	//this->_locationDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
 
@@ -132,6 +134,7 @@ void ServerConfig::print( const std::string & indent ) const {
 	}
 
 	std::cout << indent << "client_max_body_size: " << this->_client_max_body_size << std::endl;
+	std::cout << indent << "upload_store:         " << this->_upload_store << std::endl;
 
 	if ( false == this->_location.empty() ) {
 		std::cout << indent << "locations:" << std::endl;
@@ -189,6 +192,7 @@ ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 	location->_limit_except			= this->_limit_except; // inherited, replaced if present
 	location->_client_max_body_size	= this->_client_max_body_size; // inherited, replaced if present
 	// TODO cgi on server block ??? i dont think so
+	// TODO cgi inherited ??? i dont think so
 	//location->_cgi_param = this->_cgi_param;
 	//location->_cgi_pass = this->_cgi_pass;
 
@@ -481,6 +485,30 @@ void ServerConfig::parseClientMaxBodySize( token_type::const_iterator & it ) {
 	}
 	if ( ";" != *it ) {
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'client_max_body_size'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseUploadStore( token_type::const_iterator & it ) {
+	// check next token is not an end token, upload_store requires a value
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'upload_store'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'upload_store'" );
+	}
+
+	// save directive
+	this->_upload_store = *it;
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'upload_store'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'upload_store'" );
 	}
 
 	return ;
