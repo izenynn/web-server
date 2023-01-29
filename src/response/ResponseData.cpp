@@ -72,6 +72,19 @@ void ResponseData::closeFile( void ) {
 	return ;
 }
 
+void ResponseData::deleteFile( void ) {
+	if ( false == this->fileExists() ) {
+		return ;
+	}
+
+	int ret = unlink( this->_path.c_str() );
+	if ( -1 == ret ) {
+		log::failure( "unlink() failed with return code -1 when unlinking: " + this->_path );
+	}
+
+	return ;
+}
+
 const std::string ResponseData::getIndex( std::vector<std::string> & indexes ) {
 	std::string ret;
 	DIR * d;

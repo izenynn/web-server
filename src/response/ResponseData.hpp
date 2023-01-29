@@ -33,8 +33,8 @@ class ResponseData {
 		bool openFile();
 		//bool createFile(...);
 		//bool appendFile(...);
-		//bool deleteFile(...);
-		void closeFile();
+		void deleteFile( void );
+		void closeFile( void );
 
 		const std::string getIndex( std::vector<std::string> & indexes );
 		//void getFile( void ); // FIXME remove this line!!!

@@ -197,9 +197,9 @@ Response::Response( RequestConfig & config, int statusCode )
 		  _statusCode( statusCode ),
 		  _requestConfig( config ) {
 	this->_methods["GET"]		= &Response::methodGet;
-	this->_methods["POST"]		= &Response::methodPost;
-	this->_methods["PUT"]		= &Response::methodPut;
-	//this->_methods["DELETE"]	= &Response::methodDelete;
+	//this->_methods["POST"]		= &Response::methodPost;
+	//this->_methods["PUT"]		= &Response::methodPut;
+	this->_methods["DELETE"]	= &Response::methodDelete;
 	return ;
 }
 
@@ -356,9 +356,9 @@ int Response::process( void ) {
 		this->_statusCode = 405; // 405 method not allowed
 
 		// if upload_store change set upload path
-		if ( false == this->_requestConfig.getUploadStore().empty() ) {
+		/*if ( false == this->_requestConfig.getUploadStore().empty() ) {
 			;
-		}
+		}*/
 	}
 
 	// delete doesnt need any pre process
@@ -401,6 +401,20 @@ int Response::methodGet( void ) {
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[this->_responseData.getExtension()];
 	}
+	return ( 200 ); // 200 ok
+}
+
+int Response::methodDelete( void ) {
+	if ( false == this->_responseData.fileExists() ) {
+		return ( 404 ); // 404 not found
+	}
+
+	this->_responseData.deleteFile();
+
+	this->_body = "<!DOCTYPE html><html><body><h1>File deleted.</h1></body></html>";
+	this->_headers["Content-Length"] = SSTR( this->_body.length() );
+	this->_headers["Content-Type"] = this->kMimeTypes[".html"];
+
 	return ( 200 ); // 200 ok
 }
 
