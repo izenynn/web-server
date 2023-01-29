@@ -60,12 +60,14 @@ class ServerConfig {
 		void parseLimitExcept(			token_type::const_iterator & it );
 		void parseClientMaxBodySize(	token_type::const_iterator & it );
 		void parseUploadStore(			token_type::const_iterator & it );
+		void parseAlias(				token_type::const_iterator & it );
 
 		std::vector<Listen *>					_listen;
 		std::map<std::string, ServerConfig *>	_location;
 
 		std::vector<std::string>			_server_name;
 		std::string							_root;
+		std::string							_alias;
 		std::vector<std::string>			_index;
 		bool								_autoindex;
 		std::map<int, std::string>			_error_page;

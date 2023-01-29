@@ -63,9 +63,9 @@ namespace webserv {
 ServerConfig::ServerConfig( void )
 		: _autoindex( false ),
 		  _client_max_body_size( kClientMaxBodySize ) {
-	this->_serverDirectives["location"]				= &ServerConfig::parseLocation;
-	this->_serverDirectives["listen"]				= &ServerConfig::parseListen;
-	this->_serverDirectives["server_name"]			= &ServerConfig::parseServerName;
+	this->_serverDirectives["location"]				= &ServerConfig::parseLocation; // only server block
+	this->_serverDirectives["listen"]				= &ServerConfig::parseListen; // only server block
+	this->_serverDirectives["server_name"]			= &ServerConfig::parseServerName; // only server block
 	this->_serverDirectives["root"]					= &ServerConfig::parseRoot;
 	this->_serverDirectives["index"]				= &ServerConfig::parseIndex;
 	this->_serverDirectives["autoindex"]			= &ServerConfig::parseAutoindex;
@@ -77,6 +77,7 @@ ServerConfig::ServerConfig( void )
 	//this->_serverDirectives["cgi_param"] =				&ServerConfig::parseCgiParam;
 	//this->_serverDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
 
+	this->_locationDirectives["alias"]					= &ServerConfig::parseRoot; // only location block
 	this->_locationDirectives["root"]					= &ServerConfig::parseRoot;
 	this->_locationDirectives["index"]					= &ServerConfig::parseIndex;
 	this->_locationDirectives["autoindex"]				= &ServerConfig::parseAutoindex;
@@ -114,7 +115,8 @@ void ServerConfig::print( const std::string & indent ) const {
 		std::cout << indent << "    " << *it << std::endl;
 	}
 
-	std::cout << indent << "root: " << this->_root << std::endl;
+	std::cout << indent << "root:  " << this->_root << std::endl;
+	std::cout << indent << "alias: " << this->_alias << std::endl;
 
 	std::cout << indent << "index:" << std::endl;
 	for ( std::vector<std::string>::const_iterator it = this->_index.begin(); it != this->_index.end(); ++it ) {
@@ -343,6 +345,30 @@ void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 	}
 	if ( ";" != *it ) {
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'root'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseAlias( token_type::const_iterator & it ) {
+	// check next token is not an end token, alias requires a value
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'alias'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'alias'" );
+	}
+
+	// save directive
+	this->_alias = *it;
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'alias'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'alias'" );
 	}
 
 	return ;
