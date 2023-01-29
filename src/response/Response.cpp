@@ -392,7 +392,6 @@ void Response::setResponse( void ) {
 }
 
 int Response::methodGet( void ) {
-	// TODO autoindex
 	if ( true == this->_requestConfig.getAutoIndex() && true == this->_responseData.isDirectory() ) {
 		this->_body = this->_responseData.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
