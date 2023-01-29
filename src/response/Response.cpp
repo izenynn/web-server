@@ -354,16 +354,18 @@ int Response::process( void ) {
 	// post / put
 	if ( "POST" == method || "PUT" == method ) {
 		// check request is not the base directory
-		std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
-		std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
-		if ( '/' == location[location.length() - 1] ) {
-			location.erase( location.length() - 1 );
-		}
-		if ( '/' == request[request.length() - 1] ) {
-			request.erase( request.length() - 1 );
-		}
-		if ( request == location ) {
-			return ( 405 ); // 405 method not allowed
+		{
+			std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
+			std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+			if ( '/' == location[location.length() - 1] ) {
+				location.erase( location.length() - 1 );
+			}
+			if ( '/' == request[request.length() - 1] ) {
+				request.erase( request.length() - 1 );
+			}
+			if ( request == location ) {
+				return ( 405 ); // 405 method not allowed
+			}
 		}
 
 		// if upload_store change set upload path
@@ -381,11 +383,26 @@ int Response::process( void ) {
 			}
 
 			if ( false == fileExists || false == isDir ) {
-				log::failure( "POST/PUT failed because upload path: " + uploadPath + "does not exists or is not a directory" );
+				log::failure( "POST/PUT failed because upload path: " + uploadPath + " does not exists or is not a directory" );
 				return ( 500 ); // 500 internal server error
 			}
 
-			this->_responseData.setPath( uploadPath + "/" + this->_requestConfig.getRequestUri() );
+			// romove location uri from request uri
+			std::string file;
+			if ( 0 == uploadPath.find( this->_requestConfig.getRoot() ) ) {
+				// remove '/' at the end, it shouldn't have, that would mean it's a dir ande we check that before, but just in case to avoid errors
+				std::string request = this->_requestConfig.getRequestUri();
+				if ( '/' == request[request.length() - 1] ) {
+					request.erase( request.length() - 1 );
+				}
+				file = request.substr( request.find_last_of( "/" ), request.npos );
+			}
+			if ( true == file.empty() ) {
+				log::failure( "unexpected error on POST/PUT, no file specified on request uri: " + this->_requestConfig.getRequestUri() + " does not exists or is not a directory" );
+				return ( 400 ); // 400 bad request
+			}
+			this->_responseData.setPath( uploadPath + "/" + file );
+			//this->_responseData.setPath( uploadPath + "/" + this->_requestConfig.getRequestUri() );
 		}
 	}
 
