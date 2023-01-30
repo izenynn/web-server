@@ -47,8 +47,8 @@ const std::vector<ServerConfig *> * Config::getServers( void ) const {
 
 // tokenize and check for extra or missing '{}'
 void Config::lexer( void ) {
-	// TODO add comment '#' support
-	std::ifstream in;
+	std::ifstream	in;
+	bool			comment;
 
 	// open file
 	in.open( this->_file, std::ifstream::in );
@@ -58,20 +58,30 @@ void Config::lexer( void ) {
 
 	// tokenize line by line
 	for ( std::string line; getline(in, line); ) {
+		comment = false;
 		std::string::size_type	start = line.find_first_not_of(" \t", 0);
 		std::string::size_type	end = 0;
 		while ( ( start = line.find_first_not_of( " \t", end ) ) != std::string::npos ) {
 			end = line.find_first_of( " \t", start );
 			std::string	token = line.substr( start, end - start );
 
+			// check if comment starts
+			if ( '#' == token[0] ) {
+				comment = true;
+				break ;
+			}
+
 			// save token, if semicolon separate it from directive
-			if ( token.length() > 1 && token[token.length() - 1] == ';' ) {
+			if ( token.length() > 1 && ';' == token[token.length() - 1] ) {
 				token.erase(token.end() - 1);
 				this->_tokens.push_back(token);
 				this->_tokens.push_back(";");
 			} else {
 				this->_tokens.push_back(token);
 			}
+		}
+		if ( true == comment ) {
+			continue ;
 		}
 	}
 
@@ -116,7 +126,7 @@ void Config::parser( void ) {
 
 			++serverCnt;
 		} else {
-			throw Config::ConfigException( "exception: unknown directive" );
+			throw Config::ConfigException( "exception: unknown directive: " + *it );
 		}
 	}
 	if ( serverCnt == 0 ) {
