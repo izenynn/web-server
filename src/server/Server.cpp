@@ -93,13 +93,14 @@ int Server::start( void ) {
 			}
 
 			// iterate clients to read/write
-			for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ++it ) {
+			for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ) {
 				int fd = it->first;
 				// check read fd and receive request
 				if ( FD_ISSET( fd, &(this->_fdRead) ) ) {
 					int ret = this->clientRecv( fd );
 					// if error reading disconnect client
 					if ( 0 != ret ) {
+						++it;
 						this->disconnectClient( fd );
 						continue ;
 					}
@@ -111,10 +112,12 @@ int Server::start( void ) {
 					// if error sending disconnect client
 					int ret = this->clientSend( fd );
 					if ( 0 != ret ) {
+						++it;
 						this->disconnectClient( fd );
 						continue ;
 					}
 				}
+				++it;
 			}
 		} else if ( true == Server::_run ){
 			log::error( "select() failed with unexpected return code: " + SSTR( ret ) );
