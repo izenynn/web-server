@@ -8,7 +8,7 @@
 namespace {
 	void sig_sigint( int signal ) {
 		if ( SIGINT == signal ) {
-			webserv::log::info( "SIGINT detected, closing..." );
+			webserv::log::info( "SIGINT detected, stoping..." );
 			webserv::Server::stop();
 		}
 		return ;
@@ -16,7 +16,7 @@ namespace {
 
 	void sig_sigquit( int signal ) {
 		if ( SIGQUIT == signal ) {
-			webserv::log::info( "SIGQUIT detected, closing..." );
+			webserv::log::info( "SIGQUIT detected, stoping..." );
 			webserv::Server::stop();
 		}
 		return ;

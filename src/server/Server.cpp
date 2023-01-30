@@ -80,7 +80,7 @@ int Server::start( void ) {
 
 		ret = select( this->_fdMax + 1, &(this->_fdRead), &(this->_fdWrite), NULL, &timeout );
 
-		if ( -1 == ret ) {
+		if ( -1 == ret && true == Server::_run ) {
 			log::failure( "select() failed with return code: -1" );
 		} else if ( ret >= 0 ) {
 			// iterate our listeners
@@ -116,7 +116,7 @@ int Server::start( void ) {
 					}
 				}
 			}
-		} else {
+		} else if ( true == Server::_run ){
 			log::error( "select() failed with unexpected return code: " + SSTR( ret ) );
 			return ( 1 );
 		}
@@ -124,15 +124,19 @@ int Server::start( void ) {
 		while ( nanosleep( &loop_delay, &loop_delay ) );
 	}
 
+	log::info( "stoping server..." );
+
 	// disconnect all clients on exit
-	for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ++it ) {
-		this->disconnectClient( it->first );
+	for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ) {
+		this->disconnectClient( (it++)->first );
 	}
 
 	// disconnect all servers on exit
-	for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
-		this->disconnectServer( it->first );
+	for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ) {
+		this->disconnectServer( (it++)->first );
 	}
+
+	log::success( "server stop successful" );
 
 	return ( 0 );
 }
