@@ -48,7 +48,7 @@ const std::vector<ServerConfig *> * Config::getServers( void ) const {
 // tokenize and check for extra or missing '{}'
 void Config::lexer( void ) {
 	// TODO add comment '#' support
-	std::ifstream					in;
+	std::ifstream in;
 
 	// open file
 	in.open( this->_file, std::ifstream::in );
