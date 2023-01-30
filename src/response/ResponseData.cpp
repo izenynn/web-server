@@ -179,7 +179,7 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 	struct dirent * e;
 	struct stat statbuf;
 
-	body = "<!DOCTYPE html><html><head><title>index of " + uri + "</title></head>";
+	body = "<html><head><title>index of " + uri + "</title></head>";
 	body += "<body><h1>index of " + uri + "</h1><hr>";
 
 	d = opendir( this->_path.c_str() );

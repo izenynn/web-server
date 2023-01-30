@@ -75,7 +75,7 @@ class ServerConfig {
 		std::vector<std::string>			_limit_except;
 		std::string::size_type				_client_max_body_size;
 		std::string							_upload_store;
-		std::map<int, std::string>			_return;
+		std::pair<int, std::string>			_return;
 	public:
 		class ServerConfigException : virtual public std::exception {
 			private:

@@ -40,8 +40,10 @@ class RequestConfig {
 		bool								getAutoIndex( void );
 		const std::string &					getLocationUri( void );
 		const std::string &					getRoot( void );
-		const std::string &					getAlias( void );
 		const std::string &					getUploadStore( void );
+		const std::string &					getAlias( void );
+		// FIXME not a map, is a pair
+		const std::pair<int, std::string> &	getReturn( void );
 	private:
 		RequestConfig( void ); // not necessary
 

@@ -63,7 +63,8 @@ namespace webserv {
 ServerConfig::ServerConfig( void )
 		: _root( kDefaultRoot ),
 		  _autoindex( false ),
-		  _client_max_body_size( kClientMaxBodySize ) {
+		  _client_max_body_size( kClientMaxBodySize ),
+		 _return( std::make_pair( 0, "" ) ) {
 	this->_serverDirectives["location"]				= &ServerConfig::parseLocation; // only server block
 	this->_serverDirectives["listen"]				= &ServerConfig::parseListen; // only server block
 	this->_serverDirectives["server_name"]			= &ServerConfig::parseServerName; // only server block
@@ -141,9 +142,7 @@ void ServerConfig::print( const std::string & indent ) const {
 	std::cout << indent << "upload_store:         " << this->_upload_store << std::endl;
 
 	std::cout << indent << "return:" << std::endl;
-	for ( std::map<int, std::string>::const_iterator it = this->_return.begin(); it != this->_return.end(); ++it ) {
-		std::cout << indent << "    " << it->first << " " << it->second << std::endl;
-	}
+	std::cout << indent << "    " << this->_return.first << " " << this->_return.second << std::endl;
 
 	if ( false == this->_location.empty() ) {
 		std::cout << indent << "locations:" << std::endl;
@@ -574,7 +573,7 @@ void ServerConfig::parseReturn( token_type::const_iterator & it ) {
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'return'" );
 	};
 	for ( std::vector<int>::const_iterator n = codes.begin(); n != codes.end(); ++n ) {
-		this->_return[*n] = *it;
+		this->_return = std::make_pair(*n, *it);
 	}
 
 	// check next token is ';'

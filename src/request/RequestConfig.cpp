@@ -145,12 +145,16 @@ const std::string & RequestConfig::getRoot( void ) {
 	return ( this->_location->second->_root );
 }
 
+const std::string & RequestConfig::getUploadStore( void ) {
+	return ( this->_location->second->_upload_store );
+}
+
 const std::string & RequestConfig::getAlias( void ) {
 	return ( this->_location->second->_alias );
 }
 
-const std::string & RequestConfig::getUploadStore( void ) {
-	return ( this->_location->second->_upload_store );
+const std::pair<int, std::string> &	RequestConfig::getReturn( void ) {
+	return ( this->_location->second->_return );
 }
 
 ServerConfig * RequestConfig::getRequestServer( void ) {

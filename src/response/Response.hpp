@@ -53,6 +53,7 @@ class Response {
 		int methodDelete( void );
 		std::map<std::string, Response::method> _methods;
 
+		void generateReturnPage( void );
 		void generateErrorPage( int statusCode );
 
 		bool			_redirect;
