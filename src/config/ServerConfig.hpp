@@ -61,6 +61,7 @@ class ServerConfig {
 		void parseClientMaxBodySize(	token_type::const_iterator & it );
 		void parseUploadStore(			token_type::const_iterator & it );
 		void parseAlias(				token_type::const_iterator & it );
+		void parseReturn(				token_type::const_iterator & it );
 
 		std::vector<Listen *>					_listen;
 		std::map<std::string, ServerConfig *>	_location;
@@ -74,6 +75,7 @@ class ServerConfig {
 		std::vector<std::string>			_limit_except;
 		std::string::size_type				_client_max_body_size;
 		std::string							_upload_store;
+		std::pair<int, std::string>			_return;
 	public:
 		class ServerConfigException : virtual public std::exception {
 			private:

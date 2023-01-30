@@ -260,6 +260,14 @@ void Response::build( void ) {
 	std::string & method = this->_requestConfig.getMethod();
 
 	log::warning("> inside build");
+
+	// check if return directive
+	if ( 0 != this->_requestConfig.getReturn().first ) {
+		this->generateReturnPage();
+		this->setResponse();
+		return ;
+	}
+
 	// set path depending if 'alias' directive is present on location
 	if ( false == this->_requestConfig.getAlias().empty() ) {
 		this->_responseData.setPath( this->_requestConfig.getAlias() + "/" + removeLocationFromUri( this->_requestConfig.getRequestUri(), this->_requestConfig.getLocationUri() ) );
@@ -520,7 +528,7 @@ int Response::methodDelete( void ) {
 
 	this->_responseData.deleteFile();
 
-	this->_body = "<!DOCTYPE html><html><body><h1>File deleted.</h1></body></html>";
+	this->_body = "<html><body><h1>File deleted.</h1></body></html>";
 	this->_headers["Content-Length"] = SSTR( this->_body.length() );
 	this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 
@@ -539,7 +547,9 @@ void Response::generateErrorPage( int statusCode ) {
 		this->_statusCode = 0; // FIXME
 	} else {
 		// generate the ultimate error page
-		this->_body = "<!DOCTYPE html><html><head><title>error</title></head><body><h1>";
+		this->_body = "<html><head><title>error</title></head><body><h1>";
+		this->_body += SSTR( statusCode );
+		this->_body += "</title></head><body><h1>";
 		this->_body += SSTR( statusCode );
 		this->_body += "</h1><p>";
 		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( statusCode ) ) {
@@ -552,6 +562,40 @@ void Response::generateErrorPage( int statusCode ) {
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 	}
+	return ;
+}
+
+void Response::generateReturnPage( void ) {
+	const std::pair<int, std::string> & returnPage = this->_requestConfig.getReturn();
+	// set status code
+	this->_statusCode = returnPage.first;
+	// generate the ultimate redirection page
+	this->_body = "<html><head><title>";
+	this->_body += SSTR( returnPage.first );
+	this->_body += "</title></head><body><h1>";
+	this->_body += SSTR( returnPage.first );
+	this->_body += "</h1><p>";
+	// if return code is not a redirection ( 3XX ) different behaviour
+	if ( returnPage.first < 300 || returnPage.first >= 400 ) {
+		if ( true == returnPage.second.empty() ) {
+			this->_body += Response::kStatusCodes[ returnPage.first ];
+		} else {
+			this->_body += returnPage.second;
+		}
+	} else {
+		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( returnPage.first ) ) {
+			this->_body += Response::kStatusCodes[ returnPage.first ];
+		} else {
+			this->_body += "Return";
+		}
+		// location header
+		this->_headers["Location"] = returnPage.second;
+	}
+	this->_body += "</p></body></html>";
+	// set headers
+	this->_headers["Content-Length"] = SSTR( this->_body.length() );
+	this->_headers["Content-Type"] = this->kMimeTypes[".html"];
+
 	return ;
 }
 

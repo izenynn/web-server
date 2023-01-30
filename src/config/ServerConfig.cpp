@@ -63,7 +63,8 @@ namespace webserv {
 ServerConfig::ServerConfig( void )
 		: _root( kDefaultRoot ),
 		  _autoindex( false ),
-		  _client_max_body_size( kClientMaxBodySize ) {
+		  _client_max_body_size( kClientMaxBodySize ),
+		 _return( std::make_pair( 0, "" ) ) {
 	this->_serverDirectives["location"]				= &ServerConfig::parseLocation; // only server block
 	this->_serverDirectives["listen"]				= &ServerConfig::parseListen; // only server block
 	this->_serverDirectives["server_name"]			= &ServerConfig::parseServerName; // only server block
@@ -79,6 +80,7 @@ ServerConfig::ServerConfig( void )
 	//this->_serverDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
 
 	this->_locationDirectives["alias"]					= &ServerConfig::parseAlias; // only location block
+	this->_locationDirectives["return"]					= &ServerConfig::parseReturn; // only location block
 	this->_locationDirectives["root"]					= &ServerConfig::parseRoot;
 	this->_locationDirectives["index"]					= &ServerConfig::parseIndex;
 	this->_locationDirectives["autoindex"]				= &ServerConfig::parseAutoindex;
@@ -138,6 +140,9 @@ void ServerConfig::print( const std::string & indent ) const {
 
 	std::cout << indent << "client_max_body_size: " << this->_client_max_body_size << std::endl;
 	std::cout << indent << "upload_store:         " << this->_upload_store << std::endl;
+
+	std::cout << indent << "return:" << std::endl;
+	std::cout << indent << "    " << this->_return.first << " " << this->_return.second << std::endl;
 
 	if ( false == this->_location.empty() ) {
 		std::cout << indent << "locations:" << std::endl;
@@ -351,30 +356,6 @@ void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 	return ;
 }
 
-void ServerConfig::parseAlias( token_type::const_iterator & it ) {
-	// check next token is not an end token, alias requires a value
-	if ( "}" == *it ) {
-		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'alias'" );
-	}
-	if ( ";" == *it ) {
-		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'alias'" );
-	}
-
-	// save directive
-	this->_alias = *it;
-
-	// check next token is ';'
-	++it;
-	if ( "}" == *it ) {
-		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'alias'" );
-	}
-	if ( ";" != *it ) {
-		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'alias'" );
-	}
-
-	return ;
-}
-
 void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 	// check next token is not an end token, server_name requires a value
 	if ( "}" == *it ) {
@@ -536,6 +517,85 @@ void ServerConfig::parseUploadStore( token_type::const_iterator & it ) {
 	}
 	if ( ";" != *it ) {
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'upload_store'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseAlias( token_type::const_iterator & it ) {
+	// check next token is not an end token, alias requires a value
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'alias'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'alias'" );
+	}
+
+	// save directive
+	this->_alias = *it;
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'alias'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'alias'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseReturn( token_type::const_iterator & it ) {
+	// check next token is not an end token, return requires two values
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'return'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'return'" );
+	};
+
+	// save directive
+	int code;
+
+	// check valid code
+	if ( "301" == *it || "302" == *it || "303" == *it || "307" == *it
+			|| ( it->length() == 3 && ( '1' == (*it)[0] || '2' == (*it)[0] || '4' == (*it)[0] || '5' == (*it)[0] ) ) )  {
+		code = atoi( it->c_str() );
+	} else {
+		throw ServerConfig::ServerConfigException( "exception: invalid return cade in directive 'return'" );
+	}
+
+	// if next token is ';' && if status code is 1XX | 2XX | 4XX | 5XX -> text is optional
+	if ( it->length() == 3 && ( '1' == (*it)[0] || '2' == (*it)[0] || '4' == (*it)[0] || '5' == (*it)[0] ) ) {
+		++it;
+		if ( "}" == *it ) {
+			throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'return'" );
+		}
+		if ( ";" == *it ) {
+			this->_return = std::make_pair( code, "" );
+			return ;
+		} else {
+			--it;
+		}
+	}
+
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'return'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'return'" );
+	};
+	this->_return = std::make_pair( code, *it );
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'return'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'return'" );
 	}
 
 	return ;

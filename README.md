@@ -27,13 +27,14 @@ A brief explanetion of server block only directives:
 A brief explanetion of server/location blocks directives:
 
 - `root`: root folder for the server files, defualt is `/var/www/`.
+- `alias`: only for location block (doesnt make sense in server use root directive there); must end on `"/"` because is a directory; like the ngix directive is used to make a location alias to other directory, if present root directive will be ignored, more info [here](https://stackoverflow.com/questions/10631933/nginx-static-file-serving-confusion-with-root-alias).
 - `index`: index file that should be returnde when client makes a GET request to the directory
 - `autoindex`: `on/off`: autoindex page when requesting a directory; defualt is `off`.
 - `error_page`: `404 example.html`: specify a custom html file for an error code.
 - `limit_except`: `GET POST PUT DELETE`: specify allowed methods on that server/location block.
 - `client_max_body_size`: max size for a client request body.
 - `upload_store`: path where uploaded files with POST/PUT will be saved, this path is relative to `root` location, if not specified files will be uploaded to location directory or `root` in case not inside `location` block.
-- `alias`: only for location block (doesnt make sense in server use root directive there); must end on `"/"` because is a directory; like the ngix directive is used to make a location alias to other directory, if present root directive will be ignored, more info [here](https://stackoverflow.com/questions/10631933/nginx-static-file-serving-confusion-with-root-alias).
+- `return`: only for location block; define HTTP redirections (`301`, `302`, `303` or `307`), to a full url (`http://[...]`) or a local url (`/home/`), you can also define any custom response with `(1XX | 2XX | 4XX | 5XX) ["text"]` and the text that will appear on the body (but text is optional, default text for the status code will appear if not specified).
 
 NOTE: all directives are based on nginx ones, so you can search on nginx wiki for more info, but keep in mind my implementation is not 100% as nginx, mostly because limitations on available directives force me to change a little the behaviour of the existing ones in order to offer a better experience.
 

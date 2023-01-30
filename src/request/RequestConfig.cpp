@@ -145,12 +145,16 @@ const std::string & RequestConfig::getRoot( void ) {
 	return ( this->_location->second->_root );
 }
 
+const std::string & RequestConfig::getUploadStore( void ) {
+	return ( this->_location->second->_upload_store );
+}
+
 const std::string & RequestConfig::getAlias( void ) {
 	return ( this->_location->second->_alias );
 }
 
-const std::string & RequestConfig::getUploadStore( void ) {
-	return ( this->_location->second->_upload_store );
+const std::pair<int, std::string> &	RequestConfig::getReturn( void ) {
+	return ( this->_location->second->_return );
 }
 
 ServerConfig * RequestConfig::getRequestServer( void ) {
@@ -191,7 +195,7 @@ const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLo
 			if ( webserv::nullptr_t == match ) {
 				log::debug( "first match! " + it->first + " and " + this->_request_uri );
 				match = &(*it);
-			} else if ( it->first > match->first ) {
+			} else if ( it->first.length() > match->first.length() ) {
 				log::debug( "match! " + it->first + " and " + this->_request_uri );
 				match = &(*it);
 			}
