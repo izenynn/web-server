@@ -79,6 +79,7 @@ ServerConfig::ServerConfig( void )
 	//this->_serverDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
 
 	this->_locationDirectives["alias"]					= &ServerConfig::parseAlias; // only location block
+	this->_locationDirectives["return"]					= &ServerConfig::parseReturn; // only location block
 	this->_locationDirectives["root"]					= &ServerConfig::parseRoot;
 	this->_locationDirectives["index"]					= &ServerConfig::parseIndex;
 	this->_locationDirectives["autoindex"]				= &ServerConfig::parseAutoindex;
@@ -138,6 +139,11 @@ void ServerConfig::print( const std::string & indent ) const {
 
 	std::cout << indent << "client_max_body_size: " << this->_client_max_body_size << std::endl;
 	std::cout << indent << "upload_store:         " << this->_upload_store << std::endl;
+
+	std::cout << indent << "return:" << std::endl;
+	for ( std::map<int, std::string>::const_iterator it = this->_return.begin(); it != this->_return.end(); ++it ) {
+		std::cout << indent << "    " << it->first << " " << it->second << std::endl;
+	}
 
 	if ( false == this->_location.empty() ) {
 		std::cout << indent << "locations:" << std::endl;
@@ -351,30 +357,6 @@ void ServerConfig::parseRoot( token_type::const_iterator & it ) {
 	return ;
 }
 
-void ServerConfig::parseAlias( token_type::const_iterator & it ) {
-	// check next token is not an end token, alias requires a value
-	if ( "}" == *it ) {
-		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'alias'" );
-	}
-	if ( ";" == *it ) {
-		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'alias'" );
-	}
-
-	// save directive
-	this->_alias = *it;
-
-	// check next token is ';'
-	++it;
-	if ( "}" == *it ) {
-		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'alias'" );
-	}
-	if ( ";" != *it ) {
-		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'alias'" );
-	}
-
-	return ;
-}
-
 void ServerConfig::parseIndex( token_type::const_iterator & it ) {
 	// check next token is not an end token, server_name requires a value
 	if ( "}" == *it ) {
@@ -536,6 +518,72 @@ void ServerConfig::parseUploadStore( token_type::const_iterator & it ) {
 	}
 	if ( ";" != *it ) {
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'upload_store'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseAlias( token_type::const_iterator & it ) {
+	// check next token is not an end token, alias requires a value
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'alias'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'alias'" );
+	}
+
+	// save directive
+	this->_alias = *it;
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'alias'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'alias'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseReturn( token_type::const_iterator & it ) {
+	// check next token is not an end token, return requires two values
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'return'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'return'" );
+	};
+
+	// save directive
+	std::vector<int> codes;
+	while ( std::string::npos == it->find_first_not_of( "0123456789" ) ) {
+		// check valid code
+		if ( "301" == *it || "302" == *it || "303" == *it || "307" == *it ) {
+			codes.push_back( atoi( it->c_str() ) );
+		} else {
+			throw ServerConfig::ServerConfigException( "exception: invalid return cade in directive 'return'" );
+		}
+		++it;
+	}
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'return'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'return'" );
+	};
+	for ( std::vector<int>::const_iterator n = codes.begin(); n != codes.end(); ++n ) {
+		this->_return[*n] = *it;
+	}
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'return'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'return'" );
 	}
 
 	return ;
