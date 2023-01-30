@@ -556,25 +556,38 @@ void ServerConfig::parseReturn( token_type::const_iterator & it ) {
 	};
 
 	// save directive
-	std::vector<int> codes;
-	while ( std::string::npos == it->find_first_not_of( "0123456789" ) ) {
-		// check valid code
-		if ( "301" == *it || "302" == *it || "303" == *it || "307" == *it ) {
-			codes.push_back( atoi( it->c_str() ) );
-		} else {
-			throw ServerConfig::ServerConfigException( "exception: invalid return cade in directive 'return'" );
-		}
-		++it;
+	int code;
+
+	// check valid code
+	if ( "301" == *it || "302" == *it || "303" == *it || "307" == *it
+			|| ( it->length() == 3 && ( '1' == (*it)[0] || '2' == (*it)[0] || '4' == (*it)[0] || '5' == (*it)[0] ) ) )  {
+		code = atoi( it->c_str() );
+	} else {
+		throw ServerConfig::ServerConfigException( "exception: invalid return cade in directive 'return'" );
 	}
+
+	// if next token is ';' && if status code is 1XX | 2XX | 4XX | 5XX -> text is optional
+	if ( it->length() == 3 && ( '1' == (*it)[0] || '2' == (*it)[0] || '4' == (*it)[0] || '5' == (*it)[0] ) ) {
+		++it;
+		if ( "}" == *it ) {
+			throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'return'" );
+		}
+		if ( ";" == *it ) {
+			this->_return = std::make_pair( code, "" );
+			return ;
+		} else {
+			--it;
+		}
+	}
+
+	++it;
 	if ( "}" == *it ) {
 		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'return'" );
 	}
 	if ( ";" == *it ) {
 		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'return'" );
 	};
-	for ( std::vector<int>::const_iterator n = codes.begin(); n != codes.end(); ++n ) {
-		this->_return = std::make_pair(*n, *it);
-	}
+	this->_return = std::make_pair( code, *it );
 
 	// check next token is ';'
 	++it;

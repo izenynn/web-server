@@ -195,7 +195,7 @@ const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLo
 			if ( webserv::nullptr_t == match ) {
 				log::debug( "first match! " + it->first + " and " + this->_request_uri );
 				match = &(*it);
-			} else if ( it->first > match->first ) {
+			} else if ( it->first.length() > match->first.length() ) {
 				log::debug( "match! " + it->first + " and " + this->_request_uri );
 				match = &(*it);
 			}

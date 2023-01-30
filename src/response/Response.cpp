@@ -575,14 +575,23 @@ void Response::generateReturnPage( void ) {
 	this->_body += "</title></head><body><h1>";
 	this->_body += SSTR( returnPage.first );
 	this->_body += "</h1><p>";
-	if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( returnPage.first ) ) {
-		this->_body += Response::kStatusCodes[ returnPage.first ];
+	// if return code is not a redirection ( 3XX ) different behaviour
+	if ( returnPage.first < 300 || returnPage.first >= 400 ) {
+		if ( true == returnPage.second.empty() ) {
+			this->_body += Response::kStatusCodes[ returnPage.first ];
+		} else {
+			this->_body += returnPage.second;
+		}
 	} else {
-		this->_body += "Return";
+		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( returnPage.first ) ) {
+			this->_body += Response::kStatusCodes[ returnPage.first ];
+		} else {
+			this->_body += "Return";
+		}
+		// location header
+		this->_headers["Location"] = returnPage.second;
 	}
 	this->_body += "</p></body></html>";
-	// location header
-	this->_headers["Location"] = returnPage.second;
 	// set headers
 	this->_headers["Content-Length"] = SSTR( this->_body.length() );
 	this->_headers["Content-Type"] = this->kMimeTypes[".html"];
