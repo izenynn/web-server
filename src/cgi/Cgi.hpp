@@ -14,19 +14,20 @@ namespace webserv {
 
 class Cgi {
 	public:
-		Cgi( void );
+		Cgi( const RequestConfig & requestConfig, const ResponseData & responseData );
 		~Cgi( void );
 
-		int init( const RequestConfig & requestConfig, const ResponseData & ResponseData );
 		int exec( void );
 
-		void getHeaders( void ); // FIXME this cant be void
-		void getBody( void ); // FIXME this cant be void
+		void getHeaders( std::map<std::string, std::string> & headers );
+		void getBody( std::string & body );
 	private:
 		int initEnv( void );
 
 		const RequestConfig &	_requestConfig;
 		const ResponseData &	_responseData;
+
+		std::string				_requestBody;
 };
 
 } /** namespace webserv */

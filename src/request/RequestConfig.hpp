@@ -26,24 +26,24 @@ class RequestConfig {
 		bool isValidMethod( const std::string & method );
 
 		// request related getters
-		std::string &						getMethod( void );
-		const std::string &					getBody( void );
-		const std::string &					getRequestUri( void );
-		const std::string &					getRequestRequestUri( void );
-		const std::string &					getVersion( void );
+		std::string &						getMethod( void ) const;
+		const std::string &					getBody( void ) const;
+		const std::string &					getRequestUri( void ) const;
+		const std::string &					getRequestRequestUri( void ) const;
+		const std::string &					getVersion( void ) const;
 
 		// server/location related getters
-		const std::map<int, std::string> &	getErrorPages( void );
-		std::vector<std::string> &			getAllowedMethods( void );
-		std::string::size_type				getMaxBodySize( void );
-		std::vector<std::string> &			getIndex( void );
-		bool								getAutoIndex( void );
-		const std::string &					getLocationUri( void );
-		const std::string &					getRoot( void );
-		const std::string &					getUploadStore( void );
-		const std::string &					getAlias( void );
-		// FIXME not a map, is a pair
-		const std::pair<int, std::string> &	getReturn( void );
+		const std::map<int, std::string> &	getErrorPages( void ) const;
+		std::vector<std::string> &			getAllowedMethods( void ) const;
+		std::string::size_type				getMaxBodySize( void ) const;
+		std::vector<std::string> &			getIndex( void ) const;
+		bool								getAutoIndex( void ) const;
+		const std::string &					getLocationUri( void ) const;
+		const std::string &					getRoot( void ) const;
+		const std::string &					getUploadStore( void ) const;
+		const std::string &					getAlias( void ) const;
+		const std::pair<int, std::string> &	getReturn( void ) const;
+		const std::map<std::string, std::string> & getCgi( void ) const;
 	private:
 		RequestConfig( void ); // not necessary
 

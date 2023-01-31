@@ -43,8 +43,8 @@ class ResponseData {
 		bool fileExists( void ) const;
 
 		std::string getAutoIndex( const std::string & uri );
-		const std::string & getExtension( void );
-		const std::string getFileContent( void );
+		const std::string & getExtension( void ) const;
+		const std::string getFileContent( void ) const ;
 	private:
 		ResponseData( const ResponseData & other ); // not necessary
 		ResponseData & operator=( const ResponseData & other ); // not necessary

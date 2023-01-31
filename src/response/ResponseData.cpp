@@ -216,11 +216,11 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 	return ( body );
 }
 
-const std::string & ResponseData::getExtension( void ) {
+const std::string & ResponseData::getExtension( void ) const {
 	return ( this->_fileExtension );
 }
 
-const std::string ResponseData::getFileContent( void ) {
+const std::string ResponseData::getFileContent( void ) const {
 	std::string content;
 	char * buffer = reinterpret_cast<char *>( malloc( ( ResponseData::kReadBuffer + 1 ) * sizeof( char ) ) );
 	if ( NULL == buffer ) {

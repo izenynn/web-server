@@ -345,7 +345,7 @@ bool Response::isConnectionClose( void ) {
 int Response::process( void ) {
 	const std::string & method = this->_requestConfig.getMethod();
 
-	// get -> checks
+	// get -> checks and internal redirect (index/autoindex directive)
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
 		if ( true == this->_responseData.isDirectory() ) {
@@ -373,8 +373,20 @@ int Response::process( void ) {
 
 	}
 
-	// cgi
-	// TODO cgi
+	// cgi -> check and execute on match
+	for ( std::map<std::string, std::string>::const_iterator it = this->_requestConfig.getCgi().begin(); it != this->_requestConfig.getCgi().end(); ++it ) {
+		if ( this->_responseData.getExtension() == it->first ) {
+			Cgi * cgi = new Cgi( this->_requestConfig, this->_responseData );
+			int ret = cgi->exec();
+			if ( ret >= 400 ) {
+				return ( ret );
+			}
+			cgi->getHeaders( this->_headers );
+			cgi->getBody( this->_body );
+			this->_headers["Content-Length"] = SSTR( this->_body.length() );
+			return ( this->_statusCode );
+		}
+	}
 
 	// post / put
 	if ( "POST" == method || "PUT" == method ) {

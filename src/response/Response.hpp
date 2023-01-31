@@ -11,6 +11,7 @@
 
 # include <request/RequestConfig.hpp>
 # include <response/ResponseData.hpp>
+# include <cgi/Cgi.hpp>
 
 /** CLASS -------------------------------------- */
 
