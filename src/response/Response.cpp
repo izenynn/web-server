@@ -345,7 +345,7 @@ bool Response::isConnectionClose( void ) {
 int Response::process( void ) {
 	const std::string & method = this->_requestConfig.getMethod();
 
-	// get (get cant be cig)
+	// get -> checks
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
 		if ( true == this->_responseData.isDirectory() ) {
@@ -373,7 +373,7 @@ int Response::process( void ) {
 
 	}
 
-	// check cgi
+	// cgi
 	// TODO cgi
 
 	// post / put
