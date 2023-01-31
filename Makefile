@@ -74,14 +74,17 @@ SRC_REQUEST		=	Request.cpp			RequestConfig.cpp
 
 SRC_RESPONSE	=	Response.cpp		ResponseData.cpp
 
+#SRC_CGI			=	Cgi.cpp
+
 SRC_UTILS		=	utils.cpp			signals.cpp
 
 SRC_NAME =	$(SRC_ROOT)														\
-			$(addprefix $(SRC_DIR_CONFIG)/, $(SRC_CONFIG))					\
-			$(addprefix $(SRC_DIR_SERVER)/, $(SRC_SERVER))					\
-			$(addprefix $(SRC_DIR_REQUEST)/, $(SRC_REQUEST))				\
-			$(addprefix $(SRC_DIR_RESPONSE)/, $(SRC_RESPONSE))				\
-			$(addprefix $(SRC_DIR_UTILS)/, $(SRC_UTILS))
+			$(addprefix $(SRC_DIR_CONFIG)/,		$(SRC_CONFIG))				\
+			$(addprefix $(SRC_DIR_SERVER)/,		$(SRC_SERVER))				\
+			$(addprefix $(SRC_DIR_REQUEST)/,	$(SRC_REQUEST))				\
+			$(addprefix $(SRC_DIR_RESPONSE)/,	$(SRC_RESPONSE))			\
+			$(addprefix $(SRC_DIR_CGI)/,		$(SRC_CGI))					\
+			$(addprefix $(SRC_DIR_UTILS)/,		$(SRC_UTILS))
 
 OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
 DEP_NAME = $(SRC_NAME:%.cpp=%.d)
