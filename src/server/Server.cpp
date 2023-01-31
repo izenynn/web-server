@@ -163,7 +163,7 @@ int Server::clientRecv( int fd ) {
 
 	// read socket
 	//char buffer[Config::kBufferSize];
-	char * buffer = reinterpret_cast<char *>( malloc( kClientMaxBodySize * sizeof( char ) ) );
+	char * buffer = reinterpret_cast<char *>( malloc( kBufferSize * sizeof( char ) ) );
 	int size = recv( fd, buffer, kBufferSize, 0 );
 	if ( size <= 0 ) {
 		free( buffer );
