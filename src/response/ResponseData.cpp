@@ -251,6 +251,10 @@ const std::string ResponseData::getFileContent( void ) const {
 	return ( content );
 }
 
+const std::string & ResponseData::getPath( void ) const {
+	return ( this->_path );
+}
+
 void ResponseData::parseFileName( void ) {
 	std::string fileName = this->_path.substr( this->_path.find_last_of( "/" ) + 1 );
 	if ( true == fileName.empty() ) {

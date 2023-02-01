@@ -31,6 +31,9 @@ class RequestConfig {
 		const std::string &					getRequestUri( void ) const;
 		const std::string &					getRequestRequestUri( void ) const;
 		const std::string &					getVersion( void ) const;
+		const std::string &					getHost( void ) const;
+		uint16_t							getPort( void ) const;
+		const std::map<std::string, std::string> & getHeaders( void ) const;
 
 		// server/location related getters
 		const std::map<int, std::string> &	getErrorPages( void ) const;

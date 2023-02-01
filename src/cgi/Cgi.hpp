@@ -5,6 +5,10 @@
 
 /** INCLUDES ----------------------------------- */
 
+# include <string>
+# include <algorithm>
+# include <cstring> // std::strdup()
+
 # include <request/RequestConfig.hpp>
 # include <response/ResponseData.hpp>
 
@@ -22,12 +26,22 @@ class Cgi {
 		void getHeaders( std::map<std::string, std::string> & headers );
 		void getBody( std::string & body );
 	private:
-		int initEnv( void );
+		int setEnv( void );
 
 		const RequestConfig &	_requestConfig;
 		const ResponseData &	_responseData;
 
-		std::string				_requestBody;
+		std::string				_reqBody;
+		std::string				_reqFilePath;
+
+		std::string				_cgiBin;
+		std::string				_cgiPath;
+
+		std::string				_cgiTmpFilePath;
+		int						_cgiTmpFileFd;
+
+		char **		_argv;
+		char **		_env;
 };
 
 } /** namespace webserv */

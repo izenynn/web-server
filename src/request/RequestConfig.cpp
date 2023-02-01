@@ -117,6 +117,14 @@ const std::string & RequestConfig::getVersion( void ) const {
 	return ( this->_request._version );
 }
 
+const std::string & RequestConfig::getHost( void ) const {
+	return ( this->_host.ip );
+}
+
+uint16_t RequestConfig::getPort( void ) const {
+	return ( this->_host.port );
+}
+
 const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) const {
 	return ( this->_location->second->_error_page );
 }
@@ -159,6 +167,10 @@ const std::pair<int, std::string> &	RequestConfig::getReturn( void ) const {
 
 const std::map<std::string, std::string> & RequestConfig::getCgi( void ) const {
 	return ( this->_location->second->_cgi );
+}
+
+const std::map<std::string, std::string> & RequestConfig::getHeaders( void ) const {
+	return ( this->_request._headers );
 }
 
 ServerConfig * RequestConfig::getRequestServer( void ) {
