@@ -24,8 +24,6 @@ class ResponseData {
 		ResponseData( const std::string & path );
 		~ResponseData( void );
 
-		static const size_t kReadBuffer;
-
 		void print( void ) const;
 
 		void setPath( const std::string & path );

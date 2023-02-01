@@ -28,6 +28,7 @@ namespace webserv {
 	extern const size_t					kClientMaxBodySize;
 	extern const std::string			kDefaultVersion;
 	extern const std::string			kCgiTmpFile;
+	extern const size_t					kReadBuffer;
 
 	extern const std::map<int, Client *>::size_type kMaxClients;
 } /** namespace webserv */

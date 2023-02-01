@@ -258,7 +258,7 @@ int Request::parseHeaders( void ) {
 
 		// parse headers
 		sep = this->_buffer.find( ':' );
-		if ( std::string::npos == sep || 0 == sep || this->_buffer[eol - 1] == ' ' ) {
+		if ( std::string::npos == sep || 0 == sep ) {
 			return ( 400 ); // 400 bad request
 		}
 		key		= this->_buffer.substr( 0, sep );

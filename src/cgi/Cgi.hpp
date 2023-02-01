@@ -8,9 +8,16 @@
 # include <string>
 # include <algorithm>
 # include <cstring> // std::strdup()
+# include <unistd.h> // fork(), dup2(), pipe(), chdir(), lseek(), read()
+# include <sys/wait.h> // waitpid()
 
 # include <request/RequestConfig.hpp>
 # include <response/ResponseData.hpp>
+
+/** DEFINES ----------------------------------- */
+
+# define READ_END 0
+# define WRITE_END 1
 
 /** CLASS -------------------------------------- */
 
@@ -23,8 +30,7 @@ class Cgi {
 
 		int exec( void );
 
-		void getHeaders( std::map<std::string, std::string> & headers );
-		void getBody( std::string & body );
+		void getHeadersAndBody( std::map<std::string, std::string> & headers, std::string & body );
 	private:
 		int setEnv( void );
 
@@ -40,8 +46,10 @@ class Cgi {
 		std::string				_cgiTmpFilePath;
 		int						_cgiTmpFileFd;
 
-		char **		_argv;
-		char **		_env;
+		char **					_argv;
+		char **					_env;
+
+		std::string				_body;
 };
 
 } /** namespace webserv */

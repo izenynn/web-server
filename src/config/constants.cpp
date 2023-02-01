@@ -20,6 +20,7 @@ const time_t					kRequestTimeoutSec = 60; // nginx default
 const size_t					kClientMaxBodySize = 8196; // nginx default
 const std::string				kDefaultVersion = "HTTP/1.1";
 const std::string				kCgiTmpFile = "/tmp/webserv_cgi";
+const size_t					kReadBuffer = 8192;
 
 const std::map<int, Client *>::size_type kMaxClients = 1024;
 

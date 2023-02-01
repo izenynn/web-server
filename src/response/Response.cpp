@@ -377,13 +377,17 @@ int Response::process( void ) {
 	for ( std::map<std::string, std::string>::const_iterator it = this->_requestConfig.getCgi().begin(); it != this->_requestConfig.getCgi().end(); ++it ) {
 		if ( this->_responseData.getExtension() == it->first ) {
 			Cgi * cgi = new Cgi( this->_requestConfig, this->_responseData );
+
 			int ret = cgi->exec();
 			if ( ret >= 400 ) {
-				return ( ret );
+				this->_statusCode = ret;
+				return ( this->_statusCode );
 			}
-			cgi->getHeaders( this->_headers );
-			cgi->getBody( this->_body );
+
+			cgi->getHeadersAndBody( this->_headers, this->_body );
 			this->_headers["Content-Length"] = SSTR( this->_body.length() );
+
+			this->_statusCode = ret;
 			return ( this->_statusCode );
 		}
 	}
