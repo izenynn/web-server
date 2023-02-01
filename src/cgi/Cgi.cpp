@@ -43,12 +43,6 @@ namespace webserv {
 Cgi::Cgi( const RequestConfig & requestConfig, const ResponseData & responseData)
 		: _requestConfig( requestConfig ),
 		  _responseData( responseData ) {
-	// FIXME \/
-	/*if ( true == this->_requestConfig.getBody().empty() && ( this->_requestConfig.getMethod() != "POST" && this->_requestConfig.getMethod() != "PUT" ) ) {
-		this->_reqBody = this->_responseData.getFileContent();
-	} else {
-		this->_reqBody = this->_requestConfig.getBody();
-	}*/
 	this->_reqBody = this->_requestConfig.getBody();
 
 	char * cwd = getcwd( NULL, 0 );
