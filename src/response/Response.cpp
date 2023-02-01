@@ -345,7 +345,7 @@ bool Response::isConnectionClose( void ) {
 int Response::process( void ) {
 	const std::string & method = this->_requestConfig.getMethod();
 
-	// get (get cant be cig)
+	// get -> checks and internal redirect (index/autoindex directive)
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
 		if ( true == this->_responseData.isDirectory() ) {
@@ -373,8 +373,24 @@ int Response::process( void ) {
 
 	}
 
-	// check cgi
-	// TODO cgi
+	// cgi -> check and execute on match
+	for ( std::map<std::string, std::string>::const_iterator it = this->_requestConfig.getCgi().begin(); it != this->_requestConfig.getCgi().end(); ++it ) {
+		if ( this->_responseData.getExtension() == it->first ) {
+			Cgi * cgi = new Cgi( this->_requestConfig, this->_responseData );
+
+			int ret = cgi->exec();
+			if ( ret >= 400 ) {
+				this->_statusCode = ret;
+				return ( this->_statusCode );
+			}
+
+			cgi->getHeadersAndBody( this->_headers, this->_body );
+			this->_headers["Content-Length"] = SSTR( this->_body.length() );
+
+			this->_statusCode = ret;
+			return ( this->_statusCode );
+		}
+	}
 
 	// post / put
 	if ( "POST" == method || "PUT" == method ) {
@@ -457,7 +473,14 @@ void Response::setResponse( void ) {
 		this->_redirect_status_code = 0;
 	}
 
-	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
+	std::string status;
+	if ( this->_headers.end() != this->_headers.find( "Status" ) ) {
+		std::map<std::string, std::string>::iterator it = this->_headers.find( "Status" );
+		status = it->second;
+		this->_headers.erase( it );
+	} else {
+		status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
+	}
 	this->_response += this->_requestConfig.getVersion() + " " + status + kEOL;
 
 	//this->_headers["Server"] = "web-server"; // is not secure to tell a client the server software and/or version

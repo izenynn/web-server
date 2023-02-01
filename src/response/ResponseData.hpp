@@ -24,8 +24,6 @@ class ResponseData {
 		ResponseData( const std::string & path );
 		~ResponseData( void );
 
-		static const size_t kReadBuffer;
-
 		void print( void ) const;
 
 		void setPath( const std::string & path );
@@ -37,14 +35,15 @@ class ResponseData {
 		void closeFile( void );
 
 		const std::string getIndex( std::vector<std::string> & indexes );
-		//void getFile( void ); // FIXME remove this line!!!
 
 		bool isDirectory( void ) const;
 		bool fileExists( void ) const;
 
 		std::string getAutoIndex( const std::string & uri );
-		const std::string & getExtension( void );
-		const std::string getFileContent( void );
+
+		const std::string &		getExtension( void ) const;
+		const std::string		getFileContent( void ) const;
+		const std::string &		getPath(void) const;
 	private:
 		ResponseData( const ResponseData & other ); // not necessary
 		ResponseData & operator=( const ResponseData & other ); // not necessary

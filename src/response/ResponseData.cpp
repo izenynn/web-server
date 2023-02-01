@@ -1,6 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
 #include <response/ResponseData.hpp>
+#include <config/constants.hpp>
 #include <types/nullptr_t.hpp>
 #include <utils/utils.hpp>
 #include <utils/log.hpp>
@@ -10,8 +11,6 @@
 /** CLASS -------------------------------------- */
 
 namespace webserv {
-
-const size_t ResponseData::kReadBuffer = 8192;
 
 ResponseData::ResponseData()
 		: _fd( 0 ) {
@@ -216,13 +215,14 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 	return ( body );
 }
 
-const std::string & ResponseData::getExtension( void ) {
+const std::string & ResponseData::getExtension( void ) const {
 	return ( this->_fileExtension );
 }
 
-const std::string ResponseData::getFileContent( void ) {
+const std::string ResponseData::getFileContent( void ) const {
 	std::string content;
-	char * buffer = reinterpret_cast<char *>( malloc( ( ResponseData::kReadBuffer + 1 ) * sizeof( char ) ) );
+	//char * buffer = reinterpret_cast<char *>( malloc( ( kReadBuffer + 1 ) * sizeof( char ) ) );
+	char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
 	if ( NULL == buffer ) {
 		log::failure( "malloc() failed with return code -1" );
 		content = "";
@@ -232,13 +232,14 @@ const std::string ResponseData::getFileContent( void ) {
 	lseek( this->_fd, 0, SEEK_SET );
 	std::cout << "### fd: " << this->_fd << std::endl;
 	while ( true ) {
-		int ret = read( this->_fd, buffer, ResponseData::kReadBuffer );
+		int ret = read( this->_fd, buffer, kReadBuffer );
 		if ( 0 == ret ) {
 			break ;
 		}
 		if ( -1 == ret ) {
 			log::failure( "read() failed with return code -1" );
-			free( buffer );
+			//free( buffer );
+			delete[] buffer;
 			content = "";
 			return ( content );
 		}
@@ -247,8 +248,14 @@ const std::string ResponseData::getFileContent( void ) {
 		std::cout << "### readed: " << buffer << std::endl;
 	}
 
-	free ( buffer );
+	//free ( buffer );
+	delete[] buffer;
+
 	return ( content );
+}
+
+const std::string & ResponseData::getPath( void ) const {
+	return ( this->_path );
 }
 
 void ResponseData::parseFileName( void ) {

@@ -28,10 +28,6 @@ class ServerConfig {
 		void print( const std::string & indent ) const; // FIXME just to test, remove this
 		void parser( token_type::const_iterator & it );
 
-		// FIXME
-		//const int & getId( void ) const;
-		//void setId( const int & id );
-
 		std::vector<Listen *> &					getListen( void );
 		std::vector<std::string> &				getServerName( void );
 		std::map<std::string, ServerConfig *> &	getLocation( void );
@@ -40,8 +36,6 @@ class ServerConfig {
 	private:
 		ServerConfig( const ServerConfig & other ); // not necessary
 		ServerConfig & operator=( const ServerConfig & other ); // not necessary
-
-		//int _id; // FIXME
 
 		void			clear( void ); // FIXME not used
 		ServerConfig *	createLocationServerConfig( void );
@@ -62,6 +56,7 @@ class ServerConfig {
 		void parseUploadStore(			token_type::const_iterator & it );
 		void parseAlias(				token_type::const_iterator & it );
 		void parseReturn(				token_type::const_iterator & it );
+		void parseCgi(					token_type::const_iterator & it );
 
 		std::vector<Listen *>					_listen;
 		std::map<std::string, ServerConfig *>	_location;
@@ -76,6 +71,7 @@ class ServerConfig {
 		std::string::size_type				_client_max_body_size;
 		std::string							_upload_store;
 		std::pair<int, std::string>			_return;
+		std::map<std::string, std::string>	_cgi;
 	public:
 		class ServerConfigException : virtual public std::exception {
 			private:

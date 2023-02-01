@@ -122,19 +122,19 @@ bool Client::checkDisconnect( void ) {
 	}
 }
 
-int Client::getFd( void ) {
+int Client::getFd( void ) const {
 	return ( this->_fd );
 }
 
-Request * Client::getRequest( void ) {
+Request * Client::getRequest( void ) const {
 	return ( this->_request );
 }
 
-Response * Client::getResponse( void ) {
+Response * Client::getResponse( void ) const {
 	return ( this->_response );
 }
 
-RequestConfig * Client::getRequestConfig( void ) {
+RequestConfig * Client::getRequestConfig( void ) const {
 	return ( this->_requestConfig );
 }
 

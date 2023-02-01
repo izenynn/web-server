@@ -32,10 +32,10 @@ class Client {
 		bool checkTimeout( void );
 		bool checkDisconnect( void );
 
-		int getFd( void );
-		Request *		getRequest( void );
-		Response *		getResponse( void );
-		RequestConfig *	getRequestConfig( void );
+		int				getFd( void ) const;
+		Request *		getRequest( void ) const;
+		Response *		getResponse( void ) const;
+		RequestConfig *	getRequestConfig( void ) const;
 	private:
 		Client( void ); // not necessary
 		Client( const Client & other ); // not necessary

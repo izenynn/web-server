@@ -58,8 +58,6 @@ bool isValidIp( const std::string & ip ) {
 
 namespace webserv {
 
-//: _id( -1 ), // FIXME
-// TODO defualt root in constructor, now defualt root is "/"
 ServerConfig::ServerConfig( void )
 		: _root( kDefaultRoot ),
 		  _autoindex( false ),
@@ -75,9 +73,7 @@ ServerConfig::ServerConfig( void )
 	this->_serverDirectives["limit_except"]			= &ServerConfig::parseLimitExcept;
 	this->_serverDirectives["client_max_body_size"]	= &ServerConfig::parseClientMaxBodySize;
 	this->_serverDirectives["upload_store"]			= &ServerConfig::parseUploadStore;
-	// TODO cgi on server block ??? i dont think so
-	//this->_serverDirectives["cgi_param"] =				&ServerConfig::parseCgiParam;
-	//this->_serverDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
+	this->_serverDirectives["cgi"]					= &ServerConfig::parseCgi;
 
 	this->_locationDirectives["alias"]					= &ServerConfig::parseAlias; // only location block
 	this->_locationDirectives["return"]					= &ServerConfig::parseReturn; // only location block
@@ -88,8 +84,7 @@ ServerConfig::ServerConfig( void )
 	this->_locationDirectives["limit_except"]			= &ServerConfig::parseLimitExcept;
 	this->_locationDirectives["client_max_body_size"]	= &ServerConfig::parseClientMaxBodySize;
 	this->_locationDirectives["upload_store"]			= &ServerConfig::parseUploadStore;
-	//this->_locationDirectives["cgi_param"] =				&ServerConfig::parseCgiParam;
-	//this->_locationDirectives["cgi_pass"] =				&ServerConfig::parseCgiPass;
+	this->_locationDirectives["cgi"]					= &ServerConfig::parseCgi;
 
 }
 
@@ -143,6 +138,11 @@ void ServerConfig::print( const std::string & indent ) const {
 
 	std::cout << indent << "return:" << std::endl;
 	std::cout << indent << "    " << this->_return.first << " " << this->_return.second << std::endl;
+
+	std::cout << indent << "cgi:" << std::endl;
+	for ( std::map<std::string, std::string>::const_iterator it = this->_cgi.begin(); it != this->_cgi.end(); ++it ) {
+		std::cout << indent << "    " << it->first << " -> " << it->second << std::endl;
+	}
 
 	if ( false == this->_location.empty() ) {
 		std::cout << indent << "locations:" << std::endl;
@@ -596,6 +596,42 @@ void ServerConfig::parseReturn( token_type::const_iterator & it ) {
 	}
 	if ( ";" != *it ) {
 		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'return'" );
+	}
+
+	return ;
+}
+
+void ServerConfig::parseCgi( token_type::const_iterator & it ) {
+	// check next token is not an end token, cgi requires two values
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'cgi'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'cgi'" );
+	};
+
+	// save directive
+	const std::string & extension = *it;
+
+	// check next token is not an end token
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing value and ';' near token 'cgi'" );
+	}
+	if ( ";" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: not enough values in directive 'cgi'" );
+	};
+
+	// save
+	this->_cgi[extension] = *it;
+
+	// check next token is ';'
+	++it;
+	if ( "}" == *it ) {
+		throw ServerConfig::ServerConfigException( "exception: missing ';' near token 'cgi'" );
+	}
+	if ( ";" != *it ) {
+		throw ServerConfig::ServerConfigException( "exception: too many values in directive 'cgi'" );
 	}
 
 	return ;

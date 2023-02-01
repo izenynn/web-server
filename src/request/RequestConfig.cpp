@@ -30,14 +30,14 @@ void RequestConfig::print( void ) const {
 	std::string i = "    ";
 	std::cout << "\nREQUEST CONFIG:" << std::endl;
 
-	std::cout << i << "server:" << std::endl;
+	/*std::cout << i << "server:" << std::endl;
 	this->_server->print( i + "    " );
 
 	if ( webserv::nullptr_t != this->_location ) {
 		std::cout << i << "location:" << std::endl;
 		std::cout << i << "location uri: " << this->_location->first << std::endl;
 		this->_location->second->print( i + "    " );
-	}
+	}*/
 
 	return ;
 }
@@ -46,7 +46,7 @@ void RequestConfig::initialize( void ) {
 	ServerConfig *											newServer = webserv::nullptr_t;
 	const std::pair<const std::string, ServerConfig *> *	newLocation = webserv::nullptr_t;
 
-	this->_request_uri = this->_request._request_uri;
+	this->_request_uri = this->_request._requestUri;
 
 	newServer = this->getRequestServer();
 	newLocation = this->getRequestLocation( newServer );
@@ -94,67 +94,87 @@ bool RequestConfig::isValidMethod( const std::string & method ){
 	return ( false );
 }
 
-std::string & RequestConfig::getMethod( void ) {
+std::string & RequestConfig::getMethod( void ) const {
 	return ( this->_request._method );
 }
 
-const std::string & RequestConfig::getBody( void ) {
+const std::string & RequestConfig::getBody( void ) const {
 	return ( this->_request._body );
 }
 
-const std::string & RequestConfig::getRequestUri( void ) {
+const std::string & RequestConfig::getRequestUri( void ) const {
 	return ( this->_request_uri );
 }
 
-const std::string & RequestConfig::getRequestRequestUri( void ) {
-	return ( this->_request._request_uri );
+const std::string & RequestConfig::getRequestQuery( void ) const {
+	return ( this->_request._requestQuery );
 }
 
-const std::string & RequestConfig::getVersion( void ) {
+const std::string & RequestConfig::getRequestRequestUri( void ) const {
+	return ( this->_request._requestUri );
+}
+
+const std::string & RequestConfig::getVersion( void ) const {
 	if ( true == this->_request._version.empty() ) {
 		return ( kDefaultVersion );
 	}
 	return ( this->_request._version );
 }
 
-const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) {
+const std::string & RequestConfig::getHost( void ) const {
+	return ( this->_host.ip );
+}
+
+uint16_t RequestConfig::getPort( void ) const {
+	return ( this->_host.port );
+}
+
+const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) const {
 	return ( this->_location->second->_error_page );
 }
 
-std::vector<std::string> & RequestConfig::getAllowedMethods( void ) {
+std::vector<std::string> & RequestConfig::getAllowedMethods( void ) const {
 	return ( this->_location->second->_limit_except );
 }
 
-std::string::size_type RequestConfig::getMaxBodySize( void ) {
+std::string::size_type RequestConfig::getMaxBodySize( void ) const {
 	return ( this->_location->second->_client_max_body_size );
 }
 
-std::vector<std::string> & RequestConfig::getIndex( void ) {
+std::vector<std::string> & RequestConfig::getIndex( void ) const {
 	return ( this->_location->second->_index );
 }
 
-bool RequestConfig::getAutoIndex( void ) {
+bool RequestConfig::getAutoIndex( void ) const {
 	return ( this->_location->second->_autoindex );
 }
 
-const std::string & RequestConfig::getLocationUri( void ) {
+const std::string & RequestConfig::getLocationUri( void ) const {
 	return ( this->_location->first );
 }
 
-const std::string & RequestConfig::getRoot( void ) {
+const std::string & RequestConfig::getRoot( void ) const {
 	return ( this->_location->second->_root );
 }
 
-const std::string & RequestConfig::getUploadStore( void ) {
+const std::string & RequestConfig::getUploadStore( void ) const {
 	return ( this->_location->second->_upload_store );
 }
 
-const std::string & RequestConfig::getAlias( void ) {
+const std::string & RequestConfig::getAlias( void ) const {
 	return ( this->_location->second->_alias );
 }
 
-const std::pair<int, std::string> &	RequestConfig::getReturn( void ) {
+const std::pair<int, std::string> &	RequestConfig::getReturn( void ) const {
 	return ( this->_location->second->_return );
+}
+
+const std::map<std::string, std::string> & RequestConfig::getCgi( void ) const {
+	return ( this->_location->second->_cgi );
+}
+
+const std::map<std::string, std::string> & RequestConfig::getHeaders( void ) const {
+	return ( this->_request._headers );
 }
 
 ServerConfig * RequestConfig::getRequestServer( void ) {
