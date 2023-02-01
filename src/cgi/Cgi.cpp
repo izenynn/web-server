@@ -44,10 +44,10 @@ Cgi::Cgi( const RequestConfig & requestConfig, const ResponseData & responseData
 		: _requestConfig( requestConfig ),
 		  _responseData( responseData ) {
 	// FIXME \/
-	/*if ( this->_requestConfig->getMethod() == "GET" ) {
-		this->_requestBody = this->_responseData->getFileContent();
+	/*if ( true == this->_requestConfig.getBody().empty() && ( this->_requestConfig.getMethod() != "POST" && this->_requestConfig.getMethod() != "PUT" ) ) {
+		this->_reqBody = this->_responseData.getFileContent();
 	} else {
-		this->_requestBody = this->_requestConfig->getBody();
+		this->_reqBody = this->_requestConfig.getBody();
 	}*/
 	this->_reqBody = this->_requestConfig.getBody();
 
@@ -119,7 +119,7 @@ int Cgi::exec( void ) {
 		return ( 500 ); // 500 internal server error
 	} else if ( pid > 0 ) {
 		close( fd[READ_END] );
-		ret = write( this->_cgiTmpFileFd, this->_reqBody.c_str(), this->_reqBody.length() );
+		ret = write( fd[WRITE_END], this->_reqBody.c_str(), this->_reqBody.length() );
 		if ( -1 == ret ) {
 			return ( 500 ); // 500 internal server error
 		}
@@ -265,7 +265,6 @@ int Cgi::setEnv( void ) {
 		return ( -1 );
 	}
 
-	log::debug( "HEADERS" );
 	char ** aux = this->_env;
 	for ( std::map<std::string, std::string>::const_iterator it = env.begin(); it != env.end(); ++it ) {
 		std::string var = it->first + "=" + it->second;
@@ -273,7 +272,6 @@ int Cgi::setEnv( void ) {
 		if ( NULL == *aux ) {
 			return ( -1 );
 		}
-		log::debug( "> " + var );
 		++aux;
 	}
 	*aux = NULL;
