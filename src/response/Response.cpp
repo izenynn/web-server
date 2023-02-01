@@ -473,7 +473,14 @@ void Response::setResponse( void ) {
 		this->_redirect_status_code = 0;
 	}
 
-	std::string status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
+	std::string status;
+	if ( this->_headers.end() != this->_headers.find( "Status" ) ) {
+		std::map<std::string, std::string>::iterator it = this->_headers.find( "Status" );
+		status = it->second;
+		this->_headers.erase( it );
+	} else {
+		status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
+	}
 	this->_response += this->_requestConfig.getVersion() + " " + status + kEOL;
 
 	//this->_headers["Server"] = "web-server"; // is not secure to tell a client the server software and/or version

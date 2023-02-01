@@ -77,6 +77,10 @@ Cgi::~Cgi( void ) {
 		}
 	}
 
+	for ( size_t i = 0; NULL != this->_argv[i]; ++i ) {
+		free( this->_argv[i] );
+	}
+
 	for ( size_t i = 0; NULL != this->_env[i]; ++i ) {
 		free( this->_env[i] );
 	}
@@ -151,7 +155,6 @@ int Cgi::exec( void ) {
 	}
 
 	// read cgi output and save into body
-	//char * buffer = reinterpret_cast<char *>( malloc( ( kReadBuffer + 1 ) * sizeof( char ) ) );
 	char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
 	lseek( this->_cgiTmpFileFd, 0, SEEK_SET );
 	while ( true ) {
