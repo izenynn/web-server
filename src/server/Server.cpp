@@ -162,17 +162,16 @@ int Server::clientRecv( int fd ) {
 	FD_CLR( fd, &(this->_fdRead ) );
 
 	// read socket
-	//char buffer[Config::kBufferSize];
-	char * buffer = reinterpret_cast<char *>( malloc( kBufferSize * sizeof( char ) ) );
+	char * buffer = new char[kBufferSize * sizeof( char )];
 	int size = recv( fd, buffer, kBufferSize, 0 );
 	if ( size <= 0 ) {
-		free( buffer );
+		delete[] buffer;
 		return ( 1 ); // disconnect
 	}
 
 	// convert to string
 	std::string strBuffer( buffer, size );
-	free( buffer );
+	delete[] buffer;
 
 	// parse request into request class
 	log::debug( "RECV -> generating request..." );

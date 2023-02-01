@@ -51,6 +51,11 @@ Cgi::~Cgi( void ) {
 		}
 	}
 
+	for ( size_t i = 0; NULL != this->_env[i]; ++i ) {
+		free( this->_env[i] );
+	}
+	delete[] this->_env;
+
 	return ;
 }
 
@@ -61,6 +66,7 @@ int Cgi::exec( void ) {
 	}
 
 	// TODO
+
 	return ( 500 );
 }
 
@@ -108,8 +114,8 @@ int Cgi::setEnv( void ) {
 	}
 
 	// create **env
-	this->_env = reinterpret_cast<char **>( malloc( ( env.size() + 1 ) * sizeof( char *) ) );
-	if ( NULL == this->_env ) {
+	this->_env = new ( std::nothrow ) char*[ ( env.size() + 1 ) * sizeof( char * ) ];
+	if ( webserv::nullptr_t == this->_env ) {
 		return ( -1 );
 	}
 
