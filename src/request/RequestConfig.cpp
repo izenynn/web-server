@@ -46,7 +46,7 @@ void RequestConfig::initialize( void ) {
 	ServerConfig *											newServer = webserv::nullptr_t;
 	const std::pair<const std::string, ServerConfig *> *	newLocation = webserv::nullptr_t;
 
-	this->_request_uri = this->_request._request_uri;
+	this->_request_uri = this->_request._requestUri;
 
 	newServer = this->getRequestServer();
 	newLocation = this->getRequestLocation( newServer );
@@ -107,11 +107,11 @@ const std::string & RequestConfig::getRequestUri( void ) const {
 }
 
 const std::string & RequestConfig::getRequestQuery( void ) const {
-	return ( this->_request._query );
+	return ( this->_request._requestQuery );
 }
 
 const std::string & RequestConfig::getRequestRequestUri( void ) const {
-	return ( this->_request._request_uri );
+	return ( this->_request._requestUri );
 }
 
 const std::string & RequestConfig::getVersion( void ) const {
