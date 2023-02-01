@@ -109,7 +109,8 @@ void Request::print( void ) const {
 	std::string i = "    ";
 	std::cout << "\nREQUEST:" << std::endl;
 	std::cout << i << "method:  " << this->_method << std::endl;
-	std::cout << i << "uri:     " << this->_request_uri << std::endl;
+	std::cout << i << "uri:     " << this->_requestUri << std::endl;
+	std::cout << i << "query:   " << this->_requestQuery << std::endl;
 	std::cout << i << "version: " << this->_version << std::endl;
 
 	std::cout << i << "headers:" << std::endl;
@@ -214,13 +215,13 @@ int Request::parseRequestLine( void ) {
 		if ( token.length() >= kRequestUriLimit ) {
 			return ( 414 ); // 414 uri too long
 		}
-		this->_request_uri = token;
-		this->_buffer.erase( 0, this->_request_uri.length() + 1 );
+		this->_requestUri = token;
+		this->_buffer.erase( 0, this->_requestUri.length() + 1 );
 
-		if ( std::string::npos != this->_request_uri.find( '?' ) ) {
-			std::string::size_type index = this->_request_uri.find( '?' );
-			this->_uri_params = this->_request_uri.substr( index + 1 );
-			this->_request_uri.erase( index );
+		if ( std::string::npos != this->_requestUri.find( '?' ) ) {
+			std::string::size_type start = this->_requestUri.find( '?' );
+			this->_requestQuery = this->_requestUri.substr( start + 1 );
+			this->_requestUri.erase( start );
 		}
 
 		// version

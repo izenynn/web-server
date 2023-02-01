@@ -85,7 +85,7 @@ int Cgi::setEnv( void ) {
 	env["REQUEST_URI"]			= this->_reqFilePath;
 	env["PATH_INFO"]			= this->_reqFilePath;
 	env["PATH_TRANSLATED"]		= this->_reqFilePath;
-	//env["QUERY_STRING"]			= this->;
+	env["QUERY_STRING"]			= this->_requestConfig.getRequestQuery();
 	env["REMOTE_ADDR"]			= this->_requestConfig.getHost();
 	env["SERVER_NAME"]			= this->_requestConfig.getHost();
 	env["SERVER_PORT"]			= SSTR( this->_requestConfig.getPort() );

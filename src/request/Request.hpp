@@ -40,8 +40,8 @@ class Request {
 		int parseChunkTrailer( void );
 
 		std::string		_method;
-		std::string		_request_uri;
-		std::string		_uri_params;
+		std::string		_requestUri;
+		std::string		_requestQuery;
 		std::string		_version;
 		std::string		_body;
 		std::map<std::string, std::string> _headers;

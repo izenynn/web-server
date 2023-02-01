@@ -106,6 +106,10 @@ const std::string & RequestConfig::getRequestUri( void ) const {
 	return ( this->_request_uri );
 }
 
+const std::string & RequestConfig::getRequestQuery( void ) const {
+	return ( this->_request._query );
+}
+
 const std::string & RequestConfig::getRequestRequestUri( void ) const {
 	return ( this->_request._request_uri );
 }

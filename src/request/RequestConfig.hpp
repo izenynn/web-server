@@ -29,6 +29,7 @@ class RequestConfig {
 		std::string &						getMethod( void ) const;
 		const std::string &					getBody( void ) const;
 		const std::string &					getRequestUri( void ) const;
+		const std::string &					getRequestQuery( void ) const;
 		const std::string &					getRequestRequestUri( void ) const;
 		const std::string &					getVersion( void ) const;
 		const std::string &					getHost( void ) const;
