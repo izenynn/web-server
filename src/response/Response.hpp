@@ -54,8 +54,9 @@ class Response {
 		int methodDelete( void );
 		std::map<std::string, Response::method> _methods;
 
+		void generateErrorPage( const int statusCode );
 		void generateReturnPage( void );
-		void generateErrorPage( int statusCode );
+		void generateRedirectPage( const int statusCode, const std::string & uri );
 
 		bool			_redirect;
 		std::string		_redirect_uri;

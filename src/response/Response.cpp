@@ -277,6 +277,14 @@ void Response::build( void ) {
 		log::warning("> set path to root: " + this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
 	}
 
+	// if directive redirect with same uri with a '/' at the end
+	const std::string uri = this->_requestConfig.getRequestUri();
+	if ( true == this->_responseData.isDirectory() && '/' != uri[uri.length() - 1] ) {
+		this->generateRedirectPage( 301, uri + "/" );
+		this->setResponse();
+		return ;
+	}
+
 	// check for errors and process request if none
 	log::warning("> checking for errors...");
 	if ( 0 == this->_statusCode ) {
@@ -558,7 +566,7 @@ int Response::methodDelete( void ) {
 	return ( 200 ); // 200 ok
 }
 
-void Response::generateErrorPage( int statusCode ) {
+void Response::generateErrorPage( const int statusCode ) {
 	// check if theres a page for the status code
 	std::map<int, std::string> errorPages = this->_requestConfig.getErrorPages();
 	if ( errorPages.end() != errorPages.find( statusCode ) ) {
@@ -609,11 +617,35 @@ void Response::generateReturnPage( void ) {
 		if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( returnPage.first ) ) {
 			this->_body += Response::kStatusCodes[ returnPage.first ];
 		} else {
-			this->_body += "Return";
+			this->_body += "Redirect";
 		}
 		// location header
 		this->_headers["Location"] = returnPage.second;
 	}
+	this->_body += "</p></body></html>";
+	// set headers
+	this->_headers["Content-Length"] = SSTR( this->_body.length() );
+	this->_headers["Content-Type"] = this->kMimeTypes[".html"];
+
+	return ;
+}
+
+void Response::generateRedirectPage( const int statusCode, const std::string & uri ) {
+	// set status code
+	this->_statusCode = statusCode;
+	// generate the ultimate redirection page
+	this->_body = "<html><head><title>";
+	this->_body += SSTR( statusCode );;
+	this->_body += "</title></head><body><h1>";
+	this->_body += SSTR( statusCode );
+	this->_body += "</h1><p>";
+	if ( Response::kStatusCodes.end() != Response::kStatusCodes.find( statusCode ) ) {
+		this->_body += Response::kStatusCodes[ statusCode ];
+	} else {
+		this->_body += "Redirect";
+	}
+	// location header
+	this->_headers["Location"] = uri;
 	this->_body += "</p></body></html>";
 	// set headers
 	this->_headers["Content-Length"] = SSTR( this->_body.length() );
