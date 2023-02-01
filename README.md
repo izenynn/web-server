@@ -2,7 +2,7 @@
 
 ## Info
 
-This project aims to recreate a basic HTTP server following the HTTP/1.1 standard.
+This project aims to create a basic HTTP server following the HTTP/1.1 standard in C++98.
 
 - Status: on development
 - Result: n/a
@@ -12,7 +12,7 @@ This project aims to recreate a basic HTTP server following the HTTP/1.1 standar
 
 ## Config file
 
-Configuration is similar to nginx, you can check same examples on the folder `conf/`.
+Configuration is similar to nginx, you can check some examples on the folder `conf/`.
 
 A brief explanetion of the supported blocks:
 
