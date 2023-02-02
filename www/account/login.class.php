@@ -1,43 +1,43 @@
 <?php
 class login {
 // Inicia sesion
-public function inicia($tiempo=3600, $usuario=NULL, $clave=NULL) { 
-	if ($usuario==NULL && $clave==NULL) {
-		// Verifica sesion
-		if (isset($_SESSION['idusuario'])) {
-			//echo "<p>Estas logeado</p>";
+public function init($time=3600, $user=NULL, $pass=NULL) { 
+	if ($user==NULL && $pass==NULL) {
+		// verify session
+		if (isset($_SESSION['userid'])) {
+			//echo "<p>Logged in, redirecting...</p>";
 		} else {
-			// Verifica cookie
-			if (isset($_COOKIE['idusuario'])) {
-				// Restaura sesion
-				$_SESSION['idusuario']=$_COOKIE['idusuario'];
-		    } else {
-				// Si no hay sesion regresa al login
+			// verify cookie
+			if (isset($_COOKIE['userid'])) {
+				// restore session
+				$_SESSION['userid']=$_COOKIE['userid'];
+			} else {
+				// if not session return to index
 				header( "Location: index.php" );
 			}
 		}
 	} else {
-		$this->verifica_usuario($tiempo, $usuario, $clave);
+		$this->verify_user($time, $user, $pass);
 	}
 }
 
-// Verifica login
-private function verifica_usuario($tiempo, $usuario, $clave) {
-	if ($usuario=="admin" && $clave=="password") {
+// verify login
+private function verify_user($time, $user, $pass) {
+	if ($user==="admin" && $pass==="password") {
 		// Si la clave es correcta
-		$idusuario=$this->codificar_usuario($usuario);
-		setcookie("idusuario", $idusuario, time()+$tiempo);
-		$_SESSION['idusuario']=$idusuario;
+		$userid=$this->hash_user($usuario);
+		setcookie("userid", $userid, time()+$time);
+		$_SESSION['userid']=$userid;
 		header( "Location: account.php" );
 	} else {
-		// Si la clave es incorrecta
+		// if user/password is wrong
 		header( "Location: index.php?error=1" );
 	}
 }
 
-// Codifica idusuario
-private function codificar_usuario($usuario) {
-	return md5($usuario);
+// hash user
+private function hash_user($user) {
+	return md5($user);
 }
 
 }

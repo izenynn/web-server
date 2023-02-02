@@ -2,7 +2,7 @@
 session_start();
 include("login.class.php");
 $login=new login();
-$login->inicia();
+$login->init();
 ?>
 
 <html>

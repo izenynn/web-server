@@ -125,55 +125,17 @@ void Request::print( void ) const {
 }
 
 int Request::parse( const std::string & buffer ) {
-	// FIXME we really need to return 0 or 1 ????
-	int ret;
-
-	gettimeofday( &(this->_time), NULL );
-
 	this->_buffer += buffer;
-	//buffer.clear();
 
-	this->_status = this->kRequestLine;
-	if ( this->kRequestLine == this->_status ) {
-		ret = this->parseRequestLine();
-	}
-	if ( this->kHeaders == this->_status ) {
+	int ret = this->parseRequestLine();
+	if ( 0 == ret ) {
 		ret = this->parseHeaders();
 	}
-	if ( this->kBody == this->_status ) {
+	if ( 0 == ret ) {
 		ret = this->parseBody();
 	}
-	if ( this->kChunk == this->_status ) {
-		ret = this->parseChunk();
-	}
 
-	if ( this->kComplete == this->_status ) {
-		return ( ret );
-	}
-	if ( this->kError == this->_status ) {
-		return ( ret );
-	}
-
-	// okay (should return on complete)
-	if ( ret == 0 ) {
-		return ( ret );
-	}
-	// no body
-	if ( ret == 1 ) {
-		this->_status = this->kComplete;
-		return ( ret );
-	}
-	// error
-	if ( ret > 0 ) {
-		this->_status = this->kError;
-		return ( ret );
-	}
-
-	return ( 1 ); // it will never get here
-}
-
-const struct timeval & Request::getTime( void ) {
-	return ( this->_time );
+	return ( ret ); // it will never get here
 }
 
 int Request::parseRequestLine( void ) {
@@ -184,7 +146,6 @@ int Request::parseRequestLine( void ) {
 		}
 		std::string token = this->_buffer.substr( 0, _buffer.find(' ') );
 		if ( false == isSupportedMethod( token ) ) {
-			this->_status = this->kError;
 			return ( 501 ); // 501 not implemented
 		}
 		this->_method = token;
@@ -225,9 +186,6 @@ int Request::parseRequestLine( void ) {
 		}
 		this->_version = token;
 		this->_buffer.erase( 0, last + kEOL.length() );
-
-		// status
-		this->_status = this->kHeaders;
 	}
 	return ( 0 );
 }
@@ -241,7 +199,6 @@ int Request::parseHeaders( void ) {
 		// if no more headers (two consecutive new lines)
 		if ( 0 == eol ) {
 			this->_buffer.erase( 0, eol + kEOL.length() );
-			this->_status = this->kBody;
 			break ;
 		}
 
@@ -279,8 +236,8 @@ int Request::parseHeaders( void ) {
 int Request::parseBody( void ) {
 	// chunked
 	if ( this->_headers.end() != this->_headers.find( "Transfer-Encoding" ) && this->_headers["Transfer-Encoding"] == "chunked" ) {
-		this->_status = this->kChunk;
-		return ( 0 );
+		int ret = this->parseChunk();
+		return ( ret );
 	// not chunked
 	} else if ( this->_headers.end() != this->_headers.find( "Content-Length" ) ) {
 		if ( std::string::npos != this->_headers["Content-Length"].find_first_not_of( "0123456789" ) ) {
@@ -293,7 +250,6 @@ int Request::parseBody( void ) {
 		this->_length = length;
 	// no body
 	} else {
-		//return ( 1 );
 		return ( 0 );
 	}
 
@@ -305,41 +261,35 @@ int Request::parseBody( void ) {
 		if ( this->_length != this->_body.length() ) {
 			return ( 400 ); // 400 bad request
 		}
-		//return ( 1 );
 	}
 
 	return ( 0 );
 }
 
 int Request::parseChunk( void ) {
-	this->_chunkStatus = this->kChunkSize;
+	bool readingChunkSize = true;
 	std::string::size_type size = 0;
 
 	for ( std::string::size_type eol = this->_buffer.find( kEOL ); eol != std::string::npos; eol = this->_buffer.find( kEOL ) ) {
-		if ( this->kChunkSize == this->_chunkStatus ) {
+		if ( true == readingChunkSize ) {
 			std::string hex = this->_buffer.substr( 0, eol );
 			if ( false == fromHex( hex, size ) ) {
 				return ( 400 ); // 400 bad request
 			}
 			this->_buffer.erase( 0, eol + kEOL.length() );
-			this->_chunkStatus = this->kChunkBody;
-		} else if ( this->kChunkBody == this->_chunkStatus ) {
+			readingChunkSize = false;
+		} else {
 			if ( 0 == size ) {
 				// trailer
 				if ( false == this->_buffer.empty() ) {
 					return ( this->parseChunkTrailer() );
 				}
-				//return ( 1 );
 				return ( 0 );
 			}
-			/*this->_body += this->_buffer.substr( 0, eol );
-			this->_buffer.erase( 0, eol + Config::kEOL.length() );
-			size = 0;
-			this->_chunkStatus = this->kChunkSize;*/
 			this->_body += this->_buffer.substr( 0, size );
 			this->_buffer.erase( 0, size + kEOL.length() );
 			size = 0;
-			this->_chunkStatus = this->kChunkSize;
+			readingChunkSize = true;
 		}
 	}
 
@@ -377,7 +327,6 @@ int Request::parseChunkTrailer( void ) {
 		this->_buffer.erase( 0, eol + kEOL.length() );
 	}
 
-	//return ( 1 );
 	return ( 0 );
 }
 

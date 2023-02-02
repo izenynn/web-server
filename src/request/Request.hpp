@@ -25,8 +25,6 @@ class Request {
 
 		int parse( const std::string & buffer );
 
-		const struct timeval & getTime( void );
-
 		friend class RequestConfig;
 	private:
 		Request( const Request & other ); // not necessary
@@ -49,24 +47,6 @@ class Request {
 		std::string		_buffer;
 
 		std::string::size_type	_length;
-
-		struct timeval _time;
-
-		enum Status {
-			kRequestLine = 0,
-			kHeaders,
-			kBody,
-			kChunk,
-			kComplete,
-			kError
-		};
-		enum ChunkStatus {
-			kChunkBody = 0,
-			kChunkSize
-		};
-
-		Status			_status;
-		ChunkStatus		_chunkStatus;
 };
 
 } /** namespace webserv */
