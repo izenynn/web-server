@@ -237,11 +237,12 @@ void Server::newClient( int fd ) {
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-	// check if already max clients
-	bool maxClients = this->_clients.size() >= kMaxClients;
-	// create client and set disconnect to true if max clients already connected
+	// create client
 	this->_clients[sockfd] = new Client( sockfd, *(this->_servers[fd]) );
-	this->_clients[sockfd]->setDisconnct( maxClients );
+	// disconnect if max clients
+	if ( this->_clients.size() - 1 >= kMaxClients ) {
+		this->_clients[sockfd]->setDisconnct( true );
+	}
 
 	this->addToFdSet( sockfd );
 
