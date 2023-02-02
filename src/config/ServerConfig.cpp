@@ -199,10 +199,6 @@ ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 	location->_error_page			= this->_error_page; // inherited, added if present
 	location->_limit_except			= this->_limit_except; // inherited, replaced if present
 	location->_client_max_body_size	= this->_client_max_body_size; // inherited, replaced if present
-	// TODO cgi on server block ??? i dont think so
-	// TODO cgi inherited ??? i dont think so
-	//location->_cgi_param = this->_cgi_param;
-	//location->_cgi_pass = this->_cgi_pass;
 
 	return location;
 }

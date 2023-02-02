@@ -113,7 +113,6 @@ void Config::parser( void ) {
 		if ( "server" == *it ) {
 			ServerConfig * server = new ServerConfig();
 
-			//server->setId = serverCnt;
 			try {
 				server->parser( ++it );
 			} catch ( std::exception & e ) {

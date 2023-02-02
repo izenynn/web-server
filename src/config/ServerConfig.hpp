@@ -25,7 +25,7 @@ class ServerConfig {
 		ServerConfig( void );
 		~ServerConfig( void );
 
-		void print( const std::string & indent ) const; // FIXME just to test, remove this
+		void print( const std::string & indent ) const;
 		void parser( token_type::const_iterator & it );
 
 		std::vector<Listen *> &					getListen( void );
