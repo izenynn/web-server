@@ -174,23 +174,18 @@ int Server::clientRecv( int fd ) {
 	delete[] buffer;
 
 	// parse request into request class
-	log::debug( "RECV -> generating request..." );
-	// TODO aqui falla
+	log::debug( "REQUEST" );
+	std::cout << buffer << std::endl;
 	int ret = request->parse( strBuffer );
-	log::debug( "RECV -> REQUEST" );
-	std::cout << "    ret: " << ret << std::endl;
-	request->print(); // DEBUG
+	//request->print(); // DEBUG
+
 	// if error prepare response, if not, we will respond later :)
 	if ( ret >= 0 ) { // FIXME we can remove this i think
-		log::debug( "RECV -> generating request config..." );
 		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
-		log::debug( "RECV -> REQUEST CONFIG" );
-		this->_clients[fd]->getRequestConfig()->print(); // DEBUG
+		//this->_clients[fd]->getRequestConfig()->print(); // DEBUG
 
-		log::debug( "RECV -> generating response..." );
 		this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
-		log::debug( "RECV -> RESPONSE" );
-		this->_clients[fd]->getResponse()->print(); // DEBUG
+		//this->_clients[fd]->getResponse()->print(); // DEBUG
 	}
 
 	return ( 0 );
@@ -209,7 +204,8 @@ int Server::clientSend( int fd ) {
 	log::warning("sending on fd: " + SSTR( fd ) ); // DEBUG
 
 	// send response
-	std::cout << "\nRESPONSE:\nlenght: " << response->getResponseBody().length() << "\n" << response->getResponseBody() << std::endl; // DEBUG
+	log::debug( "RESPONSE" );
+	std::cout << response->getResponseBody() << std::endl; // DEBUG
 	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {

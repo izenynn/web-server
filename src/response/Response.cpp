@@ -256,10 +256,7 @@ void Response::clear( void ) {
 }
 
 void Response::build( void ) {
-	log::debug( "STATUS CODE: " + SSTR( this->_statusCode ) );
 	std::string & method = this->_requestConfig.getMethod();
-
-	log::warning("> inside build");
 
 	// check if return directive
 	if ( 0 != this->_requestConfig.getReturn().first ) {
@@ -271,10 +268,8 @@ void Response::build( void ) {
 	// set path depending if 'alias' directive is present on location
 	if ( false == this->_requestConfig.getAlias().empty() ) {
 		this->_responseData.setPath( this->_requestConfig.getAlias() + "/" + removeLocationFromUri( this->_requestConfig.getRequestUri(), this->_requestConfig.getLocationUri() ) );
-		log::warning("> set path to alias: " + this->_requestConfig.getAlias() + "/" + removeLocationFromUri( this->_requestConfig.getRequestUri(), this->_requestConfig.getLocationUri() ) );
 	} else {
 		this->_responseData.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
-		log::warning("> set path to root: " + this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
 	}
 
 	// if directive redirect with same uri with a '/' at the end
@@ -286,10 +281,8 @@ void Response::build( void ) {
 	}
 
 	// check for errors and process request if none
-	log::warning("> checking for errors...");
 	if ( 0 == this->_statusCode ) {
 		if ( false == this->_requestConfig.isValidMethod( method ) ) {
-			log::warning("> 405");
 			// set error code
 			this->_statusCode = 405; // 405 method not allowed
 			// set allow header
@@ -303,29 +296,22 @@ void Response::build( void ) {
 			}
 			this->_headers["Allow"] = allowedMethods;
 		} else if ( this->_requestConfig.getBody().length() > this->_requestConfig.getMaxBodySize() ) {
-			log::warning("> 413");
 			this->_statusCode = 413; // 413 payload too large
 		} else {
-			log::warning("> no errors... processing method...");
-			// FIXME de aqui no sale
-			this->_statusCode = this->process(); // process method
+			this->_statusCode = this->process();
 		}
 	}
 
-	log::warning("> method processed!");
 	// check if error page needed
 	if ( this->_statusCode >= 300 && 0 == this->_body.length() ) {
-		log::warning("> generating error page...");
 		this->generateErrorPage( this->_statusCode );
 	}
 
 	// check if not redirection
 	if ( false == this->_redirect ) {
-		log::warning("> setting response...");
 		this->setResponse();
 	}
 
-	log::warning("> finish build!");
 	return ;
 }
 

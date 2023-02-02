@@ -46,7 +46,6 @@ void ResponseData::setPath( const std::string & path ) {
 }
 
 bool ResponseData::openFile( void ) {
-	log::warning("### opening file..."); // DEBUG
 	// close any open file
 	this->closeFile();
 
@@ -106,7 +105,6 @@ void ResponseData::closeFile( void ) {
 		return ;
 	}
 
-	log::warning("### closing file..."); // DEBUG
 	close( this->_fd );
 	this->_fd = 0;
 
@@ -230,7 +228,6 @@ const std::string ResponseData::getFileContent( void ) const {
 	}
 
 	lseek( this->_fd, 0, SEEK_SET );
-	std::cout << "### fd: " << this->_fd << std::endl;
 	while ( true ) {
 		int ret = read( this->_fd, buffer, kReadBuffer );
 		if ( 0 == ret ) {
@@ -245,7 +242,6 @@ const std::string ResponseData::getFileContent( void ) const {
 		}
 		buffer[ret] = '\0';
 		content.insert( content.length(), buffer, ret );
-		std::cout << "### readed: " << buffer << std::endl;
 	}
 
 	//free ( buffer );

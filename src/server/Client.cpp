@@ -53,7 +53,6 @@ void Client::clear( void ) {
 }
 
 void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
-	log::warning("- init respose...");
 	// generate request and request config if doesnt exists // FIXME necessary ???
 	if ( webserv::nullptr_t == this->_request ) {
 		this->initRequest();
@@ -63,14 +62,10 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 	}
 
 	// generate response
-	log::warning("- new response...");
 	this->_response = new Response( *(this->_requestConfig), statusCode );
-	log::warning("- new response ready");
 
 	// build response
-	log::warning("- building...");
 	for ( int tries = 1, redo = 1; redo != 0; ++tries ) {
-		log::warning("- for iteration");
 		if ( tries > 10 ) {
 			if ( webserv::nullptr_t != this->_response ) {
 				delete this->_response;
@@ -101,10 +96,10 @@ void Client::initRequest( void ) {
 
 bool Client::checkTimeout( void ) {
 	if ( this->_request != webserv::nullptr_t ) {
-		log::warning("check timeout");
 		struct timeval time;
 		gettimeofday( &time, NULL );
 		if ( time.tv_sec - this->_request->getTime().tv_sec > kRequestTimeoutSec ) {
+			log::debug("timout");
 			return ( true );
 		} else {
 			return ( false );

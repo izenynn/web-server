@@ -135,47 +135,36 @@ int Request::parse( const std::string & buffer ) {
 
 	this->_status = this->kRequestLine;
 	if ( this->kRequestLine == this->_status ) {
-		log::debug( "request line" );
 		ret = this->parseRequestLine();
 	}
 	if ( this->kHeaders == this->_status ) {
-		log::debug( "headers" );
 		ret = this->parseHeaders();
 	}
 	if ( this->kBody == this->_status ) {
-		log::debug( "body" );
 		ret = this->parseBody();
 	}
 	if ( this->kChunk == this->_status ) {
-		log::debug( "chunk" );
 		ret = this->parseChunk();
 	}
 
-	log::debug( "after body" );
 	if ( this->kComplete == this->_status ) {
-		log::debug( "complete: " + SSTR( ret ) );
 		return ( ret );
 	}
 	if ( this->kError == this->_status ) {
-		log::debug( "error: " + SSTR( ret ) );
 		return ( ret );
 	}
 
-	log::debug( "should not reach here" );
 	// okay (should return on complete)
 	if ( ret == 0 ) {
-		log::debug( "ret: 0" );
 		return ( ret );
 	}
 	// no body
 	if ( ret == 1 ) {
-		log::debug( "ret: 1" );
 		this->_status = this->kComplete;
 		return ( ret );
 	}
 	// error
 	if ( ret > 0 ) {
-		log::debug( "ret: " + SSTR( ret ) );
 		this->_status = this->kError;
 		return ( ret );
 	}
