@@ -272,17 +272,15 @@ void Response::build( void ) {
 		this->_responseData.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
 	}
 
-	// if directive redirect with same uri with a '/' at the end
-	const std::string uri = this->_requestConfig.getRequestUri();
-	if ( true == this->_responseData.isDirectory() && '/' != uri[uri.length() - 1] ) {
-		this->generateRedirectPage( 301, uri + "/" );
-		this->setResponse();
-		return ;
-	}
-
-	// check for errors and process request if none
+	// check if redirect, check for errors and process request if none
 	if ( 0 == this->_statusCode ) {
-		if ( false == this->_requestConfig.isValidMethod( method ) ) {
+		// if is directory redirect to same uri but append a '/' at the end
+		const std::string uri = this->_requestConfig.getRequestUri();
+		if ( true == this->_responseData.isDirectory() && '/' != uri[uri.length() - 1] ) {
+			this->generateRedirectPage( 301, uri + "/" );
+			this->setResponse();
+			return ;
+		} else if ( false == this->_requestConfig.isValidMethod( method ) ) {
 			// set error code
 			this->_statusCode = 405; // 405 method not allowed
 			// set allow header
