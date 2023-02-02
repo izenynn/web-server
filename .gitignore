@@ -86,6 +86,9 @@ dkms.conf
 # Program name
 webserv
 
+# valgrind
+valgrind-out.txt
+
 # Logs
 *.log
 **/*.log
