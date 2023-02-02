@@ -175,7 +175,7 @@ int Server::clientRecv( int fd ) {
 
 	// parse request into request class
 	log::debug( "REQUEST" ); // INFO
-	std::cout << buffer << std::endl; // INFO
+	std::cout << strBuffer << std::endl; // INFO
 	int ret = request->parse( strBuffer );
 	//request->print(); // DEBUG
 
