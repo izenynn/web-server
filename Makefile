@@ -122,6 +122,10 @@ sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address
 endif
 sanitize: $(NAME)
 
+PHONY += valgrind
+valgrind: CXXFLAGS += -ggdb3
+valgrind: $(NAME)
+
 PHONY += thread
 thread: CXXFLAGS += -g3 -fsanitize=thread
 thread: $(NAME)
