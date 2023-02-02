@@ -124,5 +124,4 @@ void Client::setDisconnct( bool value ) {
 	return ;
 }
 
-
 } /** namespace webserv */
