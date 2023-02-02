@@ -369,6 +369,7 @@ int Response::process( void ) {
 
 			int ret = cgi->exec();
 			if ( ret >= 400 ) {
+				delete cgi;
 				this->_statusCode = ret;
 				return ( this->_statusCode );
 			}
@@ -376,6 +377,7 @@ int Response::process( void ) {
 			cgi->getHeadersAndBody( this->_headers, this->_body );
 			this->_headers["Content-Length"] = SSTR( this->_body.length() );
 
+			delete cgi;
 			this->_statusCode = ret;
 			return ( this->_statusCode );
 		}

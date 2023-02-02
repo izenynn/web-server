@@ -150,7 +150,7 @@ int Server::stop( void ) {
 }
 
 int Server::clientRecv( int fd ) {
-	log::warning("receiving on fd: " + SSTR( fd ) ); // INFO
+	//log::warning("receiving on fd: " + SSTR( fd ) ); // INFO
 	// get request
 	Request * request = this->_clients[fd]->getRequest();
 	if ( webserv::nullptr_t == request ) {
@@ -174,8 +174,7 @@ int Server::clientRecv( int fd ) {
 	delete[] buffer;
 
 	// parse request into request class
-	log::debug( "REQUEST" ); // INFO
-	std::cout << strBuffer << std::endl; // INFO
+	//log::debug( "REQUEST" ); std::cout << strBuffer << std::endl; // INFO
 	int ret = request->parse( strBuffer );
 	//request->print(); // DEBUG
 
@@ -198,11 +197,10 @@ int Server::clientSend( int fd ) {
 		return ( 0 );
 	}
 
-	log::warning("sending on fd: " + SSTR( fd ) ); // INFO
+	//log::warning("sending on fd: " + SSTR( fd ) ); // INFO
 
 	// send response
-	log::debug( "RESPONSE" ); // INFO
-	std::cout << response->getResponseBody() << std::endl; // INFO
+	//log::debug( "RESPONSE" ); std::cout << response->getResponseBody() << std::endl; // INFO
 	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {
@@ -230,7 +228,7 @@ void Server::newClient( int fd ) {
 		log::failure( "accept() failed with return code: -1" );
 		return ;
 	}
-	log::info( "new connection with fd: " + SSTR( sockfd ) + " on " + this->_servers[fd]->ip + ":" + SSTR( this->_servers[fd]->port ) );
+	//log::info( "new connection with fd: " + SSTR( sockfd ) + " on " + this->_servers[fd]->ip + ":" + SSTR( this->_servers[fd]->port ) ); // INFO
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
@@ -258,7 +256,7 @@ void Server::disconnectClient( int fd ) {
 
 	this->_clients.erase( fd );
 
-	log::info( "closed connection with fd: " + SSTR( fd ) );
+	//log::info( "closed connection with fd: " + SSTR( fd ) ); // INFO
 
 	return ;
 }

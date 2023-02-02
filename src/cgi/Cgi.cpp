@@ -45,16 +45,18 @@ Cgi::Cgi( const RequestConfig & requestConfig, const ResponseData & responseData
 		  _responseData( responseData ) {
 	this->_reqBody = this->_requestConfig.getBody();
 
-	char * cwd = getcwd( NULL, 0 );
-	if ( NULL == cwd ) {
+	char * tmp = getcwd( NULL, 0 );
+	if ( NULL == tmp ) {
 		return;
 	}
+	std::string cwd = tmp;
+	free ( tmp );
 
 	this->_cgiBin = this->_requestConfig.getCgi().find( this->_responseData.getExtension() )->second;
 	if ( '/' == this->_cgiBin[0] ) {
 		this->_cgiPath = this->_cgiBin;
 	} else {
-		this->_cgiPath = std::string( cwd ) + "/" + this->_cgiBin;
+		this->_cgiPath = cwd + "/" + this->_cgiBin;
 	}
 
 	this->_cgiTmpFilePath = kCgiTmpFile;
@@ -63,7 +65,7 @@ Cgi::Cgi( const RequestConfig & requestConfig, const ResponseData & responseData
 		return ;
 	}
 
-	this->_reqFilePath = std::string ( cwd ) + "/" + this->_responseData.getPath();
+	this->_reqFilePath = cwd + "/" + this->_responseData.getPath();
 
 	return ;
 }
@@ -80,11 +82,12 @@ Cgi::~Cgi( void ) {
 	for ( size_t i = 0; NULL != this->_argv[i]; ++i ) {
 		free( this->_argv[i] );
 	}
+	free( this->_argv );
 
 	for ( size_t i = 0; NULL != this->_env[i]; ++i ) {
 		free( this->_env[i] );
 	}
-	delete[] this->_env;
+	free( this->_env);
 
 	return ;
 }
@@ -97,7 +100,7 @@ int Cgi::exec( void ) {
 	}
 
 	// argv
-	this->_argv = new char*[3 * sizeof( char )];
+	this->_argv = reinterpret_cast<char **>( malloc( 3 * sizeof( char * ) ) );
 	this->_argv[0] = strdup( this->_cgiPath.c_str() );
 	this->_argv[1] = strdup( this->_reqFilePath.c_str() );
 	this->_argv[2] = NULL;
@@ -257,7 +260,7 @@ int Cgi::setEnv( void ) {
 	}
 
 	// create **env
-	this->_env = new ( std::nothrow ) char*[ ( env.size() + 1 ) * sizeof( char * ) ];
+	this->_env = reinterpret_cast<char **>( malloc( ( env.size() + 1 ) * sizeof( char * ) ) );
 	if ( webserv::nullptr_t == this->_env ) {
 		return ( -1 );
 	}

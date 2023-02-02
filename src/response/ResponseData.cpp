@@ -219,10 +219,9 @@ const std::string & ResponseData::getExtension( void ) const {
 
 const std::string ResponseData::getFileContent( void ) const {
 	std::string content;
-	//char * buffer = reinterpret_cast<char *>( malloc( ( kReadBuffer + 1 ) * sizeof( char ) ) );
 	char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
 	if ( NULL == buffer ) {
-		log::failure( "malloc() failed with return code -1" );
+		log::failure( "operator new char[] failed" );
 		content = "";
 		return ( content );
 	}
@@ -235,7 +234,6 @@ const std::string ResponseData::getFileContent( void ) const {
 		}
 		if ( -1 == ret ) {
 			log::failure( "read() failed with return code -1" );
-			//free( buffer );
 			delete[] buffer;
 			content = "";
 			return ( content );
@@ -244,7 +242,6 @@ const std::string ResponseData::getFileContent( void ) const {
 		content.insert( content.length(), buffer, ret );
 	}
 
-	//free ( buffer );
 	delete[] buffer;
 
 	return ( content );

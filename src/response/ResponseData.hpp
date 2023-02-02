@@ -11,7 +11,6 @@
 # include <fcntl.h> // open()
 # include <unistd.h> // close()
 # include <sys/stat.h> // stat()
-# include <stdlib.h> // malloc()
 # include <dirent.h> // opendir()
 
 /** CLASS -------------------------------------- */
