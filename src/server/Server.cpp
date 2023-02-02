@@ -179,13 +179,11 @@ int Server::clientRecv( int fd ) {
 	int ret = request->parse( strBuffer );
 	//request->print(); // DEBUG
 
-	if ( ret >= 0 ) { // FIXME we can remove this i think
-		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
-		//this->_clients[fd]->getRequestConfig()->print(); // DEBUG
+	this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
+	//this->_clients[fd]->getRequestConfig()->print(); // DEBUG
 
-		this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
-		//this->_clients[fd]->getResponse()->print(); // DEBUG
-	}
+	this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
+	//this->_clients[fd]->getResponse()->print(); // DEBUG
 
 	return ( 0 );
 }
