@@ -10,10 +10,10 @@
 
 namespace webserv {
 
-Client::Client( int fd, Listen & host, bool disconnect )
+Client::Client( int fd, Listen & host )
 		: _fd( fd ),
 		  _host( host ),
-		  _disconnect ( disconnect ),
+		  _disconnect ( false ),
 		  _request( webserv::nullptr_t ),
 		  _response( webserv::nullptr_t ),
 		  _requestConfig( webserv::nullptr_t ) {
@@ -50,6 +50,8 @@ void Client::clear( void ) {
 		delete this->_requestConfig;
 		this->_requestConfig = webserv::nullptr_t;
 	}
+
+	return ;
 }
 
 void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
@@ -82,6 +84,8 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 			redo = 1;
 		}
 	}
+
+	return ;
 }
 
 void Client::initRequestConfig( const std::vector<ServerConfig *> & servers ) {
@@ -92,14 +96,7 @@ void Client::initRequestConfig( const std::vector<ServerConfig *> & servers ) {
 
 void Client::initRequest( void ) {
 	this->_request = new Request();
-}
-
-bool Client::checkDisconnect( void ) {
-	if ( true == this->_disconnect ) {
-		return ( true );
-	} else {
-		return ( false );
-	}
+	return ;
 }
 
 int Client::getFd( void ) const {
@@ -117,5 +114,15 @@ Response * Client::getResponse( void ) const {
 RequestConfig * Client::getRequestConfig( void ) const {
 	return ( this->_requestConfig );
 }
+
+bool Client::getDisconnect( void ) const {
+	return ( this->_disconnect );
+}
+
+void Client::setDisconnct( bool value ) {
+	this->_disconnect = value;
+	return ;
+}
+
 
 } /** namespace webserv */

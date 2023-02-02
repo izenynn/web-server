@@ -213,7 +213,7 @@ int Server::clientSend( int fd ) {
 		return ( 1 );
 	}
 
-	bool disconnect = this->_clients[fd]->checkDisconnect() || response->isConnectionClose();
+	bool disconnect = this->_clients[fd]->getDisconnect() || response->isConnectionClose();
 	this->_clients[fd]->clear();
 	if ( true == disconnect ) return ( 1 );
 	else                      return ( 0 );
@@ -237,7 +237,11 @@ void Server::newClient( int fd ) {
 
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 
-	this->_clients[sockfd] = new Client( sockfd, *(this->_servers[fd]), this->_clients.size() >= kMaxClients );
+	// check if already max clients
+	bool maxClients = this->_clients.size() >= kMaxClients;
+	// create client and set disconnect to true if max clients already connected
+	this->_clients[sockfd] = new Client( sockfd, *(this->_servers[fd]) );
+	this->_clients[sockfd]->setDisconnct( maxClients );
 
 	this->addToFdSet( sockfd );
 
@@ -262,7 +266,7 @@ void Server::disconnectClient( int fd ) {
 }
 
 void Server::checkDisconnectClient( Client * client ) {
-	if ( true == client->checkDisconnect() ) {
+	if ( true == client->getDisconnect() ) {
 		client->initResponse( *(this->_serverConfigs), 503 ); // 503 service unavailable
 	}
 }

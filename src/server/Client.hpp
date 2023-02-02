@@ -20,7 +20,7 @@ namespace webserv {
 
 class Client {
 	public:
-		Client( int fd, Listen & host, bool disconnect );
+		Client( int fd, Listen & host );
 		~Client( void );
 
 		void clear( void );
@@ -29,12 +29,14 @@ class Client {
 		void initResponse( const std::vector<ServerConfig *> & servers, int statusCode );
 		void initRequestConfig( const std::vector<ServerConfig *> & servers );
 
-		bool checkDisconnect( void );
 
 		int				getFd( void ) const;
 		Request *		getRequest( void ) const;
 		Response *		getResponse( void ) const;
 		RequestConfig *	getRequestConfig( void ) const;
+		bool			getDisconnect( void ) const;
+
+		void			setDisconnct( bool value );
 	private:
 		Client( void ); // not necessary
 		Client( const Client & other ); // not necessary
