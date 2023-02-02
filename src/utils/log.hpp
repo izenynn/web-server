@@ -164,7 +164,8 @@ namespace log {
 		return;
 	}
 	inline void debug( const std::string & msg ) {
-		std::clog << "[" << CBACK_YELLOW_BLACK << "DEBUG" << C_OFF << "] " << msg << std::endl;
+		//std::clog << "[" << CBACK_YELLOW_BLACK << "DEBUG" << C_OFF << "] " << msg << std::endl;
+		std::clog << CBACK_YELLOW_BLACK << msg << C_OFF << std::endl;
 		return;
 	}
 } /** namespace log */
