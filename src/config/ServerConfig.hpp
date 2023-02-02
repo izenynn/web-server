@@ -37,7 +37,6 @@ class ServerConfig {
 		ServerConfig( const ServerConfig & other ); // not necessary
 		ServerConfig & operator=( const ServerConfig & other ); // not necessary
 
-		void			clear( void ); // FIXME not used
 		ServerConfig *	createLocationServerConfig( void );
 
 		typedef void ( ServerConfig::*parse_directive_type )( token_type::const_iterator & );

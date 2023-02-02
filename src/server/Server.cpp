@@ -150,7 +150,7 @@ int Server::stop( void ) {
 }
 
 int Server::clientRecv( int fd ) {
-	log::warning("receiving on fd: " + SSTR( fd ) ); // DEBUG
+	log::warning("receiving on fd: " + SSTR( fd ) ); // INFO
 	// get request
 	Request * request = this->_clients[fd]->getRequest();
 	if ( webserv::nullptr_t == request ) {
@@ -174,8 +174,8 @@ int Server::clientRecv( int fd ) {
 	delete[] buffer;
 
 	// parse request into request class
-	log::debug( "REQUEST" );
-	std::cout << buffer << std::endl;
+	log::debug( "REQUEST" ); // INFO
+	std::cout << buffer << std::endl; // INFO
 	int ret = request->parse( strBuffer );
 	//request->print(); // DEBUG
 
@@ -201,11 +201,11 @@ int Server::clientSend( int fd ) {
 		return ( 0 );
 	}
 
-	log::warning("sending on fd: " + SSTR( fd ) ); // DEBUG
+	log::warning("sending on fd: " + SSTR( fd ) ); // INFO
 
 	// send response
-	log::debug( "RESPONSE" );
-	std::cout << response->getResponseBody() << std::endl; // DEBUG
+	log::debug( "RESPONSE" ); // INFO
+	std::cout << response->getResponseBody() << std::endl; // INFO
 	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {
