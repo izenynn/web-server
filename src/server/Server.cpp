@@ -262,9 +262,6 @@ void Server::disconnectClient( int fd ) {
 }
 
 void Server::checkDisconnectClient( Client * client ) {
-	if ( true == client->checkTimeout() ) {
-		client->initResponse( *(this->_serverConfigs), 408 ); // 408 request timeout
-	}
 	if ( true == client->checkDisconnect() ) {
 		client->initResponse( *(this->_serverConfigs), 503 ); // 503 service unavailable
 	}

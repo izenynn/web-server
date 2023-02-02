@@ -29,7 +29,6 @@ class Client {
 		void initResponse( const std::vector<ServerConfig *> & servers, int statusCode );
 		void initRequestConfig( const std::vector<ServerConfig *> & servers );
 
-		bool checkTimeout( void );
 		bool checkDisconnect( void );
 
 		int				getFd( void ) const;

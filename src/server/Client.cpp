@@ -94,21 +94,6 @@ void Client::initRequest( void ) {
 	this->_request = new Request();
 }
 
-bool Client::checkTimeout( void ) {
-	if ( this->_request != webserv::nullptr_t ) {
-		struct timeval time;
-		gettimeofday( &time, NULL );
-		if ( time.tv_sec - this->_request->getTime().tv_sec > kRequestTimeoutSec ) {
-			log::debug("timout");
-			return ( true );
-		} else {
-			return ( false );
-		}
-	} else {
-		return ( false );
-	}
-}
-
 bool Client::checkDisconnect( void ) {
 	if ( true == this->_disconnect ) {
 		return ( true );
