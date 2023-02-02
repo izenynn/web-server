@@ -357,9 +357,6 @@ int Response::process( void ) {
 				return ( 404 ); // 404 bad request
 			}
 
-			// TODO getFile()
-			//this->_uri.getFile(); // FIXME remove this line!!!
-
 			if ( false == this->_responseData.openFile() ) {
 				return ( 403 ); // 403 forbidden
 			}
