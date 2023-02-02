@@ -15,6 +15,8 @@ RequestConfig::RequestConfig( Request & request, Listen & host, Client & client,
 		  _host( host ),
 		  _client( client ),
 		  _servers( servers ),
+		  _server( webserv::nullptr_t ),
+		  _location( webserv::nullptr_t ),
 		  _locationAllocated( false ) {
 	return ;
 }
