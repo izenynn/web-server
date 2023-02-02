@@ -34,7 +34,7 @@ class ResponseData {
 		void deleteFile( void );
 		void closeFile( void );
 
-		const std::string getIndex( std::vector<std::string> & indexes );
+		const std::string getIndex( const std::vector<std::string> & indexes );
 
 		bool isDirectory( void ) const;
 		bool fileExists( void ) const;

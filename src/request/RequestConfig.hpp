@@ -26,7 +26,7 @@ class RequestConfig {
 		bool isValidMethod( const std::string & method );
 
 		// request related getters
-		std::string &						getMethod( void ) const;
+		const std::string &					getMethod( void ) const;
 		const std::string &					getBody( void ) const;
 		const std::string &					getRequestUri( void ) const;
 		const std::string &					getRequestQuery( void ) const;
@@ -36,11 +36,13 @@ class RequestConfig {
 		uint16_t							getPort( void ) const;
 		const std::map<std::string, std::string> & getHeaders( void ) const;
 
+		void								setMethod( const std::string & value ) const;
+
 		// server/location related getters
 		const std::map<int, std::string> &	getErrorPages( void ) const;
-		std::vector<std::string> &			getAllowedMethods( void ) const;
+		const std::vector<std::string> &	getAllowedMethods( void ) const;
 		std::string::size_type				getMaxBodySize( void ) const;
-		std::vector<std::string> &			getIndex( void ) const;
+		const std::vector<std::string> &	getIndex( void ) const;
 		bool								getAutoIndex( void ) const;
 		const std::string &					getLocationUri( void ) const;
 		const std::string &					getRoot( void ) const;

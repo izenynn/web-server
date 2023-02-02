@@ -94,7 +94,7 @@ bool RequestConfig::isValidMethod( const std::string & method ){
 	return ( false );
 }
 
-std::string & RequestConfig::getMethod( void ) const {
+const std::string & RequestConfig::getMethod( void ) const {
 	return ( this->_request._method );
 }
 
@@ -129,11 +129,16 @@ uint16_t RequestConfig::getPort( void ) const {
 	return ( this->_host.port );
 }
 
+void RequestConfig::setMethod( const std::string & value ) const {
+	this->_request._method = value;
+	return ;
+}
+
 const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) const {
 	return ( this->_location->second->_error_page );
 }
 
-std::vector<std::string> & RequestConfig::getAllowedMethods( void ) const {
+const std::vector<std::string> & RequestConfig::getAllowedMethods( void ) const {
 	return ( this->_location->second->_limit_except );
 }
 
@@ -141,7 +146,7 @@ std::string::size_type RequestConfig::getMaxBodySize( void ) const {
 	return ( this->_location->second->_client_max_body_size );
 }
 
-std::vector<std::string> & RequestConfig::getIndex( void ) const {
+const std::vector<std::string> & RequestConfig::getIndex( void ) const {
 	return ( this->_location->second->_index );
 }
 

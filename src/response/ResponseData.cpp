@@ -124,7 +124,7 @@ void ResponseData::deleteFile( void ) {
 	return ;
 }
 
-const std::string ResponseData::getIndex( std::vector<std::string> & indexes ) {
+const std::string ResponseData::getIndex( const std::vector<std::string> & indexes ) {
 	std::string ret;
 	DIR * d;
 	struct dirent * e;

@@ -256,7 +256,7 @@ void Response::clear( void ) {
 }
 
 void Response::build( void ) {
-	std::string & method = this->_requestConfig.getMethod();
+	const std::string & method = this->_requestConfig.getMethod();
 
 	// check if return directive
 	if ( 0 != this->_requestConfig.getReturn().first ) {
@@ -343,7 +343,7 @@ int Response::process( void ) {
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
 		if ( true == this->_responseData.isDirectory() ) {
-			std::string index = this->_responseData.getIndex( this->_requestConfig.getIndex() );
+			const std::string & index = this->_responseData.getIndex( this->_requestConfig.getIndex() );
 			if ( index.length() > 0 ) {
 				this->_redirect = true;
 				this->_redirect_uri = utils::sanitizePath( "/" + this->_requestConfig.getRequestUri() + "/" + index );
@@ -557,7 +557,7 @@ void Response::generateErrorPage( const int statusCode ) {
 	std::map<int, std::string> errorPages = this->_requestConfig.getErrorPages();
 	if ( errorPages.end() != errorPages.find( statusCode ) ) {
 		// redirect to error page
-		this->_requestConfig.getMethod() = "GET";
+		this->_requestConfig.setMethod( "GET" );
 		this->_redirect = true;
 		this->_redirect_uri = errorPages[statusCode];
 		this->_redirect_status_code = statusCode;
