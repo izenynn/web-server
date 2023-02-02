@@ -179,7 +179,6 @@ int Server::clientRecv( int fd ) {
 	int ret = request->parse( strBuffer );
 	//request->print(); // DEBUG
 
-	// if error prepare response, if not, we will respond later :)
 	if ( ret >= 0 ) { // FIXME we can remove this i think
 		this->_clients[fd]->initRequestConfig( *(this->_serverConfigs) );
 		//this->_clients[fd]->getRequestConfig()->print(); // DEBUG
@@ -365,6 +364,7 @@ int Server::initialize( void ) {
 					return ( -1 );
 				}
 
+				// FIXME
 				//int option_value = 1;
 				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 

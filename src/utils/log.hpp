@@ -160,13 +160,11 @@ namespace log {
 		return;
 	}
 	inline void error( const std::string & msg) {
-		//std::clog << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << std::endl;
 		std::cerr << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << std::endl;
 		return;
 	}
 	inline void debug( const std::string & msg ) {
-		//std::clog << "[" << CBACK_YELLOW_BLACK << "DEBUG" << C_OFF << "] " << msg << std::endl;
-		std::cout << "[" << CBACK_YELLOW_BLACK << "DEBUG" << C_OFF << "] " << msg << std::endl;
+		std::clog << "[" << CBACK_YELLOW_BLACK << "DEBUG" << C_OFF << "] " << msg << std::endl;
 		return;
 	}
 } /** namespace log */
