@@ -3,7 +3,6 @@
 #include <types/nullptr_t.hpp>
 #include <server/Server.hpp>
 #include <utils/log.hpp>
-#include <utils/signals.hpp>
 
 int main( int argc, char * argv[] ) {
 	int					ret = 0;
