@@ -63,6 +63,7 @@
 # VS code files
 .vscode
 **/.vscode
+*.code-workspace
 
 # CLion
 .idea
@@ -84,3 +85,10 @@ dkms.conf
 
 # Program name
 webserv
+
+# valgrind
+valgrind-out.txt
+
+# Logs
+*.log
+**/*.log
