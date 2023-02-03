@@ -203,11 +203,11 @@ std::map<std::string, std::string> Response::initMimeTypes( void ) {
 std::map<int, std::string>			Response::kStatusCodes = initStatusCodes();
 std::map<std::string, std::string>	Response::kMimeTypes = initMimeTypes();
 
-Response::Response( RequestConfig & config, int statusCode )
+Response::Response( RequestData & requestData, int statusCode )
 		: _redirect( false ),
 		  _redirect_status_code( 0 ),
 		  _statusCode( statusCode ),
-		  _requestConfig( config ) {
+		  _requestData( requestData ) {
 	this->_methods["GET"]		= &Response::methodGet;
 	this->_methods["POST"]		= &Response::methodPost;
 	this->_methods["PUT"]		= &Response::methodPut;
@@ -239,7 +239,7 @@ void Response::print( void ) const {
 	std::cout << i << this->_response << std::endl;
 
 	std::cout << i << "request config:" << std::endl;
-	this->_requestConfig.print();
+	this->_requestData.print();
 
 	std::cout << i << "uri:" << std::endl;
 	this->_responseData.print();
@@ -256,44 +256,44 @@ void Response::clear( void ) {
 }
 
 void Response::build( void ) {
-	const std::string & method = this->_requestConfig.getMethod();
+	const std::string & method = this->_requestData.getMethod();
 
 	// check if return directive
-	if ( 0 != this->_requestConfig.getReturn().first ) {
+	if ( 0 != this->_requestData.getReturn().first ) {
 		this->generateReturnPage();
 		this->setResponse();
 		return ;
 	}
 
 	// set path depending if 'alias' directive is present on location
-	if ( false == this->_requestConfig.getAlias().empty() ) {
-		this->_responseData.setPath( this->_requestConfig.getAlias() + "/" + removeLocationFromUri( this->_requestConfig.getRequestUri(), this->_requestConfig.getLocationUri() ) );
+	if ( false == this->_requestData.getAlias().empty() ) {
+		this->_responseData.setPath( this->_requestData.getAlias() + "/" + removeLocationFromUri( this->_requestData.getRequestUri(), this->_requestData.getLocationUri() ) );
 	} else {
-		this->_responseData.setPath( this->_requestConfig.getRoot() + "/" + this->_requestConfig.getRequestUri() );
+		this->_responseData.setPath( this->_requestData.getRoot() + "/" + this->_requestData.getRequestUri() );
 	}
 
 	// check if redirect, check for errors and process request if none
 	if ( 0 == this->_statusCode ) {
 		// if is directory redirect to same uri but append a '/' at the end
-		const std::string uri = this->_requestConfig.getRequestUri();
+		const std::string uri = this->_requestData.getRequestUri();
 		if ( true == this->_responseData.isDirectory() && '/' != uri[uri.length() - 1] ) {
 			this->generateRedirectPage( 301, uri + "/" );
 			this->setResponse();
 			return ;
-		} else if ( false == this->_requestConfig.isValidMethod( method ) ) {
+		} else if ( false == this->_requestData.isValidMethod( method ) ) {
 			// set error code
 			this->_statusCode = 405; // 405 method not allowed
 			// set allow header
 			std::string allowedMethods;
-			for ( std::vector<std::string>::const_iterator it = this->_requestConfig.getAllowedMethods().begin(); it != this->_requestConfig.getAllowedMethods().end(); ) {
+			for ( std::vector<std::string>::const_iterator it = this->_requestData.getAllowedMethods().begin(); it != this->_requestData.getAllowedMethods().end(); ) {
 				allowedMethods += *it;
 				++it;
-				if ( this->_requestConfig.getAllowedMethods().end() != it ) {
+				if ( this->_requestData.getAllowedMethods().end() != it ) {
 					allowedMethods += ", ";
 				}
 			}
 			this->_headers["Allow"] = allowedMethods;
-		} else if ( this->_requestConfig.getBody().length() > this->_requestConfig.getMaxBodySize() ) {
+		} else if ( this->_requestData.getBody().length() > this->_requestData.getMaxBodySize() ) {
 			this->_statusCode = 413; // 413 payload too large
 		} else {
 			this->_statusCode = this->process();
@@ -335,18 +335,18 @@ bool Response::isConnectionClose( void ) {
 }
 
 int Response::process( void ) {
-	const std::string & method = this->_requestConfig.getMethod();
+	const std::string & method = this->_requestData.getMethod();
 
 	// get -> checks and internal redirect (index/autoindex directive)
 	if ( "GET" == method ) {
 		// directory, if index -> go to index, else if no index and no autoindex -> bad request
 		if ( true == this->_responseData.isDirectory() ) {
-			const std::string & index = this->_responseData.getIndex( this->_requestConfig.getIndex() );
+			const std::string & index = this->_responseData.getIndex( this->_requestData.getIndex() );
 			if ( index.length() > 0 ) {
 				this->_redirect = true;
-				this->_redirect_uri = utils::sanitizePath( "/" + this->_requestConfig.getRequestUri() + "/" + index );
+				this->_redirect_uri = utils::sanitizePath( "/" + this->_requestData.getRequestUri() + "/" + index );
 				return ( 200 ); // 200 ok
-			} else if ( false == this->_requestConfig.getAutoIndex() ) {
+			} else if ( false == this->_requestData.getAutoIndex() ) {
 				return ( 404 ); // 404 bad request
 			}
 		// not directory
@@ -363,9 +363,9 @@ int Response::process( void ) {
 	}
 
 	// cgi -> check and execute on match
-	for ( std::map<std::string, std::string>::const_iterator it = this->_requestConfig.getCgi().begin(); it != this->_requestConfig.getCgi().end(); ++it ) {
+	for ( std::map<std::string, std::string>::const_iterator it = this->_requestData.getCgi().begin(); it != this->_requestData.getCgi().end(); ++it ) {
 		if ( this->_responseData.getExtension() == it->first ) {
-			Cgi * cgi = new Cgi( this->_requestConfig, this->_responseData );
+			Cgi * cgi = new Cgi( this->_requestData, this->_responseData );
 
 			int ret = cgi->exec();
 			if ( ret >= 400 ) {
@@ -387,8 +387,8 @@ int Response::process( void ) {
 	if ( "POST" == method || "PUT" == method ) {
 		// check request is not the base directory
 		{
-			std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
-			std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+			std::string location = utils::sanitizePath( this->_requestData.getLocationUri() );
+			std::string request = utils::sanitizePath( this->_requestData.getRequestUri() );
 			if ( '/' == location[location.length() - 1] ) {
 				location.erase( location.length() - 1 );
 			}
@@ -401,8 +401,8 @@ int Response::process( void ) {
 		}
 
 		// if upload_store change set upload path
-		if ( false == this->_requestConfig.getUploadStore().empty() ) {
-			std::string uploadPath = this->_requestConfig.getRoot() + "/" + this->_requestConfig.getUploadStore();
+		if ( false == this->_requestData.getUploadStore().empty() ) {
+			std::string uploadPath = this->_requestData.getRoot() + "/" + this->_requestData.getUploadStore();
 
 			bool fileExists = false;
 			bool isDir = false;
@@ -421,28 +421,28 @@ int Response::process( void ) {
 
 			// romove location uri from request uri
 			std::string file;
-			if ( 0 == uploadPath.find( this->_requestConfig.getRoot() ) ) {
+			if ( 0 == uploadPath.find( this->_requestData.getRoot() ) ) {
 				// remove '/' at the end, it shouldn't have, that would mean it's a dir ande we check that before, but just in case to avoid errors
-				std::string request = this->_requestConfig.getRequestUri();
+				std::string request = this->_requestData.getRequestUri();
 				if ( '/' == request[request.length() - 1] ) {
 					request.erase( request.length() - 1 );
 				}
 				file = request.substr( request.find_last_of( "/" ), request.npos );
 			}
 			if ( true == file.empty() ) {
-				log::failure( "unexpected error on POST/PUT, no file specified on request uri: " + this->_requestConfig.getRequestUri() + " does not exists or is not a directory" );
+				log::failure( "unexpected error on POST/PUT, no file specified on request uri: " + this->_requestData.getRequestUri() + " does not exists or is not a directory" );
 				return ( 400 ); // 400 bad request
 			}
 			this->_responseData.setPath( uploadPath + "/" + file );
-			//this->_responseData.setPath( uploadPath + "/" + this->_requestConfig.getRequestUri() );
+			//this->_responseData.setPath( uploadPath + "/" + this->_requestData.getRequestUri() );
 		}
 	}
 
 	// delete
 	if ( "DELETE" == method ) {
 		// check request is not the base directory
-		std::string location = utils::sanitizePath( this->_requestConfig.getLocationUri() );
-		std::string request = utils::sanitizePath( this->_requestConfig.getRequestUri() );
+		std::string location = utils::sanitizePath( this->_requestData.getLocationUri() );
+		std::string request = utils::sanitizePath( this->_requestData.getRequestUri() );
 		if ( '/' == location[location.length() - 1] ) {
 			location.erase( location.length() - 1 );
 		}
@@ -472,7 +472,7 @@ void Response::setResponse( void ) {
 	} else {
 		status = SSTR( this->_statusCode ) + " " + this->kStatusCodes[this->_statusCode];
 	}
-	this->_response += this->_requestConfig.getVersion() + " " + status + kEOL;
+	this->_response += this->_requestData.getVersion() + " " + status + kEOL;
 
 	//this->_headers["Server"] = "web-server"; // is not secure to tell a client the server software and/or version
 	this->_headers["Date"] = getDate();
@@ -491,8 +491,8 @@ void Response::setResponse( void ) {
 }
 
 int Response::methodGet( void ) {
-	if ( true == this->_requestConfig.getAutoIndex() && true == this->_responseData.isDirectory() ) {
-		this->_body = this->_responseData.getAutoIndex( this->_requestConfig.getRequestRequestUri() );
+	if ( true == this->_requestData.getAutoIndex() && true == this->_responseData.isDirectory() ) {
+		this->_body = this->_responseData.getAutoIndex( this->_requestData.getRequestRequestUri() );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
 		this->_headers["Content-Type"] = this->kMimeTypes[".html"];
 	} else {
@@ -504,7 +504,7 @@ int Response::methodGet( void ) {
 }
 
 int Response::methodPost( void ) {
-	const std::string & data = this->_requestConfig.getBody();
+	const std::string & data = this->_requestData.getBody();
 
 	if ( true == this->_responseData.fileExists() ) {
 		this->_responseData.appendFile( data );
@@ -513,13 +513,13 @@ int Response::methodPost( void ) {
 	} else {
 		this->_responseData.createFile( data );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
-		this->_headers["Location"] = this->_requestConfig.getRequestUri();
+		this->_headers["Location"] = this->_requestData.getRequestUri();
 		return ( 201 ); // 201 created
 	}
 }
 
 int Response::methodPut( void ) {
-	const std::string & data = this->_requestConfig.getBody();
+	const std::string & data = this->_requestData.getBody();
 
 	if ( true == this->_responseData.fileExists() ) {
 		this->_responseData.createFile( data );
@@ -528,7 +528,7 @@ int Response::methodPut( void ) {
 	} else {
 		this->_responseData.createFile( data );
 		this->_headers["Content-Length"] = SSTR( this->_body.length() );
-		this->_headers["Location"] = this->_requestConfig.getRequestUri();
+		this->_headers["Location"] = this->_requestData.getRequestUri();
 		return ( 201 ); // 201 created
 	}
 
@@ -551,10 +551,10 @@ int Response::methodDelete( void ) {
 
 void Response::generateErrorPage( const int statusCode ) {
 	// check if theres a page for the status code
-	std::map<int, std::string> errorPages = this->_requestConfig.getErrorPages();
+	std::map<int, std::string> errorPages = this->_requestData.getErrorPages();
 	if ( errorPages.end() != errorPages.find( statusCode ) ) {
 		// redirect to error page
-		this->_requestConfig.setMethod( "GET" );
+		this->_requestData.setMethod( "GET" );
 		this->_redirect = true;
 		this->_redirect_uri = errorPages[statusCode];
 		this->_redirect_status_code = statusCode;
@@ -580,7 +580,7 @@ void Response::generateErrorPage( const int statusCode ) {
 }
 
 void Response::generateReturnPage( void ) {
-	const std::pair<int, std::string> & returnPage = this->_requestConfig.getReturn();
+	const std::pair<int, std::string> & returnPage = this->_requestData.getReturn();
 	// set status code
 	this->_statusCode = returnPage.first;
 	// generate the ultimate redirection page

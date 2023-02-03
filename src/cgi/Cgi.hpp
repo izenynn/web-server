@@ -11,7 +11,7 @@
 # include <unistd.h> // fork(), dup2(), pipe(), chdir(), lseek(), read()
 # include <sys/wait.h> // waitpid()
 
-# include <request/RequestConfig.hpp>
+# include <request/RequestData.hpp>
 # include <response/ResponseData.hpp>
 
 /** DEFINES ----------------------------------- */
@@ -25,7 +25,7 @@ namespace webserv {
 
 class Cgi {
 	public:
-		Cgi( const RequestConfig & requestConfig, const ResponseData & responseData );
+		Cgi( const RequestData & requestData, const ResponseData & responseData );
 		~Cgi( void );
 
 		int exec( void );
@@ -34,7 +34,7 @@ class Cgi {
 	private:
 		int setEnv( void );
 
-		const RequestConfig &	_requestConfig;
+		const RequestData &		_requestData;
 		const ResponseData &	_responseData;
 
 		std::string				_reqBody;

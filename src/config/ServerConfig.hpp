@@ -32,7 +32,7 @@ class ServerConfig {
 		std::vector<std::string> &				getServerName( void );
 		std::map<std::string, ServerConfig *> &	getLocation( void );
 
-		friend class RequestConfig;
+		friend class RequestData;
 	private:
 		ServerConfig( const ServerConfig & other ); // not necessary
 		ServerConfig & operator=( const ServerConfig & other ); // not necessary

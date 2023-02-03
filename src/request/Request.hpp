@@ -25,7 +25,7 @@ class Request {
 
 		int parse( const std::string & buffer );
 
-		friend class RequestConfig;
+		friend class RequestData;
 	private:
 		Request( const Request & other ); // not necessary
 		Request & operator=( const Request & other ); // not necessary

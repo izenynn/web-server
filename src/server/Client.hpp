@@ -27,13 +27,13 @@ class Client {
 
 		void initRequest( void );
 		void initResponse( const std::vector<ServerConfig *> & servers, int statusCode );
-		void initRequestConfig( const std::vector<ServerConfig *> & servers );
+		void initRequestData( const std::vector<ServerConfig *> & servers );
 
 
 		int				getFd( void ) const;
 		Request *		getRequest( void ) const;
 		Response *		getResponse( void ) const;
-		RequestConfig *	getRequestConfig( void ) const;
+		RequestData *	getRequestData( void ) const;
 		bool			getDisconnect( void ) const;
 
 		void			setDisconnct( bool value );
@@ -48,7 +48,7 @@ class Client {
 
 		Request *		_request;
 		Response *		_response;
-		RequestConfig *	_requestConfig;
+		RequestData *	_requestData;
 };
 
 } /** namespace webserv */

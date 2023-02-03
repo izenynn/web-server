@@ -1,7 +1,8 @@
 #pragma once
 
-#ifndef __REQUEST_CONFIG_HPP__
-# define __REQUEST_CONFIG_HPP__
+#include <string>
+#ifndef __REQUEST_DATA_HPP__
+# define __REQUEST_DATA_HPP__
 
 /** INCLUDES ----------------------------------- */
 
@@ -13,10 +14,10 @@ namespace webserv {
 
 class Client;
 
-class RequestConfig {
+class RequestData {
 	public:
-		RequestConfig( Request & request, Listen & host, Client & client, const std::vector<ServerConfig *> & servers );
-		~RequestConfig( void );
+		RequestData( Request & request, Listen & host, Client & client, const std::vector<ServerConfig *> & servers );
+		~RequestData( void );
 
 		void print( void ) const;
 
@@ -51,7 +52,9 @@ class RequestConfig {
 		const std::pair<int, std::string> &	getReturn( void ) const;
 		const std::map<std::string, std::string> & getCgi( void ) const;
 	private:
-		RequestConfig( void ); // not necessary
+		RequestData( void ); // not necessary
+		RequestData( const RequestData & other ); // not necessary
+		RequestData & operator=( const RequestData & other ); // not necessary
 
 		ServerConfig *											getRequestServer( void );
 		const std::pair<const std::string, ServerConfig *> *	getRequestLocation( const ServerConfig * const server );

@@ -9,7 +9,7 @@
 # include <string>
 # include <iostream>
 
-# include <request/RequestConfig.hpp>
+# include <request/RequestData.hpp>
 # include <response/ResponseData.hpp>
 # include <cgi/Cgi.hpp>
 
@@ -19,7 +19,7 @@ namespace webserv {
 
 class Response {
 	public:
-		Response( RequestConfig & config, int statusCode );
+		Response( RequestData & requestData, int statusCode );
 		~Response( void );
 
 		void print( void ) const;
@@ -65,7 +65,7 @@ class Response {
 		std::string							_response;
 
 		int									_statusCode;
-		RequestConfig &						_requestConfig;
+		RequestData &						_requestData;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
 

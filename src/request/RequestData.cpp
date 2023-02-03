@@ -1,6 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
-#include <request/RequestConfig.hpp>
+#include <request/RequestData.hpp>
 #include <config/constants.hpp>
 #include <utils/log.hpp>
 
@@ -10,7 +10,7 @@
 
 namespace webserv {
 
-RequestConfig::RequestConfig( Request & request, Listen & host, Client & client, const std::vector<ServerConfig *> & servers ) 
+RequestData::RequestData( Request & request, Listen & host, Client & client, const std::vector<ServerConfig *> & servers ) 
 		: _request( request ),
 		  _host( host ),
 		  _client( client ),
@@ -21,14 +21,14 @@ RequestConfig::RequestConfig( Request & request, Listen & host, Client & client,
 	return ;
 }
 
-RequestConfig::~RequestConfig( void ) {
+RequestData::~RequestData( void ) {
 	if ( true == this->_locationAllocated ) {
 		delete this->_location;
 	}
 	return ;
 }
 
-void RequestConfig::print( void ) const {
+void RequestData::print( void ) const {
 	std::string i = "    ";
 	std::cout << "\nREQUEST CONFIG:" << std::endl;
 
@@ -44,7 +44,7 @@ void RequestConfig::print( void ) const {
 	return ;
 }
 
-void RequestConfig::initialize( void ) {
+void RequestData::initialize( void ) {
 	ServerConfig *											newServer = webserv::nullptr_t;
 	const std::pair<const std::string, ServerConfig *> *	newLocation = webserv::nullptr_t;
 
@@ -69,7 +69,7 @@ void RequestConfig::initialize( void ) {
 	}
 }
 
-void RequestConfig::redirect( const std::string & uri ) {
+void RequestData::redirect( const std::string & uri ) {
 	const std::pair<const std::string, ServerConfig *> * newLocation = webserv::nullptr_t;
 
 	newLocation = this->getRequestLocation( this->_server );
@@ -82,7 +82,7 @@ void RequestConfig::redirect( const std::string & uri ) {
 	return ;
 }
 
-bool RequestConfig::isValidMethod( const std::string & method ){
+bool RequestData::isValidMethod( const std::string & method ){
 	const std::vector<std::string> & allowedMethods = this->_location->second->_limit_except;
 
 	if ( true == allowedMethods.empty() ) {
@@ -96,95 +96,95 @@ bool RequestConfig::isValidMethod( const std::string & method ){
 	return ( false );
 }
 
-const std::string & RequestConfig::getMethod( void ) const {
+const std::string & RequestData::getMethod( void ) const {
 	return ( this->_request._method );
 }
 
-const std::string & RequestConfig::getBody( void ) const {
+const std::string & RequestData::getBody( void ) const {
 	return ( this->_request._body );
 }
 
-const std::string & RequestConfig::getRequestUri( void ) const {
+const std::string & RequestData::getRequestUri( void ) const {
 	return ( this->_request_uri );
 }
 
-const std::string & RequestConfig::getRequestQuery( void ) const {
+const std::string & RequestData::getRequestQuery( void ) const {
 	return ( this->_request._requestQuery );
 }
 
-const std::string & RequestConfig::getRequestRequestUri( void ) const {
+const std::string & RequestData::getRequestRequestUri( void ) const {
 	return ( this->_request._requestUri );
 }
 
-const std::string & RequestConfig::getVersion( void ) const {
+const std::string & RequestData::getVersion( void ) const {
 	if ( true == this->_request._version.empty() ) {
 		return ( kDefaultVersion );
 	}
 	return ( this->_request._version );
 }
 
-const std::string & RequestConfig::getHost( void ) const {
+const std::string & RequestData::getHost( void ) const {
 	return ( this->_host.ip );
 }
 
-uint16_t RequestConfig::getPort( void ) const {
+uint16_t RequestData::getPort( void ) const {
 	return ( this->_host.port );
 }
 
-void RequestConfig::setMethod( const std::string & value ) const {
+void RequestData::setMethod( const std::string & value ) const {
 	this->_request._method = value;
 	return ;
 }
 
-const std::map<int, std::string> &	RequestConfig::getErrorPages( void ) const {
+const std::map<int, std::string> &	RequestData::getErrorPages( void ) const {
 	return ( this->_location->second->_error_page );
 }
 
-const std::vector<std::string> & RequestConfig::getAllowedMethods( void ) const {
+const std::vector<std::string> & RequestData::getAllowedMethods( void ) const {
 	return ( this->_location->second->_limit_except );
 }
 
-std::string::size_type RequestConfig::getMaxBodySize( void ) const {
+std::string::size_type RequestData::getMaxBodySize( void ) const {
 	return ( this->_location->second->_client_max_body_size );
 }
 
-const std::vector<std::string> & RequestConfig::getIndex( void ) const {
+const std::vector<std::string> & RequestData::getIndex( void ) const {
 	return ( this->_location->second->_index );
 }
 
-bool RequestConfig::getAutoIndex( void ) const {
+bool RequestData::getAutoIndex( void ) const {
 	return ( this->_location->second->_autoindex );
 }
 
-const std::string & RequestConfig::getLocationUri( void ) const {
+const std::string & RequestData::getLocationUri( void ) const {
 	return ( this->_location->first );
 }
 
-const std::string & RequestConfig::getRoot( void ) const {
+const std::string & RequestData::getRoot( void ) const {
 	return ( this->_location->second->_root );
 }
 
-const std::string & RequestConfig::getUploadStore( void ) const {
+const std::string & RequestData::getUploadStore( void ) const {
 	return ( this->_location->second->_upload_store );
 }
 
-const std::string & RequestConfig::getAlias( void ) const {
+const std::string & RequestData::getAlias( void ) const {
 	return ( this->_location->second->_alias );
 }
 
-const std::pair<int, std::string> &	RequestConfig::getReturn( void ) const {
+const std::pair<int, std::string> &	RequestData::getReturn( void ) const {
 	return ( this->_location->second->_return );
 }
 
-const std::map<std::string, std::string> & RequestConfig::getCgi( void ) const {
+const std::map<std::string, std::string> & RequestData::getCgi( void ) const {
 	return ( this->_location->second->_cgi );
 }
 
-const std::map<std::string, std::string> & RequestConfig::getHeaders( void ) const {
+const std::map<std::string, std::string> & RequestData::getHeaders( void ) const {
 	return ( this->_request._headers );
 }
 
-ServerConfig * RequestConfig::getRequestServer( void ) {
+ServerConfig * RequestData::getRequestServer( void ) {
 	std::vector<ServerConfig *> matches;
 
 	// match server with same ip:port
@@ -213,7 +213,7 @@ ServerConfig * RequestConfig::getRequestServer( void ) {
 	return ( matches.front() );
 }
 
-const std::pair<const std::string, ServerConfig *> * RequestConfig::getRequestLocation( const ServerConfig * const server ) {
+const std::pair<const std::string, ServerConfig *> * RequestData::getRequestLocation( const ServerConfig * const server ) {
 	const std::pair<const std::string, ServerConfig *> * match = webserv::nullptr_t;
 
 	// find location with longest match

@@ -71,7 +71,7 @@ SRC_CONFIG		=	constants.cpp		Config.cpp			ServerConfig.cpp
 
 SRC_SERVER		=	Server.cpp			Client.cpp
 
-SRC_REQUEST		=	Request.cpp			RequestConfig.cpp
+SRC_REQUEST		=	Request.cpp			RequestData.cpp
 
 SRC_RESPONSE	=	Response.cpp		ResponseData.cpp
 

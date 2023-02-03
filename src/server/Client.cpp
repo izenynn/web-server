@@ -16,7 +16,7 @@ Client::Client( int fd, Listen & host )
 		  _disconnect ( false ),
 		  _request( webserv::nullptr_t ),
 		  _response( webserv::nullptr_t ),
-		  _requestConfig( webserv::nullptr_t ) {
+		  _requestData( webserv::nullptr_t ) {
 	return ;
 }
 
@@ -29,9 +29,9 @@ Client::~Client( void ) {
 		delete this->_response;
 		this->_response = webserv::nullptr_t;
 	}
-	if ( webserv::nullptr_t != this->_requestConfig ) {
-		delete this->_requestConfig;
-		this->_requestConfig = webserv::nullptr_t;
+	if ( webserv::nullptr_t != this->_requestData ) {
+		delete this->_requestData;
+		this->_requestData = webserv::nullptr_t;
 	}
 	close( this->_fd );
 	return ;
@@ -46,9 +46,9 @@ void Client::clear( void ) {
 		delete this->_response;
 		this->_response = webserv::nullptr_t;
 	}
-	if ( webserv::nullptr_t != this->_requestConfig ) {
-		delete this->_requestConfig;
-		this->_requestConfig = webserv::nullptr_t;
+	if ( webserv::nullptr_t != this->_requestData ) {
+		delete this->_requestData;
+		this->_requestData = webserv::nullptr_t;
 	}
 
 	return ;
@@ -59,12 +59,12 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 	if ( webserv::nullptr_t == this->_request ) {
 		this->initRequest();
 	}
-	if ( webserv::nullptr_t == this->_requestConfig ) {
-		this->initRequestConfig( servers );
+	if ( webserv::nullptr_t == this->_requestData ) {
+		this->initRequestData( servers );
 	}
 
 	// generate response
-	this->_response = new Response( *(this->_requestConfig), statusCode );
+	this->_response = new Response( *(this->_requestData), statusCode );
 
 	// build response
 	for ( int tries = 1, redo = 1; redo != 0; ++tries ) {
@@ -72,14 +72,14 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 			if ( webserv::nullptr_t != this->_response ) {
 				delete this->_response;
 			}
-			this->_response = new Response( *(this->_requestConfig), 500 );
+			this->_response = new Response( *(this->_requestData), 500 );
 			this->_response->build();
 			break ;
 		}
 		redo = 0;
 		this->_response->build();
 		if ( true == this->_response->getRedirect() ) {
-			this->_requestConfig->redirect( this->_response->getRedirectUri() );
+			this->_requestData->redirect( this->_response->getRedirectUri() );
 			this->_response->clear();
 			redo = 1;
 		}
@@ -88,9 +88,9 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
 	return ;
 }
 
-void Client::initRequestConfig( const std::vector<ServerConfig *> & servers ) {
-	this->_requestConfig = new RequestConfig( *(this->_request), this->_host, *this, servers );
-	this->_requestConfig->initialize();
+void Client::initRequestData( const std::vector<ServerConfig *> & servers ) {
+	this->_requestData = new RequestData( *(this->_request), this->_host, *this, servers );
+	this->_requestData->initialize();
 	return ;
 }
 
@@ -111,8 +111,8 @@ Response * Client::getResponse( void ) const {
 	return ( this->_response );
 }
 
-RequestConfig * Client::getRequestConfig( void ) const {
-	return ( this->_requestConfig );
+RequestData * Client::getRequestData( void ) const {
+	return ( this->_requestData );
 }
 
 bool Client::getDisconnect( void ) const {

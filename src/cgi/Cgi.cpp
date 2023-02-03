@@ -40,10 +40,10 @@ inline std::string & trim( std::string & s, const char * t = " \t\n\r\f\v" ) {
 
 namespace webserv {
 
-Cgi::Cgi( const RequestConfig & requestConfig, const ResponseData & responseData)
-		: _requestConfig( requestConfig ),
+Cgi::Cgi( const RequestData & requestData, const ResponseData & responseData)
+		: _requestData( requestData ),
 		  _responseData( responseData ) {
-	this->_reqBody = this->_requestConfig.getBody();
+	this->_reqBody = this->_requestData.getBody();
 
 	char * tmp = getcwd( NULL, 0 );
 	if ( NULL == tmp ) {
@@ -52,7 +52,7 @@ Cgi::Cgi( const RequestConfig & requestConfig, const ResponseData & responseData
 	std::string cwd = tmp;
 	free ( tmp );
 
-	this->_cgiBin = this->_requestConfig.getCgi().find( this->_responseData.getExtension() )->second;
+	this->_cgiBin = this->_requestData.getCgi().find( this->_responseData.getExtension() )->second;
 	if ( '/' == this->_cgiBin[0] ) {
 		this->_cgiPath = this->_cgiBin;
 	} else {
@@ -233,23 +233,23 @@ int Cgi::setEnv( void ) {
 
 	env["GATEWAY_INTERFACE"]	= "CGI/1.1";
 	env["SCRIPT_NAME"]			= this->_cgiPath;
-	env["REQUEST_METHOD"]		= this->_requestConfig.getMethod();
+	env["REQUEST_METHOD"]		= this->_requestData.getMethod();
 	env["REQUEST_URI"]			= this->_reqFilePath;
 	env["PATH_INFO"]			= this->_reqFilePath;
 	env["PATH_TRANSLATED"]		= this->_reqFilePath;
-	env["QUERY_STRING"]			= this->_requestConfig.getRequestQuery();
-	env["REMOTE_ADDR"]			= this->_requestConfig.getHost();
-	env["SERVER_NAME"]			= this->_requestConfig.getHost();
-	env["SERVER_PORT"]			= SSTR( this->_requestConfig.getPort() );
-	env["SERVER_PROTOCOL"]		= this->_requestConfig.getVersion();
+	env["QUERY_STRING"]			= this->_requestData.getRequestQuery();
+	env["REMOTE_ADDR"]			= this->_requestData.getHost();
+	env["SERVER_NAME"]			= this->_requestData.getHost();
+	env["SERVER_PORT"]			= SSTR( this->_requestData.getPort() );
+	env["SERVER_PROTOCOL"]		= this->_requestData.getVersion();
 	env["SERVER_SOFTWARE"]		= ""; // empty for security reasons
 
-	if ( "POST" == this->_requestConfig.getMethod() || "PUT" == this->_requestConfig.getMethod() ) {
+	if ( "POST" == this->_requestData.getMethod() || "PUT" == this->_requestData.getMethod() ) {
 		env["CONTENT_LENGTH"] = SSTR( this->_reqBody.length() );
-		env["CONTENT_TYPE"] = this->_requestConfig.getHeaders().find("Content-Type")->second;
+		env["CONTENT_TYPE"] = this->_requestData.getHeaders().find("Content-Type")->second;
 	}
 
-	for ( std::map<std::string, std::string>::const_iterator it = this->_requestConfig.getHeaders().begin(); it != this->_requestConfig.getHeaders().end(); ++it ) {
+	for ( std::map<std::string, std::string>::const_iterator it = this->_requestData.getHeaders().begin(); it != this->_requestData.getHeaders().end(); ++it ) {
 		if ( false == it->second.empty() ) {
 			std::string header = it->first;
 			std::transform( it->first.begin(), it->first.end(), header.begin(), static_cast<int(*)(int)>( std::toupper ) );
