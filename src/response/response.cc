@@ -1,9 +1,10 @@
 /** INCLUDES ----------------------------------- */
 
-#include <response/Response.hpp>
-#include <config/constants.hpp>
-#include <utils/utils.hpp>
-#include <utils/log.hpp>
+#include <response/response.h>
+
+#include <config/constants.h>
+#include <utils/utils.h>
+#include <utils/log.h>
 
 /** UTILS -------------------------------------- */
 

@@ -1,9 +1,10 @@
 /** INCLUDES ----------------------------------- */
 
-# include <cgi/Cgi.hpp>
-# include <config/constants.hpp>
-# include <utils/utils.hpp>
-# include <utils/log.hpp>
+# include <cgi/cgi.h>
+
+# include <config/constants.h>
+# include <utils/utils.h>
+# include <utils/log.h>
 
 /** UTILS -------------------------------------- */
 

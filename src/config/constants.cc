@@ -1,6 +1,6 @@
 /** INCLUDES ----------------------------------- */
 
-# include <config/constants.hpp>
+# include <config/constants.h>
 
 /** METHODS ------------------------------------ */
 

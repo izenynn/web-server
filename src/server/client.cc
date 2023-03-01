@@ -1,8 +1,9 @@
 /** INCLUDES ----------------------------------- */
 
-#include <server/Client.hpp>
-#include <config/constants.hpp>
-#include <utils/log.hpp>
+#include <server/client.h>
+
+#include <config/constants.h>
+#include <utils/log.h>
 
 /** UTILS -------------------------------------- */
 

@@ -7,7 +7,7 @@
 
 # include <csignal>
 
-# include <server/Server.hpp>
+# include <server/server.h>
 
 /** METHODS ------------------------------------ */
 

@@ -1,8 +1,9 @@
 /** INCLUDES ----------------------------------- */
 
-#include <config/Config.hpp>
-#include <utils/log.hpp>
-#include <config/constants.hpp>
+#include <config/config.h>
+
+#include <utils/log.h>
+#include <config/constants.h>
 
 /** CLASS -------------------------------------- */
 

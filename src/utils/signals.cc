@@ -1,7 +1,7 @@
 /** INCLUDES ----------------------------------- */
 
-# include <utils/signals.hpp>
-# include <utils/log.hpp>
+# include <utils/signals.h>
+# include <utils/log.h>
 
 /** METHODS ------------------------------------ */
 

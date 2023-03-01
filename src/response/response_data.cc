@@ -1,10 +1,11 @@
 /** INCLUDES ----------------------------------- */
 
-#include <response/ResponseData.hpp>
-#include <config/constants.hpp>
-#include <types/nullptr_t.hpp>
-#include <utils/utils.hpp>
-#include <utils/log.hpp>
+#include <response/response_data.h>
+
+#include <types.h>
+#include <utils/log.h>
+#include <config/constants.h>
+#include <utils/utils.h>
 
 /** UTILS -------------------------------------- */
 

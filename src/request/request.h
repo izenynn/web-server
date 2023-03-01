@@ -10,7 +10,7 @@
 # include <sstream>
 # include <sys/time.h>
 
-# include <config/Config.hpp>
+# include <config/config.h>
 
 /** CLASS -------------------------------------- */
 

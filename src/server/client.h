@@ -9,10 +9,10 @@
 # include <sys/time.h>
 # include <sys/socket.h>
 
-# include <server/Listen.hpp>
-# include <config/ServerConfig.hpp>
-# include <request/Request.hpp>
-# include <response/Response.hpp>
+# include <server/listen.h>
+# include <config/server_config.h>
+# include <request/request.h>
+# include <response/response.h>
 
 /** CLASS -------------------------------------- */
 

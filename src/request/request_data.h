@@ -6,7 +6,7 @@
 
 /** INCLUDES ----------------------------------- */
 
-# include <request/Request.hpp>
+# include <request/request.h>
 
 /** CLASS -------------------------------------- */
 

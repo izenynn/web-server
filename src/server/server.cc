@@ -1,9 +1,10 @@
 /** INCLUDES ----------------------------------- */
 
-#include <server/Server.hpp>
-#include <config/constants.hpp>
-#include <utils/log.hpp>
-#include <utils/signals.hpp>
+#include <server/server.h>
+
+#include <config/constants.h>
+#include <utils/log.h>
+#include <utils/signals.h>
 
 /** CLASS -------------------------------------- */
 

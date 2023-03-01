@@ -22,8 +22,8 @@
 
 
 # include <types/nullptr_t.hpp>
-# include <config/Config.hpp>
-# include <server/Client.hpp>
+# include <config/config.h>
+# include <server/client.h>
 
 /** CLASS -------------------------------------- */
 

@@ -1,8 +1,9 @@
 /** INCLUDES ----------------------------------- */
 
-#include <request/Request.hpp>
-#include <config/constants.hpp>
-#include <utils/log.hpp>
+#include <request/request.h>
+
+#include <config/constants.h>
+#include <utils/log.h>
 
 /** UTILS -------------------------------------- */
 

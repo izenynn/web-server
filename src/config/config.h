@@ -12,7 +12,7 @@
 # include <stdint.h>
 
 # include <types/nullptr_t.hpp>
-# include <config/ServerConfig.hpp>
+# include <config/server_config.h>
 
 /** CLASS -------------------------------------- */
 

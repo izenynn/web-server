@@ -9,9 +9,9 @@
 # include <string>
 # include <iostream>
 
-# include <request/RequestData.hpp>
-# include <response/ResponseData.hpp>
-# include <cgi/Cgi.hpp>
+# include <request/request_data.h>
+# include <response/response_data.h>
+# include <cgi/cgi.h>
 
 /** CLASS -------------------------------------- */
 

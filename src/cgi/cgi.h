@@ -11,9 +11,9 @@
 # include <unistd.h> // fork(), dup2(), pipe(), chdir(), lseek(), read()
 # include <sys/wait.h> // waitpid()
 
-# include <request/RequestData.hpp>
-# include <response/ResponseData.hpp>
-# include <types.hpp>
+# include <request/request_data.h>
+# include <response/response_data.h>
+# include <types.h>
 
 /** DEFINES ----------------------------------- */
 

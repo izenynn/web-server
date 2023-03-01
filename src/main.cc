@@ -1,8 +1,8 @@
 #include <cstring> // std::strcmp()
 
-#include "types.hpp"
-#include "utils/log.hpp"
-#include "server/Server.hpp"
+#include "types.h"
+#include "utils/log.h"
+#include "server/server.h"
 
 int main( int argc, char * argv[] ) {
   // too many args

@@ -66,19 +66,19 @@ OBJ_DIRS_NAME =	$(SRC_DIR_CONFIG)	$(SRC_DIR_SERVER)	$(SRC_DIR_REQUEST)	\
 
 OBJ_DIRS = $(addprefix $(OBJ_PATH)/, $(OBJ_DIRS_NAME))
 
-SRC_ROOT		=	main.cpp
+SRC_ROOT		=	main.cc
 
-SRC_CONFIG		=	constants.cpp		Config.cpp			ServerConfig.cpp
+SRC_CONFIG		=	constants.cc		config.cc			server_config.cc
 
-SRC_SERVER		=	Server.cpp			Client.cpp
+SRC_SERVER		=	server.cc			client.cc
 
-SRC_REQUEST		=	Request.cpp			RequestData.cpp
+SRC_REQUEST		=	request.cc			request_data.cc
 
-SRC_RESPONSE	=	Response.cpp		ResponseData.cpp
+SRC_RESPONSE	=	response.cc			response_data.cc
 
-SRC_CGI			=	Cgi.cpp
+SRC_CGI			=	cgi.cc
 
-SRC_UTILS		=	utils.cpp			signals.cpp
+SRC_UTILS		=	utils.cc			signals.cc
 
 SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CONFIG)/,		$(SRC_CONFIG))				\
@@ -88,8 +88,8 @@ SRC_NAME =	$(SRC_ROOT)														\
 			$(addprefix $(SRC_DIR_CGI)/,		$(SRC_CGI))					\
 			$(addprefix $(SRC_DIR_UTILS)/,		$(SRC_UTILS))
 
-OBJ_NAME = $(SRC_NAME:%.cpp=%.o)
-DEP_NAME = $(SRC_NAME:%.cpp=%.d)
+OBJ_NAME = $(SRC_NAME:%.cc=%.o)
+DEP_NAME = $(SRC_NAME:%.cc=%.d)
 
 SRC = $(addprefix $(SRC_PATH)/, $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_NAME))
@@ -132,7 +132,7 @@ thread: CXXFLAGS += -g3 -fsanitize=thread
 thread: $(NAME)
 
 # OBJ
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp | $(OBJ_PATH) $(OBJ_DIRS)
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc | $(OBJ_PATH) $(OBJ_DIRS)
 	@printf "${BLU}"
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 	@printf "${NOCOL}"
