@@ -50,7 +50,7 @@ Cgi::Cgi( const RequestData & requestData, const ResponseData & responseData)
     return;
   }
   std::string cwd = tmp;
-  free ( tmp );
+  free( tmp );
 
   this->_cgiBin = this->_requestData.getCgi().find( this->_responseData.getExtension() )->second;
   if ( '/' == this->_cgiBin[0] ) {
@@ -159,6 +159,7 @@ int Cgi::exec( void ) {
 
   // read cgi output and save into body
   char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
+  //auto_ptr<char *> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
   lseek( this->_cgiTmpFileFd, 0, SEEK_SET );
   for ( ssize_t aux_ret = 0; ; ) {
     aux_ret = read( this->_cgiTmpFileFd, buffer, kReadBuffer );
@@ -167,15 +168,13 @@ int Cgi::exec( void ) {
     }
     if ( -1 == aux_ret ) {
       LOG_FAILURE( "read() failed with return code -1" );
-      //free( buffer );
       delete[] buffer;
       this->_body = "";
       return ( 500 ); // 500 internal server error
     }
     buffer[aux_ret] = '\0';
-    this->_body.insert( this->_body.length(), buffer, aux_ret );
+    this->_body.insert( this->_body.length(), buffer, static_cast<std::string::size_type>( aux_ret ) );
   }
-  //free ( buffer );
   delete[] buffer;
 
   return ( 200 ); // 200 ok

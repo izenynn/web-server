@@ -52,7 +52,7 @@ void Config::lexer( void ) {
 
   // open file
   in.open( this->_file, std::ifstream::in );
-  if ( false == in ) {
+  if ( false == in.is_open() ) {
     throw Config::ConfigException( "exception: can't open config file: " + std::string( this->_file ) );
   }
 
