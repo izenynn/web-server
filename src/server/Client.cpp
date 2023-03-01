@@ -14,41 +14,41 @@ Client::Client( int fd, Listen & host )
     : _fd( fd ),
       _host( host ),
       _disconnect ( false ),
-      _request( webserv::nullptr_t ),
-      _response( webserv::nullptr_t ),
-      _requestData( webserv::nullptr_t ) {
+      _request( webserv::nullptr ),
+      _response( webserv::nullptr ),
+      _requestData( webserv::nullptr ) {
   return ;
 }
 
 Client::~Client( void ) {
-  if ( webserv::nullptr_t != this->_request ) {
+  if ( webserv::nullptr != this->_request ) {
     delete this->_request;
-    this->_request = webserv::nullptr_t;
+    this->_request = webserv::nullptr;
   }
-  if ( webserv::nullptr_t != this->_response ) {
+  if ( webserv::nullptr != this->_response ) {
     delete this->_response;
-    this->_response = webserv::nullptr_t;
+    this->_response = webserv::nullptr;
   }
-  if ( webserv::nullptr_t != this->_requestData ) {
+  if ( webserv::nullptr != this->_requestData ) {
     delete this->_requestData;
-    this->_requestData = webserv::nullptr_t;
+    this->_requestData = webserv::nullptr;
   }
   close( this->_fd );
   return ;
 }
 
 void Client::clear( void ) {
-  if ( webserv::nullptr_t != this->_request ) {
+  if ( webserv::nullptr != this->_request ) {
     delete this->_request;
-    this->_request = webserv::nullptr_t;
+    this->_request = webserv::nullptr;
   }
-  if ( webserv::nullptr_t != this->_response ) {
+  if ( webserv::nullptr != this->_response ) {
     delete this->_response;
-    this->_response = webserv::nullptr_t;
+    this->_response = webserv::nullptr;
   }
-  if ( webserv::nullptr_t != this->_requestData ) {
+  if ( webserv::nullptr != this->_requestData ) {
     delete this->_requestData;
-    this->_requestData = webserv::nullptr_t;
+    this->_requestData = webserv::nullptr;
   }
 
   return ;
@@ -56,10 +56,10 @@ void Client::clear( void ) {
 
 void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
   // generate request and request config if doesnt exists
-  if ( webserv::nullptr_t == this->_request ) {
+  if ( webserv::nullptr == this->_request ) {
     this->initRequest();
   }
-  if ( webserv::nullptr_t == this->_requestData ) {
+  if ( webserv::nullptr == this->_requestData ) {
     this->initRequestData( servers );
   }
 
@@ -69,7 +69,7 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
   // build response
   for ( int tries = 1, redo = 1; redo != 0; ++tries ) {
     if ( tries > 10 ) {
-      if ( webserv::nullptr_t != this->_response ) {
+      if ( webserv::nullptr != this->_response ) {
         delete this->_response;
       }
       this->_response = new Response( *(this->_requestData), 500 );

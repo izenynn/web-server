@@ -18,7 +18,7 @@ namespace webserv {
       }
     private:
       void operator&() const;
-  } nullptr_t = {};
+  } nullptr = {};
 }
 
 #endif /** __NULLPTR_T_HPP__ */

@@ -12,8 +12,8 @@ namespace webserv {
 bool Server::_run = false;
 
 Server::Server( void ) 
-    : _config( webserv::nullptr_t ),
-      _serverConfigs( webserv::nullptr_t ),
+    : _config( webserv::nullptr ),
+      _serverConfigs( webserv::nullptr ),
       _fdMax( 0 ) {
   FD_ZERO( &(this->_fdSet) );
   FD_ZERO( &(this->_fdRead) );
@@ -22,7 +22,7 @@ Server::Server( void )
 }
 
 Server::~Server( void ) {
-  if ( this->_config != webserv::nullptr_t ) {
+  if ( this->_config != webserv::nullptr ) {
     delete this->_config;
   }
   for ( std::map<int, Listen *>::iterator it = this->_servers.begin(); it != this->_servers.end(); ) {
@@ -152,7 +152,7 @@ int Server::stop( void ) {
 int Server::clientRecv( int fd ) {
   // get request
   Request * request = this->_clients[fd]->getRequest();
-  if ( webserv::nullptr_t == request ) {
+  if ( webserv::nullptr == request ) {
     this->_clients[fd]->initRequest();
     request = this->_clients[fd]->getRequest();
   }
@@ -188,7 +188,7 @@ int Server::clientSend( int fd ) {
   FD_CLR( fd, &(this->_fdWrite ) );
 
   // check response exists
-  if ( webserv::nullptr_t == response ) {
+  if ( webserv::nullptr == response ) {
     return ( 0 );
   }
 

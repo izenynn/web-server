@@ -260,7 +260,7 @@ int Cgi::setEnv( void ) {
 
   // create **env
   this->_env = reinterpret_cast<char **>( malloc( ( env.size() + 1 ) * sizeof( char * ) ) );
-  if ( webserv::nullptr_t == this->_env ) {
+  if ( webserv::nullptr == this->_env ) {
     return ( -1 );
   }
 

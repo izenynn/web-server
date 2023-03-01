@@ -205,7 +205,7 @@ ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 
 void ServerConfig::parseLocation( token_type::const_iterator & it ) {
   std::string   location    = *it;
-  ServerConfig *  locationConfig  = webserv::nullptr_t;
+  ServerConfig *  locationConfig  = webserv::nullptr;
 
   // check not duplicate location
   if ( this->_location.end() != this->_location.find( location ) ) {

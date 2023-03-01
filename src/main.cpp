@@ -6,7 +6,7 @@
 
 int main( int argc, char * argv[] ) {
 	int					ret = 0;
-	webserv::Server *	server = webserv::nullptr_t;
+	webserv::Server *	server = webserv::nullptr;
 
 	// too many args
 	if ( argc > 2 ) {
