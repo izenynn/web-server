@@ -72,7 +72,7 @@ int Server::start( void ) {
 
 	signals::handle_signals();
 	this->_run = true;
-	log::info( "starting server..." );
+	LOG_INFO( "starting server..." );
 
 	while ( true == Server::_run ) {
 		this->_fdRead	= this->_fdSet;
@@ -81,7 +81,7 @@ int Server::start( void ) {
 		ret = select( this->_fdMax + 1, &(this->_fdRead), &(this->_fdWrite), NULL, &timeout );
 
 		if ( -1 == ret && true == Server::_run ) {
-			log::failure( "select() failed with return code: -1" );
+			LOG_FAILURE( "select() failed with return code: -1" );
 		} else if ( ret >= 0 ) {
 			// iterate our listeners
 			for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
@@ -120,14 +120,14 @@ int Server::start( void ) {
 				++it;
 			}
 		} else if ( true == Server::_run ){
-			log::error( "select() failed with unexpected return code: " + SSTR( ret ) );
+			LOG_ERROR( "select() failed with unexpected return code: " << ret );
 			return ( 1 );
 		}
 
 		while ( nanosleep( &loop_delay, &loop_delay ) );
 	}
 
-	log::info( "stoping server..." );
+	LOG_INFO( "stoping server..." );
 
 	// disconnect all clients on exit
 	for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ) {
@@ -139,7 +139,7 @@ int Server::start( void ) {
 		this->disconnectServer( (it++)->first );
 	}
 
-	log::success( "server stop successful" );
+	LOG_SUCCESS( "server stop successful" );
 
 	return ( 0 );
 }
@@ -204,7 +204,7 @@ int Server::clientSend( int fd ) {
 	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {
-		log::failure( "send() failed with return code: " + SSTR( ret ) );
+		LOG_FAILURE( "send() failed with return code: " << ret );
 		return ( 1 );
 	}
 
@@ -225,7 +225,7 @@ void Server::newClient( int fd ) {
 
 	int sockfd = ::accept( fd, reinterpret_cast<struct sockaddr *>(&addr), &addr_len );
 	if ( -1 == sockfd ) {
-		log::failure( "accept() failed with return code: -1" );
+		LOG_FAILURE( "accept() failed with return code: -1" );
 		return ;
 	}
 	//log::info( "new connection with fd: " + SSTR( sockfd ) + " on " + this->_servers[fd]->ip + ":" + SSTR( this->_servers[fd]->port ) ); // INFO
@@ -248,7 +248,7 @@ void Server::disconnectClient( int fd ) {
 	this->delFromFdSet( fd );
 
 	if ( this->_clients.end() == this->_clients.find( fd ) ) {
-		log::failure( "tried to close non registered connection with fd: " + SSTR( fd ) );
+		LOG_FAILURE( "tried to close non registered connection with fd: " << fd );
 		return ;
 	}
 
@@ -271,7 +271,7 @@ void Server::disconnectServer( int fd ) {
 	this->delFromFdSet( fd );
 
 	if ( this->_servers.end() == this->_servers.find( fd ) ) {
-		log::failure( "tried to close non registered server with fd: " + SSTR( fd ) );
+		LOG_FAILURE( "tried to close non registered server with fd: " << fd );
 		return ;
 	}
 
@@ -280,7 +280,7 @@ void Server::disconnectServer( int fd ) {
 
 	this->_servers.erase( fd );
 
-	log::info( "closed server with fd: " + SSTR( fd ) );
+	LOG_INFO( "closed server with fd: " << fd );
 
 	return ;
 }
@@ -331,7 +331,7 @@ int Server::initialize( void ) {
 			if ( binded.end() == std::find( binded.begin(), binded.end(), **it2 ) ) {
 				sockfd = socket( PF_INET, SOCK_STREAM, 0 );
 				if ( -1 == sockfd ) {
-					log::error( "socket() failed with return code: -1" );
+					LOG_ERROR( "socket() failed with return code: -1" );
 					return ( -1 );
 				}
 
@@ -348,7 +348,7 @@ int Server::initialize( void ) {
 				bool isBinded = false;
 				for ( int tries = 0; tries < 10; ++tries ) {
 					if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>(&addr), sizeof( addr ) ) ) {
-						log::failure( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1, retrying..." );
+						LOG_FAILURE( "bind() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1, retrying..." );
 					} else {
 						isBinded = true;
 						break ;
@@ -356,7 +356,7 @@ int Server::initialize( void ) {
 					while ( nanosleep( &loop_delay, &loop_delay ) );
 				}
 				if ( false == isBinded ) {
-					log::error( "bind() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
+					LOG_ERROR( "bind() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1" );
 					return ( -1 );
 				}
 
@@ -365,7 +365,7 @@ int Server::initialize( void ) {
 				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 
 				if ( -1 == listen( sockfd, kBacklogSize ) ) {
-					log::error( "listen() for address " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " failed with return code: -1" );
+					LOG_ERROR( "listen() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1" );
 					return ( -1 );
 				}
 
@@ -373,16 +373,16 @@ int Server::initialize( void ) {
 				this->addToFdSet( sockfd );
 				binded.push_back( **it2 );
 
-				log::info( "started listening on " + (*it2)->ip + ":" + SSTR( (*it2)->port ) + " with fd: " + SSTR( sockfd ) );
+				LOG_INFO( "started listening on " << (*it2)->ip << ":" << (*it2)->port << " with fd: " << sockfd );
 			}
 		}
 	}
 	if ( true == binded.empty() ) {
-		log::error( "failed to start server" );
+		LOG_ERROR( "failed to start server" );
 		return ( -1 );
 	}
 
-	log::success( "server initialition successful" );
+  LOG_SUCCESS( "server initialition successful" );
 
 	return ( 0 );
 }

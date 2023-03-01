@@ -75,7 +75,7 @@ Cgi::~Cgi( void ) {
 		close( this->_cgiTmpFileFd );
 		int ret = unlink( this->_cgiTmpFilePath.c_str() );
 		if ( -1 == ret ) {
-			log::failure( "unlink() failed with return code -1 when unlinking: " + this->_cgiTmpFilePath );
+			LOG_FAILURE( "unlink() failed with return code -1 when unlinking: " + this->_cgiTmpFilePath );
 		}
 	}
 
@@ -153,7 +153,7 @@ int Cgi::exec( void ) {
 
 		execve( this->_argv[0], this->_argv, this->_env );
 
-		log::error( "execve() failed when running: " + std::string( this->_argv[0] ) );
+		LOG_ERROR( "execve() failed when running: " << this->_argv[0] );
 		exit( 1 ); // error exit
 	}
 
@@ -166,7 +166,7 @@ int Cgi::exec( void ) {
 			break ;
 		}
 		if ( -1 == ret ) {
-			log::failure( "read() failed with return code -1" );
+			LOG_FAILURE( "read() failed with return code -1" );
 			//free( buffer );
 			delete[] buffer;
 			this->_body = "";

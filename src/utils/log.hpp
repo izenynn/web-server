@@ -9,7 +9,6 @@
 # include <string>
 
 # include <sstream>
-# define SSTR( x ) static_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
 
 /** COLORS ------------------------------------- */
 
@@ -134,42 +133,15 @@
 # define CBACK_YELLOW_YELLOW	"\033[33;43m"
 # define CBACK_YELLOW_WHITE		"\033[37;43m"
 
-/** METHODS ------------------------------------ */
+/** MACROS ------------------------------------- */
 
-namespace webserv {
+# define SSTR( x ) static_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
 
-namespace colors {
-
-} /** namespace colors */
-
-namespace log {
-	inline void info( const std::string & msg ) {
-		std::cout << "[" << C_BLUE << "*" << C_OFF << "] " << msg << std::endl;
-		return;
-	}
-	inline void success( const std::string & msg) {
-		std::cout << "[" << C_GREEN << "+" << C_OFF << "] " << msg << std::endl;
-		return;
-	}
-	inline void warning( const std::string & msg) {
-		std::cout << "[" << C_YELLOW << "!" << C_OFF << "] " << msg << std::endl;
-		return;
-	}
-	inline void failure( const std::string & msg) {
-		std::cout << "[" << C_RED << "-" << C_OFF << "] " << msg << std::endl;
-		return;
-	}
-	inline void error( const std::string & msg) {
-		std::cerr << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << std::endl;
-		return;
-	}
-	inline void debug( const std::string & msg ) {
-		//std::clog << "[" << CBACK_YELLOW_BLACK << "DEBUG" << C_OFF << "] " << msg << std::endl;
-		std::clog << CBACK_YELLOW_BLACK << msg << C_OFF << std::endl;
-		return;
-	}
-} /** namespace log */
-
-} /** namespace webserv */
+# define LOG_INFO( msg ) std::cout << "[" << C_BLUE << "*" << C_OFF << "] " << msg << "\n"
+# define LOG_SUCCESS( msg ) std::cout << "[" << C_GREEN << "+" << C_OFF << "] " << msg << "\n"
+# define LOG_WARNING( msg ) std::cout << "[" << C_YELLOW << "!" << C_OFF << "] " << msg << "\n"
+# define LOG_FAILURE( msg ) std::cout << "[" << C_RED << "-" << C_OFF << "] " << msg << "\n"
+# define LOG_ERROR( msg ) std::cerr << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << "\n"
+# define LOG_DEBUG( msg ) std::clog << CBACK_YELLOW_BLACK << msg << C_OFF << "\n"
 
 #endif /** __LOG_HPP__ */

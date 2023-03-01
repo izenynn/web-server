@@ -415,7 +415,7 @@ int Response::process( void ) {
 			}
 
 			if ( false == fileExists || false == isDir ) {
-				log::failure( "POST/PUT failed because upload path: " + uploadPath + " does not exists or is not a directory" );
+				LOG_FAILURE( "POST/PUT failed because upload path: " << uploadPath << " does not exists or is not a directory" );
 				return ( 500 ); // 500 internal server error
 			}
 
@@ -430,7 +430,7 @@ int Response::process( void ) {
 				file = request.substr( request.find_last_of( "/" ), request.npos );
 			}
 			if ( true == file.empty() ) {
-				log::failure( "unexpected error on POST/PUT, no file specified on request uri: " + this->_requestData.getRequestUri() + " does not exists or is not a directory" );
+				LOG_FAILURE( "unexpected error on POST/PUT, no file specified on request uri: " << this->_requestData.getRequestUri() << " does not exists or is not a directory" );
 				return ( 400 ); // 400 bad request
 			}
 			this->_responseData.setPath( uploadPath + "/" + file );

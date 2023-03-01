@@ -243,7 +243,7 @@ void ServerConfig::parseLocation( token_type::const_iterator & it ) {
 		}
 	} catch ( std::exception & e ) {
 		delete locationConfig;
-		log::error( e.what() );
+		LOG_ERROR( e.what() );
 		throw ServerConfig::ServerConfigException( "exception: location block parser throw an exception" );
 	}
 

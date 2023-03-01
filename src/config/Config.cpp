@@ -21,12 +21,12 @@ Config::~Config( void ) {
 }
 
 void Config::print( void ) {
-	log::info( "TOKENS: " );
+	LOG_INFO( "TOKENS: " );
 	for ( std::vector<std::string>::const_iterator it = this->_tokens.begin(); it != this->_tokens.end(); ++it ) {
 		std::cout << *it << std::endl;
 	}
 
-	log::info( "CONFIG CLASS INFO AFTER PARSER: " );
+	LOG_INFO( "CONFIG CLASS INFO AFTER PARSER: " );
 	for ( std::vector<ServerConfig *>::const_iterator it = this->_server.begin(); it != this->_server.end(); ++it ) {
 		(*it)->print( "" );
 	}
@@ -117,7 +117,7 @@ void Config::parser( void ) {
 				server->parser( ++it );
 			} catch ( std::exception & e ) {
 				delete server;
-				log::error( e.what() );
+				LOG_ERROR( e.what() );
 				throw Config::ConfigException( "exception: server block parser throw an exception" );
 			}
 

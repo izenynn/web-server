@@ -63,7 +63,7 @@ void ResponseData::createFile( const std::string & data ) {
 
 	this->_fd = open( this->_path.c_str(), O_RDWR | O_CREAT | O_TRUNC, 00644 );
 	if ( this->_fd <= 0 ) {
-		log::failure( "open() failed with return code -1 when opening: " + this->_path );
+		LOG_FAILURE( "open() failed with return code -1 when opening: " << this->_path );
 		return ;
 	}
 
@@ -73,7 +73,7 @@ void ResponseData::createFile( const std::string & data ) {
 
 	int ret = write( this->_fd, data.c_str(), data.length() );
 	if ( -1 == ret ) {
-		log::failure( "write() failed with return code -1 when writing to: " + this->_path );
+		LOG_FAILURE( "write() failed with return code -1 when writing to: " << this->_path );
 	}
 
 	return ;
@@ -84,7 +84,7 @@ void ResponseData::appendFile( const std::string & data ) {
 
 	this->_fd = open( this->_path.c_str(), O_RDWR | O_APPEND );
 	if ( this->_fd <= 0 ) {
-		log::failure( "open() failed with return code -1 when opening: " + this->_path );
+		LOG_FAILURE( "open() failed with return code -1 when opening: " << this->_path );
 		return ;
 	}
 
@@ -94,7 +94,7 @@ void ResponseData::appendFile( const std::string & data ) {
 
 	int ret = write( this->_fd, data.c_str(), data.length() );
 	if ( -1 == ret ) {
-		log::failure( "write() failed with return code -1 when writing to: " + this->_path );
+		LOG_FAILURE( "write() failed with return code -1 when writing to: " << this->_path );
 	}
 
 	return ;
@@ -118,7 +118,7 @@ void ResponseData::deleteFile( void ) {
 
 	int ret = unlink( this->_path.c_str() );
 	if ( -1 == ret ) {
-		log::failure( "unlink() failed with return code -1 when unlinking: " + this->_path );
+		LOG_FAILURE( "unlink() failed with return code -1 when unlinking: " << this->_path );
 	}
 
 	return ;
@@ -147,7 +147,7 @@ const std::string ResponseData::getIndex( const std::vector<std::string> & index
 		}
 		closedir( d );
 	} else {
-		log::failure( "opendir() failed with return code -1" );
+		LOG_FAILURE( "opendir() failed with return code -1" );
 	}
 
 	ret = "";
@@ -204,7 +204,7 @@ std::string ResponseData::getAutoIndex( const std::string & uri ) {
 		}
 		closedir( d );
 	} else {
-		log::failure( "opendir() failed with return code -1" );
+		LOG_FAILURE( "opendir() failed with return code -1" );
 		body += "error: could not open: " + uri;
 	}
 
@@ -221,7 +221,7 @@ const std::string ResponseData::getFileContent( void ) const {
 	std::string content;
 	char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
 	if ( NULL == buffer ) {
-		log::failure( "operator new char[] failed" );
+		LOG_FAILURE( "operator new char[] failed" );
 		content = "";
 		return ( content );
 	}
@@ -233,7 +233,7 @@ const std::string ResponseData::getFileContent( void ) const {
 			break ;
 		}
 		if ( -1 == ret ) {
-			log::failure( "read() failed with return code -1" );
+			LOG_FAILURE( "read() failed with return code -1" );
 			delete[] buffer;
 			content = "";
 			return ( content );

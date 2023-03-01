@@ -10,33 +10,33 @@ int main( int argc, char * argv[] ) {
 
 	// too many args
 	if ( argc > 2 ) {
-		webserv::log::failure( "Error: too many arguments" );
-		webserv::log::failure( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
+		LOG_FAILURE( "Error: too many arguments" );
+		LOG_FAILURE( "Usage: " << argv[0] << " [CONF FILE]" );
 		return ( 1 );
 	}
 
 	// help message
 	if ( argc == 2 && ( 0 == std::strcmp( "-h", argv[1] ) || 0 == std::strcmp( "--help", argv[1] ) ) ) {
-		webserv::log::info( "Usage: " + std::string( argv[0] ) + " [CONF FILE]" );
+		LOG_INFO( "Usage: " << argv[0] << " [CONF FILE]" );
 		return ( 0 );
 	}
 
 	// web server
 	server = new webserv::Server();
 
-	webserv::log::info( "loading config..." );
+	LOG_INFO( "loading config..." );
 	try {
 		if ( argc == 2 ) server->load( argv[1] );
 		else             server->load();
 	} catch ( std::exception & e ) {
 		delete server;
-		webserv::log::error( e.what() );
+		LOG_ERROR( e.what() );
 		return ( 1 );
 	}
 
 	//server->print();
 
-	webserv::log::info( "starting..." );
+	LOG_INFO( "starting..." );
 	ret = server->start();
 
 	delete server;
