@@ -273,13 +273,13 @@ void ServerConfig::parseListen( token_type::const_iterator & it ) {
 		}
 
 		ip		= tmpIp;
-		port	= atoi( tmpPort.c_str() );
+		port	= static_cast<uint16_t>( atoi( tmpPort.c_str() ) );
 	// ip
 	} else if ( true == isValidIp( *it ) ) {
 		ip = *it;
 	// port
 	} else if ( true == isValidPort( *it ) ) {
-		port = atoi( (*it).c_str() );
+		port = static_cast<uint16_t>( atoi( (*it).c_str() ) );
 	// invalid
 	} else {
 		throw ServerConfig::ServerConfigException( "exception: invalid value on 'listen' directive" );

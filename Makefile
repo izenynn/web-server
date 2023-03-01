@@ -115,10 +115,10 @@ install: $(NAME)
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize: CXXFLAGS += -Wpedantic -Wconversion -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize: CXXFLAGS += -pedantic -g3 -fsanitize=address
+sanitize: CXXFLAGS += -Wpedantic -Wconversion -g3 -fsanitize=address
 endif
 sanitize: $(NAME)
 

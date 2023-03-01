@@ -20,7 +20,7 @@ std::string getDate( void ) {
 
 	// Example: Date: Tue, 24 Dec 2022 19:22:21 GMT
 	//int length = strftime( buffer, 32, "%a, %d %b %Y %T GMT", htime );
-	int length = strftime( buffer, 32, "%a, %d %b %Y %H:%M:%S GMT", htime );
+  size_t length = strftime( buffer, 32, "%a, %d %b %Y %H:%M:%S GMT", htime );
 
 	return ( std::string( buffer, length ) );
 }
@@ -558,7 +558,7 @@ void Response::generateErrorPage( const int statusCode ) {
 		this->_redirect = true;
 		this->_redirect_uri = errorPages[statusCode];
 		this->_redirect_status_code = statusCode;
-		this->_statusCode = 0; // FIXME
+		this->_statusCode = 0;
 	} else {
 		// generate the ultimate error page
 		this->_body = "<html><head><title>";

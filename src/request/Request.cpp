@@ -210,7 +210,6 @@ int Request::parseHeaders( void ) {
 		key		= this->_buffer.substr( 0, sep );
 		value	= this->_buffer.substr( sep + 1, eol - sep - 1 );
 		if ( this->_headers.end() != this->_headers.find( key ) ) {
-			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
 			this->_buffer.erase( 0, eol + kEOL.length() );
 			continue ;
 		}
@@ -243,11 +242,11 @@ int Request::parseBody( void ) {
 		if ( std::string::npos != this->_headers["Content-Length"].find_first_not_of( "0123456789" ) ) {
 			return ( 400 ); // 400 bad request
 		}
-		std::string::size_type length = atoi( this->_headers["Content-Length"].c_str() );
-		/*if ( length < 0 ) { // FIXME remove this probably
+		long aux = atoi( this->_headers["Content-Length"].c_str() );
+		if ( aux < 0 ) {
 			return ( 400 ); // 400 bad request
-		}*/
-		this->_length = length;
+		}
+		this->_length = static_cast<std::string::size_type>(aux);
 	// no body
 	} else {
 		return ( 0 );
@@ -313,9 +312,7 @@ int Request::parseChunkTrailer( void ) {
 		}
 		key		= this->_buffer.substr( 0, sep );
 		value	= this->_buffer.substr( sep + 1, eol - sep - 1 );
-		if ( this->_headers.end() != this->_headers.find( key ) ) {
-			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
-		} else {
+		if ( this->_headers.end() == this->_headers.find( key ) ) {
 			if ( key.length() >= kRequestHeaderKeyLimit || value.length() >= kRequestHeaderValueLimit ) {
 				return ( 400 ); // 400 bad request
 			}

@@ -120,8 +120,8 @@ int Cgi::exec( void ) {
 		return ( 500 ); // 500 internal server error
 	} else if ( pid > 0 ) {
 		close( fd[READ_END] );
-		ret = write( fd[WRITE_END], this->_reqBody.c_str(), this->_reqBody.length() );
-		if ( -1 == ret ) {
+		ssize_t aux_ret = write( fd[WRITE_END], this->_reqBody.c_str(), this->_reqBody.length() );
+		if ( -1 == aux_ret ) {
 			return ( 500 ); // 500 internal server error
 		}
 		close( fd[WRITE_END] );
@@ -160,20 +160,20 @@ int Cgi::exec( void ) {
 	// read cgi output and save into body
 	char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
 	lseek( this->_cgiTmpFileFd, 0, SEEK_SET );
-	while ( true ) {
-		ret = read( this->_cgiTmpFileFd, buffer, kReadBuffer );
-		if ( 0 == ret ) {
+	for ( ssize_t aux_ret = 0; ; ) {
+		aux_ret = read( this->_cgiTmpFileFd, buffer, kReadBuffer );
+		if ( 0 == aux_ret ) {
 			break ;
 		}
-		if ( -1 == ret ) {
+		if ( -1 == aux_ret ) {
 			LOG_FAILURE( "read() failed with return code -1" );
 			//free( buffer );
 			delete[] buffer;
 			this->_body = "";
 			return ( 500 ); // 500 internal server error
 		}
-		buffer[ret] = '\0';
-		this->_body.insert( this->_body.length(), buffer, ret );
+		buffer[aux_ret] = '\0';
+		this->_body.insert( this->_body.length(), buffer, aux_ret );
 	}
 	//free ( buffer );
 	delete[] buffer;
@@ -202,7 +202,6 @@ void Cgi::getHeadersAndBody( std::map<std::string, std::string> & headers, std::
 		key		= this->_body.substr( 0, sep );
 		value	= this->_body.substr( sep + 1, eol - sep - 1 );
 		if ( headers.end() != headers.find( key ) ) {
-			// FIXME return 400 or ignore on duplitare header ???? ( now ignoring )
 			this->_body.erase( 0, eol + kEOL.length() );
 			continue ;
 		}

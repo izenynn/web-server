@@ -55,7 +55,7 @@ void Client::clear( void ) {
 }
 
 void Client::initResponse( const std::vector<ServerConfig *> & servers, int statusCode ) {
-	// generate request and request config if doesnt exists // FIXME necessary ???
+	// generate request and request config if doesnt exists
 	if ( webserv::nullptr_t == this->_request ) {
 		this->initRequest();
 	}

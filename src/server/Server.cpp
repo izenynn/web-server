@@ -162,7 +162,7 @@ int Server::clientRecv( int fd ) {
 
 	// read socket
 	char * buffer = new char[kBufferSize * sizeof( char )];
-	int size = recv( fd, buffer, kBufferSize, 0 );
+	ssize_t size = recv( fd, buffer, kBufferSize, 0 );
 	if ( size <= 0 ) {
 		delete[] buffer;
 		return ( 1 ); // disconnect
@@ -193,7 +193,7 @@ int Server::clientSend( int fd ) {
 	}
 
 	// send response
-	int ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
+	ssize_t ret = send( fd, response->getResponseBody().c_str(), response->getResponseBody().length(), 0 );
 
 	if ( ret < 0 ) {
 		LOG_FAILURE( "send() failed with return code: " << ret );
@@ -348,10 +348,6 @@ int Server::initialize( void ) {
 					LOG_ERROR( "bind() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1" );
 					return ( -1 );
 				}
-
-				// FIXME
-				//int option_value = 1;
-				//setsockopt( sockfd, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof( int ));
 
 				if ( -1 == listen( sockfd, kBacklogSize ) ) {
 					LOG_ERROR( "listen() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1" );

@@ -41,7 +41,9 @@ class Server {
 		int start( void );
 		static int stop( void );
 
-		// FIXME from here to end move to private
+  private:
+		Server & operator=( const Server & other); // not necessary
+
 		int clientRecv( int fd );
 		int clientSend( int fd );
 
@@ -53,8 +55,6 @@ class Server {
 
 		void addToFdSet( int fd );
 		void delFromFdSet( int fd );
-	private:
-		Server & operator=( const Server & other); // not necessary
 
 		static bool _run;
 

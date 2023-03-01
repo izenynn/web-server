@@ -71,7 +71,7 @@ void ResponseData::createFile( const std::string & data ) {
 		return ;
 	}
 
-	int ret = write( this->_fd, data.c_str(), data.length() );
+	ssize_t ret = write( this->_fd, data.c_str(), data.length() );
 	if ( -1 == ret ) {
 		LOG_FAILURE( "write() failed with return code -1 when writing to: " << this->_path );
 	}
@@ -92,7 +92,7 @@ void ResponseData::appendFile( const std::string & data ) {
 		return ;
 	}
 
-	int ret = write( this->_fd, data.c_str(), data.length() );
+	ssize_t ret = write( this->_fd, data.c_str(), data.length() );
 	if ( -1 == ret ) {
 		LOG_FAILURE( "write() failed with return code -1 when writing to: " << this->_path );
 	}
@@ -228,7 +228,7 @@ const std::string ResponseData::getFileContent( void ) const {
 
 	lseek( this->_fd, 0, SEEK_SET );
 	while ( true ) {
-		int ret = read( this->_fd, buffer, kReadBuffer );
+		ssize_t ret = read( this->_fd, buffer, kReadBuffer );
 		if ( 0 == ret ) {
 			break ;
 		}
