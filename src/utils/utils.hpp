@@ -12,7 +12,9 @@
 namespace webserv {
 
 namespace utils {
-	std::string sanitizePath( std::string path );
+
+std::string sanitizePath( std::string path );
+
 } /** namespace utils */
 
 } /** namespace webserv */

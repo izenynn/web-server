@@ -32,7 +32,8 @@ MAKE = make
 
 CXX = g++
 
-CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -Wpedantic -Wconversion -MD
+CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
+			-Wall -Wextra -Werror -Wpedantic -Wconversion -MMD
 
 # **************************************************************************** #
 #                                    PATHS                                     #

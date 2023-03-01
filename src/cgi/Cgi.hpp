@@ -24,32 +24,32 @@
 namespace webserv {
 
 class Cgi {
-	public:
-		Cgi( const RequestData & requestData, const ResponseData & responseData );
-		~Cgi( void );
+  public:
+    Cgi( const RequestData & requestData, const ResponseData & responseData );
+    ~Cgi( void );
 
-		int exec( void );
+    int exec( void );
 
-		void getHeadersAndBody( std::map<std::string, std::string> & headers, std::string & body );
-	private:
-		int setEnv( void );
+    void getHeadersAndBody( std::map<std::string, std::string> & headers, std::string & body );
+  private:
+    int setEnv( void );
 
-		const RequestData &		_requestData;
-		const ResponseData &	_responseData;
+    const RequestData &   _requestData;
+    const ResponseData &  _responseData;
 
-		std::string				_reqBody;
-		std::string				_reqFilePath;
+    std::string       _reqBody;
+    std::string       _reqFilePath;
 
-		std::string				_cgiBin;
-		std::string				_cgiPath;
+    std::string       _cgiBin;
+    std::string       _cgiPath;
 
-		std::string				_cgiTmpFilePath;
-		int						_cgiTmpFileFd;
+    std::string       _cgiTmpFilePath;
+    int           _cgiTmpFileFd;
 
-		char **					_argv;
-		char **					_env;
+    char **         _argv;
+    char **         _env;
 
-		std::string				_body;
+    std::string       _body;
 };
 
 } /** namespace webserv */
