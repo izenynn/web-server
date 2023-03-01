@@ -32,7 +32,7 @@ MAKE = make
 
 CXX = g++
 
-CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -MD
+CXXFLAGS += -std=c++98 -Wall -Wextra -Werror -Wpedantic -Wconversion -MD
 
 # **************************************************************************** #
 #                                    PATHS                                     #
@@ -115,10 +115,10 @@ install: $(NAME)
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize: CXXFLAGS += -Wpedantic -Wconversion -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize: CXXFLAGS += -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize: CXXFLAGS += -Wpedantic -Wconversion -g3 -fsanitize=address
+sanitize: CXXFLAGS += -g3 -fsanitize=address
 endif
 sanitize: $(NAME)
 
