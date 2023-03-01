@@ -13,6 +13,7 @@
 
 # include <request/RequestData.hpp>
 # include <response/ResponseData.hpp>
+# include <types.hpp>
 
 /** DEFINES ----------------------------------- */
 

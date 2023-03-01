@@ -158,24 +158,25 @@ int Cgi::exec( void ) {
   }
 
   // read cgi output and save into body
-  char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
+  //char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
   //auto_ptr<char *> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
+  unique_ptr<char[]> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
   lseek( this->_cgiTmpFileFd, 0, SEEK_SET );
   for ( ssize_t aux_ret = 0; ; ) {
-    aux_ret = read( this->_cgiTmpFileFd, buffer, kReadBuffer );
+    aux_ret = read( this->_cgiTmpFileFd, buffer.get(), kReadBuffer );
     if ( 0 == aux_ret ) {
       break ;
     }
     if ( -1 == aux_ret ) {
       LOG_FAILURE( "read() failed with return code -1" );
-      delete[] buffer;
+      //delete[] buffer;
       this->_body = "";
       return ( 500 ); // 500 internal server error
     }
-    buffer[aux_ret] = '\0';
-    this->_body.insert( this->_body.length(), buffer, static_cast<std::string::size_type>( aux_ret ) );
+    buffer[static_cast<size_t>(aux_ret)] = '\0';
+    this->_body.insert( this->_body.length(), buffer.get(), static_cast<std::string::size_type>( aux_ret ) );
   }
-  delete[] buffer;
+  //delete[] buffer;
 
   return ( 200 ); // 200 ok
 }
