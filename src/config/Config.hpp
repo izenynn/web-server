@@ -36,9 +36,9 @@ class Config {
     Config( const Config & other ); // not necessary
     Config &operator=( const Config& other ); // not necessary
 
-    const char *            _file;
+    const char *                  _file;
     std::vector<std::string>      _tokens;
-    std::vector<ServerConfig *>     _server;
+    std::vector<ServerConfig *>   _server;
 
     void        lexer( void );
     void        parser( void );
