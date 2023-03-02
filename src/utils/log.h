@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __LOG_HPP__
-# define __LOG_HPP__
+#ifndef WEBSERV_LOG_H_
+# define WEBSERV_LOG_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -144,4 +142,4 @@
 # define LOG_ERROR( msg ) std::cerr << "[" << CBACK_RED_WHITE << "ERROR" << C_OFF << "] " << msg << "\n"
 # define LOG_DEBUG( msg ) std::clog << CBACK_YELLOW_BLACK << msg << C_OFF << "\n"
 
-#endif /** __LOG_HPP__ */
+#endif // WEBSERV_LOG_H_

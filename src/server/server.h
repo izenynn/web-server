@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __SERVER_HPP__
-# define __SERVER_HPP__
+#ifndef WEBSERV_SERVER_H_
+# define WEBSERV_SERVER_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -61,6 +59,6 @@ class Server {
     int initialize( void );
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __SERVER_HPP__ */
+#endif // WEBSERV_SERVER_H_

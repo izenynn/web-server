@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __RESPONSE_HPP__
-# define __RESPONSE_HPP__
+#ifndef WEBSERV_RESPONSE_H_
+# define WEBSERV_RESPONSE_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -74,6 +72,6 @@ class Response {
     ResponseData            _responseData;
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __RESPONSE_HPP__ */
+#endif // WEBSERV_RESPONSE_H_

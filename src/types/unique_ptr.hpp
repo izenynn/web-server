@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __UNIQUE_PTR_HPP__
-# define __UNIQUE_PTR_HPP__
+#ifndef WEBSERV_UNIQUEPTR_H_
+# define WEBSERV_UNIQUEPTR_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -262,4 +260,4 @@ inline bool operator>=(const unique_ptr<Tp, Dp>& x, const unique_ptr<Up, Ep>& y)
 
 } // namespace webserv
 
-#endif /** __UNIQUE_PTR_HPP__ */
+#endif // WEBSERV_UNIQUEPTR_H_

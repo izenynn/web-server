@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __REQUEST_DATA_HPP__
-# define __REQUEST_DATA_HPP__
+#ifndef WEBSERV_REQUESTDATA_H_
+# define WEBSERV_REQUESTDATA_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -77,6 +75,6 @@ class RequestData {
     bool                          _locationAllocated;
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __REQUEST_CONFIG_HPP__ */
+#endif // WEBSERV_REQUESTDATA_H_

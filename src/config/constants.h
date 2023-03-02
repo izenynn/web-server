@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __CONSTANTS_HPP__
-# define __CONSTANTS_HPP__
+#ifndef WEBSERV_CONSTANTS_H_
+# define WEBSERV_CONSTANTS_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -34,4 +32,4 @@ extern const std::map<int, Client *>::size_type kMaxClients;
 
 } // namespace webserv
 
-#endif // __CONSTANTS_HPP__
+#endif // WEBSERV_CONSTANTS_H_

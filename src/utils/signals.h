@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __SIGNALS_HPP__
-# define __SIGNALS_HPP__
+#ifndef WEBSERV_SIGNALS_H_
+# define WEBSERV_SIGNALS_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -21,4 +19,4 @@ void handle_signals( void );
 
 } // namespace webserv
 
-#endif // __SIGNALS_HPP__
+#endif // WEBSERV_SIGNALS_H_

@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __CONFIG_HPP__
-# define __CONFIG_HPP__
+#ifndef WEBSERV_CONFIG_H_
+# define WEBSERV_CONFIG_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -48,6 +46,6 @@ class Config {
     };
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __CONFIG_HPP__ */
+#endif // WEBSERV_CONFIG_H_

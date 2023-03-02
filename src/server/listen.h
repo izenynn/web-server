@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __LISTEN_HPP__
-# define __LISTEN_HPP__
+#ifndef WEBSERV_LISTEN_H_
+# define WEBSERV_LISTEN_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -24,6 +22,6 @@ inline bool operator==( const Listen & lhs, const Listen & rhs ) {
   return ( lhs.ip == rhs.ip && lhs.port == rhs.port );
 }
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __LISTEN_HPP__ */
+#endif // WEBSERV_LISTEN_H_

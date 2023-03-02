@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __UTILS_HPP__
-# define __UTILS_HPP__
+#ifndef WEBSERV_UTILS_H_
+# define WEBSERV_UTILS_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -19,4 +17,4 @@ std::string sanitizePath( std::string path );
 
 } // namespace webserv
 
-#endif // __UTILS_HPP__
+#endif // WEBSERV_UTILS_H_

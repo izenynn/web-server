@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __CLIENT_HPP__
-# define __CLIENT_HPP__
+#ifndef WEBSERV_CLIENT_H_
+# define WEBSERV_CLIENT_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -53,6 +51,6 @@ class Client {
     RequestData * _requestData;
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __CLIENT_HPP__ */
+#endif // WEBSERV_CLIENT_H_

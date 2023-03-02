@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __RESPONSE_DATA_HPP__
-# define __RESPONSE_DATA_HPP__
+#ifndef WEBSERV_RESPONSEDATA_H_
+# define WEBSERV_RESPONSEDATA_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -52,6 +50,6 @@ class ResponseData {
     std::string   _fileExtension;
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __RESPONSE_DATA_HPP__ */
+#endif // WEBSERV_RESPONSEDATA_H_

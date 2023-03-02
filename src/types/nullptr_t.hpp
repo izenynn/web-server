@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __NULLPTR_T_HPP__
-# define __NULLPTR_T_HPP__
+#ifndef WEBSERV_NULLPTRT_H_
+# define WEBSERV_NULLPTRT_H_
 
 /** CLASS -------------------------------------- */
 
@@ -23,4 +21,4 @@ const class nullptr_t {
 
 } // namespace webserv
 
-#endif /** __NULLPTR_T_HPP__ */
+#endif // WEBSERV_NULLPTRT_H_

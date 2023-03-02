@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __CGI_HPP__
-# define __CGI_HPP__
+#ifndef WEBSERV_CGI_H_
+# define WEBSERV_CGI_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -49,6 +47,6 @@ class Cgi {
     std::string       _body;
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __CGI_HPP__ */
+#endif // WEBSERV_CGI_H_

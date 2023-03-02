@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef __REQUEST_HPP__
-# define __REQUEST_HPP__
+#ifndef WEBSERV_REQUEST_H_
+# define WEBSERV_REQUEST_H_
 
 /** INCLUDES ----------------------------------- */
 
@@ -47,6 +45,6 @@ class Request {
     std::string::size_type  _length;
 };
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __REQUEST_HPP__ */
+#endif // WEBSERV_REQUEST_H_

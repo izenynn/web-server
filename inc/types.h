@@ -1,11 +1,9 @@
-#pragma once
-
-#ifndef __TYPES_HPP__
-# define __TYPES_HPP__
+#ifndef WEBSERV_TYPES_H_
+# define WEBSERV_TYPES_H_
 
 /** INCLUDES ----------------------------------- */
 
 # include "types/nullptr_t.hpp"
 # include "types/unique_ptr.hpp"
 
-#endif /** __TYPES_HPP__ */
+#endif // WEBSERV_TYPES_H_
