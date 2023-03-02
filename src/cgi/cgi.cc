@@ -133,12 +133,12 @@ int Cgi::exec( void ) {
   if ( -1 == pid ) {
     return ( 500 ); // 500 internal server error
   } else if ( pid > 0 ) {
-    close( fd[READ_END] );
-    ssize_t aux_ret = write( fd[WRITE_END], this->_reqBody.c_str(), this->_reqBody.length() );
+    close( fd[Cgi::kReadEnd] );
+    ssize_t aux_ret = write( fd[Cgi::kWriteEnd], this->_reqBody.c_str(), this->_reqBody.length() );
     if ( -1 == aux_ret ) {
       return ( 500 ); // 500 internal server error
     }
-    close( fd[WRITE_END] );
+    close( fd[Cgi::kWriteEnd] );
 
     int status;
     ret = waitpid( pid, &status, 0 );
@@ -154,12 +154,12 @@ int Cgi::exec( void ) {
       return ( 500 ); // 500 internal server error
     }
 
-    close( fd[WRITE_END] );
-    ret = dup2( fd[READ_END], STDIN_FILENO );
+    close( fd[Cgi::kWriteEnd] );
+    ret = dup2( fd[Cgi::kReadEnd], STDIN_FILENO );
     if ( -1 == ret ) {
       return ( 500 ); // 500 internal server error
     }
-    close( fd[READ_END] );
+    close( fd[Cgi::kReadEnd] );
     ret = dup2( this->_cgiTmpFileFd, STDOUT_FILENO );
     if ( -1 == ret ) {
       return ( 500 ); // 500 internal server error
@@ -226,7 +226,7 @@ void Cgi::getHeadersAndBody( std::map<std::string, std::string> & headers, std::
   // erase extra body if any
   std::map<std::string, std::string>::const_iterator contentLength = headers.find( "Content-Length" );
   if ( headers.end() != contentLength ) {
-    this->_body.erase( atoi( contentLength->second.c_str() ) );
+    this->_body.erase( static_cast<std::string::size_type>( atoi( contentLength->second.c_str() ) ) );
   }
 
   // body
@@ -241,15 +241,15 @@ int Cgi::setEnv( void ) {
   env["REDIRECT_STATUS"] = "200"; // security reasons, to tell the cgi the server handled the request
 
   env["GATEWAY_INTERFACE"]  = "CGI/1.1";
-  env["SCRIPT_NAME"]      = this->_cgiPath;
-  env["REQUEST_METHOD"]   = this->_requestData.getMethod();
-  env["REQUEST_URI"]      = this->_reqFilePath;
-  env["PATH_INFO"]      = this->_reqFilePath;
+  env["SCRIPT_NAME"]        = this->_cgiPath;
+  env["REQUEST_METHOD"]     = this->_requestData.getMethod();
+  env["REQUEST_URI"]        = this->_reqFilePath;
+  env["PATH_INFO"]          = this->_reqFilePath;
   env["PATH_TRANSLATED"]    = this->_reqFilePath;
-  env["QUERY_STRING"]     = this->_requestData.getRequestQuery();
-  env["REMOTE_ADDR"]      = this->_requestData.getHost();
-  env["SERVER_NAME"]      = this->_requestData.getHost();
-  env["SERVER_PORT"]      = SSTR( this->_requestData.getPort() );
+  env["QUERY_STRING"]       = this->_requestData.getRequestQuery();
+  env["REMOTE_ADDR"]        = this->_requestData.getHost();
+  env["SERVER_NAME"]        = this->_requestData.getHost();
+  env["SERVER_PORT"]        = SSTR( this->_requestData.getPort() );
   env["SERVER_PROTOCOL"]    = this->_requestData.getVersion();
   env["SERVER_SOFTWARE"]    = ""; // empty for security reasons
 

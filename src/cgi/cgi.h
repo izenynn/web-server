@@ -6,11 +6,6 @@
 # include <map>
 # include <string>
 
-/** DEFINES ----------------------------------- */
-
-# define READ_END 0
-# define WRITE_END 1
-
 /** CLASS -------------------------------------- */
 
 namespace webserv {
@@ -27,6 +22,9 @@ class Cgi {
 
     void getHeadersAndBody( std::map<std::string, std::string> & headers, std::string & body );
   private:
+    static const int kReadEnd = 0;
+    static const int kWriteEnd = 1;
+
     int setEnv( void );
 
     const RequestData &   _requestData;
@@ -39,10 +37,10 @@ class Cgi {
     std::string       _cgiPath;
 
     std::string       _cgiTmpFilePath;
-    int           _cgiTmpFileFd;
+    int               _cgiTmpFileFd;
 
-    char **         _argv;
-    char **         _env;
+    char **           _argv;
+    char **           _env;
 
     std::string       _body;
 };
