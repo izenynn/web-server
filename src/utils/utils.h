@@ -15,8 +15,8 @@ namespace utils {
 
 std::string sanitizePath( std::string path );
 
-} /** namespace utils */
+} // namespace utils
 
-} /** namespace webserv */
+} // namespace webserv
 
-#endif /** __UTILS_HPP__ */
+#endif // __UTILS_HPP__

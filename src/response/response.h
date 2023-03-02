@@ -9,13 +9,15 @@
 # include <string>
 # include <iostream>
 
-# include <request/request_data.h>
-# include <response/response_data.h>
-# include <cgi/cgi.h>
+# include "request/request_data.h"
+# include "response/response_data.h"
 
 /** CLASS -------------------------------------- */
 
 namespace webserv {
+
+class RequestData;
+class ResponseData;
 
 class Response {
   public:

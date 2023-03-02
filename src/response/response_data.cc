@@ -1,11 +1,16 @@
 /** INCLUDES ----------------------------------- */
 
-#include <response/response_data.h>
+#include "response/response_data.h"
 
-#include <types.h>
-#include <utils/log.h>
-#include <config/constants.h>
-#include <utils/utils.h>
+#include <fcntl.h> // open()
+#include <unistd.h> // close()
+#include <sys/stat.h> // stat()
+#include <dirent.h> // opendir()
+
+#include "types.h"
+#include "utils/log.h"
+#include "config/constants.h"
+#include "utils/utils.h"
 
 /** UTILS -------------------------------------- */
 
@@ -240,7 +245,7 @@ const std::string ResponseData::getFileContent( void ) const {
       return ( content );
     }
     buffer[ret] = '\0';
-    content.insert( content.length(), buffer, ret );
+    content.insert( content.length(), buffer, static_cast<std::string::size_type>( ret ) );
   }
 
   delete[] buffer;

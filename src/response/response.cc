@@ -1,10 +1,17 @@
 /** INCLUDES ----------------------------------- */
 
-#include <response/response.h>
+#include "response/response.h"
 
-#include <config/constants.h>
-#include <utils/utils.h>
-#include <utils/log.h>
+#include <fcntl.h> // open()
+#include <unistd.h> // close()
+#include <sys/stat.h> // stat()
+#include <dirent.h> // opendir()
+
+#include "cgi/cgi.h"
+
+#include "utils/log.h"
+#include "utils/utils.h"
+#include "config/constants.h"
 
 /** UTILS -------------------------------------- */
 

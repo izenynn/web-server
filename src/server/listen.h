@@ -5,8 +5,8 @@
 
 /** INCLUDES ----------------------------------- */
 
-# include <stdint.h>
 # include <string>
+# include <stdint.h>
 
 /** CLASS -------------------------------------- */
 

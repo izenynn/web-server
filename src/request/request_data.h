@@ -1,18 +1,23 @@
 #pragma once
 
-#include <string>
 #ifndef __REQUEST_DATA_HPP__
 # define __REQUEST_DATA_HPP__
 
 /** INCLUDES ----------------------------------- */
 
-# include <request/request.h>
+# include <vector>
+# include <string>
+# include <stdint.h>
+
+# include "request/request.h"
 
 /** CLASS -------------------------------------- */
 
 namespace webserv {
 
+class Listen;
 class Client;
+class ServerConfig;
 
 class RequestData {
   public:

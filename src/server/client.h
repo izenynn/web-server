@@ -5,18 +5,20 @@
 
 /** INCLUDES ----------------------------------- */
 
+# include <vector>
 # include <unistd.h>
 # include <sys/time.h>
 # include <sys/socket.h>
 
-# include <server/listen.h>
-# include <config/server_config.h>
-# include <request/request.h>
-# include <response/response.h>
-
 /** CLASS -------------------------------------- */
 
 namespace webserv {
+
+struct Listen;
+class ServerConfig;
+class Request;
+class RequestData;
+class Response;
 
 class Client {
   public:

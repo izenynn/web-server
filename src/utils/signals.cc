@@ -1,7 +1,8 @@
 /** INCLUDES ----------------------------------- */
 
-# include <utils/signals.h>
-# include <utils/log.h>
+# include "utils/signals.h"
+
+# include "utils/log.h"
 
 /** METHODS ------------------------------------ */
 
@@ -35,6 +36,6 @@ void handle_signals( void ) {
   return ;
 }
 
-} /** namespace signals */
+} // namespace signals
 
-} /** namespace webserv */
+} // namespace webserv

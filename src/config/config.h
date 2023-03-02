@@ -7,17 +7,12 @@
 
 # include <string>
 # include <vector>
-# include <fstream>
-
-# include <stdint.h>
-
-# include <types/nullptr_t.hpp>
-# include <config/server_config.h>
 
 /** CLASS -------------------------------------- */
 
 namespace webserv {
 
+class ServerConfig;
 class Client;
 
 class Config {

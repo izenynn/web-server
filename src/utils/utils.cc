@@ -23,6 +23,6 @@ std::string sanitizePath( std::string path ) {
   return ( path );
 }
 
-} /** namespace utils */
+} // namespace utils
 
-} /** namespace webserv */
+} // namespace webserv

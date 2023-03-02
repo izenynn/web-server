@@ -11,12 +11,11 @@
 # include <algorithm> // std::count()
 # include <cstdio> // sscanf
 
-# include <types.h>
-# include <server/listen.h>
-
 /** CLASS -------------------------------------- */
 
 namespace webserv {
+
+class Listen;
 
 class ServerConfig {
   private:

@@ -1,9 +1,12 @@
 /** INCLUDES ----------------------------------- */
 
-#include <request/request.h>
+#include "request/request.h"
 
-#include <config/constants.h>
-#include <utils/log.h>
+#include "config/config.h"
+
+#include "types.h"
+#include "utils/log.h"
+#include "config/constants.h"
 
 /** UTILS -------------------------------------- */
 

@@ -14,9 +14,11 @@
 namespace webserv {
 
 namespace signals {
-  void handle_signals( void );
-} /** namespace utils */
 
-} /** namespace webserv */
+void handle_signals( void );
 
-#endif /** __SIGNALS_HPP__ */
+} // namespace utils
+
+} // namespace webserv
+
+#endif // __SIGNALS_HPP__

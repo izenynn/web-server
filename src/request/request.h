@@ -10,8 +10,6 @@
 # include <sstream>
 # include <sys/time.h>
 
-# include <config/config.h>
-
 /** CLASS -------------------------------------- */
 
 namespace webserv {

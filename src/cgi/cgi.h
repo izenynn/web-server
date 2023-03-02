@@ -5,15 +5,8 @@
 
 /** INCLUDES ----------------------------------- */
 
+# include <map>
 # include <string>
-# include <algorithm>
-# include <cstring> // std::strdup()
-# include <unistd.h> // fork(), dup2(), pipe(), chdir(), lseek(), read()
-# include <sys/wait.h> // waitpid()
-
-# include <request/request_data.h>
-# include <response/response_data.h>
-# include <types.h>
 
 /** DEFINES ----------------------------------- */
 
@@ -23,6 +16,9 @@
 /** CLASS -------------------------------------- */
 
 namespace webserv {
+
+class RequestData;
+class ResponseData;
 
 class Cgi {
   public:
