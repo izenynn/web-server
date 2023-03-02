@@ -178,16 +178,14 @@ int Server::clientRecv( int fd ) {
   FD_CLR( fd, &(this->_fdRead ) );
 
   // read socket
-  char * buffer = new char[kBufferSize * sizeof( char )];
-  ssize_t size = recv( fd, buffer, kBufferSize, 0 );
+  unique_ptr<char[]> buffer( new char[kBufferSize * sizeof( char )] );
+  ssize_t size = recv( fd, buffer.get(), kBufferSize, 0 );
   if ( size <= 0 ) {
-    delete[] buffer;
     return ( 1 ); // disconnect
   }
 
   // convert to string
-  std::string strBuffer( buffer, size );
-  delete[] buffer;
+  std::string strBuffer( buffer.get(), static_cast<std::string::size_type>( size ) );
 
   // parse request into request class
   int ret = request->parse( strBuffer );

@@ -9,6 +9,7 @@
 
 #include "cgi/cgi.h"
 
+#include "types.h"
 #include "utils/log.h"
 #include "utils/utils.h"
 #include "config/constants.h"
@@ -373,11 +374,10 @@ int Response::process( void ) {
   // cgi -> check and execute on match
   for ( std::map<std::string, std::string>::const_iterator it = this->_requestData.getCgi().begin(); it != this->_requestData.getCgi().end(); ++it ) {
     if ( this->_responseData.getExtension() == it->first ) {
-      Cgi * cgi = new Cgi( this->_requestData, this->_responseData );
+      unique_ptr<Cgi> cgi( new Cgi( this->_requestData, this->_responseData ) );
 
       int ret = cgi->exec();
       if ( ret >= 400 ) {
-        delete cgi;
         this->_statusCode = ret;
         return ( this->_statusCode );
       }
@@ -385,7 +385,6 @@ int Response::process( void ) {
       cgi->getHeadersAndBody( this->_headers, this->_body );
       this->_headers["Content-Length"] = SSTR( this->_body.length() );
 
-      delete cgi;
       this->_statusCode = ret;
       return ( this->_statusCode );
     }

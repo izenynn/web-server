@@ -9,7 +9,7 @@ namespace webserv {
 const char *            kDefaultPath = "/etc/webserv/webserv.conf";
 const std::string       kDefaultRoot = "/var/www/";
 const int               kBacklogSize = 1024; // listen() argument: the backlog argument defines the maximum length to which the queue of pending connections for a sockfd may grow
-const int               kBufferSize = 65536;
+const unsigned long     kBufferSize = 65536;
 const time_t            kTimeoutSec = 1; // select() timeout in seconds
 const long              kNsecLoopDelay = 500L * 1000L;
 const std::string       kEOL = "\r\n";

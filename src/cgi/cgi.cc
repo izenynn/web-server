@@ -172,8 +172,6 @@ int Cgi::exec( void ) {
   }
 
   // read cgi output and save into body
-  //char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
-  //auto_ptr<char *> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
   unique_ptr<char[]> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
   lseek( this->_cgiTmpFileFd, 0, SEEK_SET );
   for ( ssize_t aux_ret = 0; ; ) {
@@ -183,14 +181,12 @@ int Cgi::exec( void ) {
     }
     if ( -1 == aux_ret ) {
       LOG_FAILURE( "read() failed with return code -1" );
-      //delete[] buffer;
       this->_body = "";
       return ( 500 ); // 500 internal server error
     }
     buffer[static_cast<size_t>(aux_ret)] = '\0';
     this->_body.insert( this->_body.length(), buffer.get(), static_cast<std::string::size_type>( aux_ret ) );
   }
-  //delete[] buffer;
 
   return ( 200 ); // 200 ok
 }

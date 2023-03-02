@@ -50,8 +50,8 @@ void RequestData::print( void ) const {
 }
 
 void RequestData::initialize( void ) {
-  ServerConfig *                      newServer = webserv::nullptr;
-  const std::pair<const std::string, ServerConfig *> *  newLocation = webserv::nullptr;
+  ServerConfig * newServer = webserv::nullptr;
+  const std::pair<const std::string, ServerConfig *> * newLocation = webserv::nullptr;
 
   this->_request_uri = this->_request._requestUri;
 

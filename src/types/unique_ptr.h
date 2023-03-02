@@ -6,7 +6,7 @@
 # include <cassert>
 # include <algorithm>
 
-# include "nullptr_t.hpp"
+# include "nullptr_t.h"
 
 /** CLASS -------------------------------------- */
 

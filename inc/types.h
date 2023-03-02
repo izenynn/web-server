@@ -3,7 +3,7 @@
 
 /** INCLUDES ----------------------------------- */
 
-# include "types/nullptr_t.hpp"
-# include "types/unique_ptr.hpp"
+# include "types/nullptr_t.h"
+# include "types/unique_ptr.h"
 
 #endif // WEBSERV_TYPES_H_

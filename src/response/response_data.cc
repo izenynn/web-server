@@ -225,8 +225,8 @@ const std::string & ResponseData::getExtension( void ) const {
 
 const std::string ResponseData::getFileContent( void ) const {
   std::string content;
-  char * buffer = new char[ (kReadBuffer + 1 ) * sizeof( char )];
-  if ( NULL == buffer ) {
+  unique_ptr<char[]> buffer( new char[ ( kReadBuffer + 1 ) * sizeof( char )] );
+  if ( nullptr == buffer ) {
     LOG_FAILURE( "operator new char[] failed" );
     content = "";
     return ( content );
@@ -234,21 +234,18 @@ const std::string ResponseData::getFileContent( void ) const {
 
   lseek( this->_fd, 0, SEEK_SET );
   while ( true ) {
-    ssize_t ret = read( this->_fd, buffer, kReadBuffer );
+    ssize_t ret = read( this->_fd, buffer.get(), kReadBuffer );
     if ( 0 == ret ) {
       break ;
     }
     if ( -1 == ret ) {
       LOG_FAILURE( "read() failed with return code -1" );
-      delete[] buffer;
       content = "";
       return ( content );
     }
-    buffer[ret] = '\0';
-    content.insert( content.length(), buffer, static_cast<std::string::size_type>( ret ) );
+    buffer[static_cast<size_t>( ret )] = '\0';
+    content.insert( content.length(), buffer.get(), static_cast<std::string::size_type>( ret ) );
   }
-
-  delete[] buffer;
 
   return ( content );
 }
