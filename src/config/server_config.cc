@@ -2,11 +2,8 @@
 
 #include "config/server_config.h"
 
+#include "webserv.h"
 #include "server/listen.h"
-
-#include "types.h"
-#include "utils/log.h"
-#include "config/constants.h"
 
 /** UTILS -------------------------------------- */
 
@@ -209,7 +206,7 @@ ServerConfig * ServerConfig::createLocationServerConfig( void ) {
 
 void ServerConfig::parseLocation( token_type::const_iterator & it ) {
   std::string     location    = *it;
-  ServerConfig *  locationConfig  = webserv::nullptr;
+  ServerConfig *  locationConfig  = nullptr;
 
   // check not duplicate location
   if ( this->_location.end() != this->_location.find( location ) ) {

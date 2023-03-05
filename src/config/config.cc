@@ -4,11 +4,8 @@
 
 #include <fstream>
 
+#include "webserv.h"
 #include "config/server_config.h"
-
-#include "types.h"
-#include "utils/log.h"
-#include "config/constants.h"
 
 /** CLASS -------------------------------------- */
 

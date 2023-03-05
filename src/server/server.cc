@@ -11,16 +11,16 @@
 #include <netinet/in.h> // sockaddr_in
 #include <arpa/inet.h> // inet_addr()
 
+#include "nstd/memory.h"
+
+#include "webserv.h"
+#include "utils/signals.h"
+
 #include "config/server_config.h"
 #include "server/listen.h"
 #include "request/request.h"
 #include "request/request_data.h"
 #include "response/response.h"
-
-#include "types.h"
-#include "utils/log.h"
-#include "utils/signals.h"
-#include "config/constants.h"
 
 /** CLASS -------------------------------------- */
 
@@ -29,8 +29,8 @@ namespace webserv {
 bool Server::_run = false;
 
 Server::Server( void ) 
-    : _config( webserv::nullptr ),
-      _serverConfigs( webserv::nullptr ),
+    : _config( nullptr ),
+      _serverConfigs( nullptr ),
       _fdMax( 0 ) {
   FD_ZERO( &(this->_fdSet) );
   FD_ZERO( &(this->_fdRead) );
@@ -39,7 +39,7 @@ Server::Server( void )
 }
 
 Server::~Server( void ) {
-  if ( this->_config != webserv::nullptr ) {
+  if ( this->_config != nullptr ) {
     delete this->_config;
   }
   for ( std::map<int, Listen *>::iterator it = this->_servers.begin(); it != this->_servers.end(); ) {
@@ -169,7 +169,7 @@ int Server::stop( void ) {
 int Server::clientRecv( int fd ) {
   // get request
   Request * request = this->_clients[fd]->getRequest();
-  if ( webserv::nullptr == request ) {
+  if ( nullptr == request ) {
     this->_clients[fd]->initRequest();
     request = this->_clients[fd]->getRequest();
   }
@@ -178,7 +178,7 @@ int Server::clientRecv( int fd ) {
   FD_CLR( fd, &(this->_fdRead ) );
 
   // read socket
-  unique_ptr<char[]> buffer( new char[kBufferSize * sizeof( char )] );
+  nstd::unique_ptr<char[]> buffer( new char[kBufferSize * sizeof( char )] );
   ssize_t size = recv( fd, buffer.get(), kBufferSize, 0 );
   if ( size <= 0 ) {
     return ( 1 ); // disconnect
@@ -203,7 +203,7 @@ int Server::clientSend( int fd ) {
   FD_CLR( fd, &(this->_fdWrite ) );
 
   // check response exists
-  if ( webserv::nullptr == response ) {
+  if ( nullptr == response ) {
     return ( 0 );
   }
 

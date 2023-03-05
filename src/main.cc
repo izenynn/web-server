@@ -1,7 +1,7 @@
 #include <cstring> // std::strcmp()
 
-#include "types.h"
-#include "utils/log.h"
+#include "webserv.h"
+#include "nstd/memory.h"
 #include "server/server.h"
 
 int main( int argc, char * argv[] ) {
@@ -22,7 +22,7 @@ int main( int argc, char * argv[] ) {
   }
 
   // web server
-  webserv::unique_ptr<webserv::Server> server( new webserv::Server() );
+  nstd::unique_ptr<webserv::Server> server( new webserv::Server() );
 
   LOG_INFO( "loading config..." );
   try {

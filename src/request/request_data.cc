@@ -2,12 +2,10 @@
 
 #include "request/request_data.h"
 
+#include "webserv.h"
+
 #include "config/server_config.h"
 #include "server/listen.h"
-
-#include "types.h"
-#include "utils/log.h"
-#include "config/constants.h"
 
 /** UTILS -------------------------------------- */
 
@@ -20,8 +18,8 @@ RequestData::RequestData( Request & request, Listen & host, Client & client, con
       _host( host ),
       _client( client ),
       _servers( servers ),
-      _server( webserv::nullptr ),
-      _location( webserv::nullptr ),
+      _server( nullptr ),
+      _location( nullptr ),
       _locationAllocated( false ) {
   return ;
 }
@@ -50,8 +48,8 @@ void RequestData::print( void ) const {
 }
 
 void RequestData::initialize( void ) {
-  ServerConfig * newServer = webserv::nullptr;
-  const std::pair<const std::string, ServerConfig *> * newLocation = webserv::nullptr;
+  ServerConfig * newServer = nullptr;
+  const std::pair<const std::string, ServerConfig *> * newLocation = nullptr;
 
   this->_request_uri = this->_request._requestUri;
 
@@ -61,12 +59,12 @@ void RequestData::initialize( void ) {
   // assign server
   this->_server = newServer;
   // delete previus location
-  if ( webserv::nullptr != this->_location && true == this->_locationAllocated ) {
+  if ( nullptr != this->_location && true == this->_locationAllocated ) {
     delete this->_location;
     this->_locationAllocated = false;
   }
   // assign location
-  if ( webserv::nullptr != newLocation ) {
+  if ( nullptr != newLocation ) {
     this->_location = newLocation;
   } else {
     this->_location = new std::pair<const std::string, ServerConfig *>( std::string( newServer->_root ), newServer );
@@ -75,12 +73,12 @@ void RequestData::initialize( void ) {
 }
 
 void RequestData::redirect( const std::string & uri ) {
-  const std::pair<const std::string, ServerConfig *> * newLocation = webserv::nullptr;
+  const std::pair<const std::string, ServerConfig *> * newLocation = nullptr;
 
   newLocation = this->getRequestLocation( this->_server );
 
   this->_request_uri = uri;
-  if ( webserv::nullptr != newLocation ) {
+  if ( nullptr != newLocation ) {
     this->_location = newLocation;
   }
 
@@ -219,12 +217,12 @@ ServerConfig * RequestData::getRequestServer( void ) {
 }
 
 const std::pair<const std::string, ServerConfig *> * RequestData::getRequestLocation( const ServerConfig * const server ) {
-  const std::pair<const std::string, ServerConfig *> * match = webserv::nullptr;
+  const std::pair<const std::string, ServerConfig *> * match = nullptr;
 
   // find location with longest match
   for ( std::map<std::string, ServerConfig *>::const_iterator it = server->_location.begin(); it != server->_location.end(); ++it ) {
     if ( 0 == this->_request_uri.find( it->first ) ) {
-      if ( webserv::nullptr == match ) {
+      if ( nullptr == match ) {
         match = &(*it);
       } else if ( it->first.length() > match->first.length() ) {
         match = &(*it);

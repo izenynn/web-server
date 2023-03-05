@@ -11,13 +11,13 @@
 #include <sys/stat.h> // stat()
 #include <dirent.h> // opendir()
 
+#include "nstd/memory.h"
+
+#include "webserv.h"
+#include "utils/utils.h"
+
 #include "request/request_data.h"
 #include "response/response_data.h"
-
-#include "types.h"
-#include "utils/log.h"
-#include "config/constants.h"
-#include "utils/utils.h"
 
 /** UTILS -------------------------------------- */
 
@@ -172,7 +172,7 @@ int Cgi::exec( void ) {
   }
 
   // read cgi output and save into body
-  unique_ptr<char[]> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
+  nstd::unique_ptr<char[]> buffer( new char[ (kReadBuffer + 1 ) * sizeof( char )] );
   lseek( this->_cgiTmpFileFd, 0, SEEK_SET );
   for ( ssize_t aux_ret = 0; ; ) {
     aux_ret = read( this->_cgiTmpFileFd, buffer.get(), kReadBuffer );
@@ -270,7 +270,7 @@ int Cgi::setEnv( void ) {
 
   // create **env
   this->_env = reinterpret_cast<char **>( malloc( ( env.size() + 1 ) * sizeof( char * ) ) );
-  if ( webserv::nullptr == this->_env ) {
+  if ( nullptr == this->_env ) {
     return ( -1 );
   }
 

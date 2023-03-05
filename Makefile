@@ -40,7 +40,7 @@ CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
 			-Wnull-dereference \
 			-Winit-self \
 			-Wmissing-include-dirs \
-			-Wunused -Wunused-const-variable=2 \
+			-Wunused -Wunused-const-variable=1 \
 			-Walloc-zero \
 			-MMD
 
@@ -50,7 +50,8 @@ CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
 
 SRC_PATH = src
 OBJ_PATH = obj
-INC_PATH = inc
+INC_PATH = include
+LIB_PATH = lib
 
 # **************************************************************************** #
 #                                    FLAGS                                     #
@@ -58,6 +59,12 @@ INC_PATH = inc
 
 CXXFLAGS += -I ./$(INC_PATH)
 CXXFLAGS += -I ./$(SRC_PATH)
+
+# **************************************************************************** #
+#                                     LIBS                                     #
+# **************************************************************************** #
+
+CXXFLAGS += -I ./$(LIB_PATH)/nstd/include
 
 # **************************************************************************** #
 #                                   SOURCES                                    #

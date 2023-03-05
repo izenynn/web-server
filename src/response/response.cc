@@ -7,12 +7,12 @@
 #include <sys/stat.h> // stat()
 #include <dirent.h> // opendir()
 
-#include "cgi/cgi.h"
+#include "nstd/memory.h"
 
-#include "types.h"
-#include "utils/log.h"
+#include "webserv.h"
 #include "utils/utils.h"
-#include "config/constants.h"
+
+#include "cgi/cgi.h"
 
 /** UTILS -------------------------------------- */
 
@@ -374,7 +374,7 @@ int Response::process( void ) {
   // cgi -> check and execute on match
   for ( std::map<std::string, std::string>::const_iterator it = this->_requestData.getCgi().begin(); it != this->_requestData.getCgi().end(); ++it ) {
     if ( this->_responseData.getExtension() == it->first ) {
-      unique_ptr<Cgi> cgi( new Cgi( this->_requestData, this->_responseData ) );
+      nstd::unique_ptr<Cgi> cgi( new Cgi( this->_requestData, this->_responseData ) );
 
       int ret = cgi->exec();
       if ( ret >= 400 ) {

@@ -7,9 +7,9 @@
 #include <sys/stat.h> // stat()
 #include <dirent.h> // opendir()
 
-#include "types.h"
-#include "utils/log.h"
-#include "config/constants.h"
+#include "nstd/memory.h"
+
+#include "webserv.h"
 #include "utils/utils.h"
 
 /** UTILS -------------------------------------- */
@@ -225,7 +225,7 @@ const std::string & ResponseData::getExtension( void ) const {
 
 const std::string ResponseData::getFileContent( void ) const {
   std::string content;
-  unique_ptr<char[]> buffer( new char[ ( kReadBuffer + 1 ) * sizeof( char )] );
+  nstd::unique_ptr<char[]> buffer( new char[ ( kReadBuffer + 1 ) * sizeof( char )] );
   if ( nullptr == buffer ) {
     LOG_FAILURE( "operator new char[] failed" );
     content = "";
