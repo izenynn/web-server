@@ -234,9 +234,6 @@ re: fclean all
 
 # RUN
 PHONY += run
-ifeq ($(UNAME_S),Darwin)
-export ASAN_OPTIONS = detect_leaks=1
-endif
 run: CONF ?= ./conf/all.conf
 run: $(NAME)
 	@printf "\n${YEL}RUNNING...${NOCOL}\n"
