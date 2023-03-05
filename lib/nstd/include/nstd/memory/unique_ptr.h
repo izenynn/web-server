@@ -1,8 +1,7 @@
 #ifndef NSTD_UNIQUEPTR_H_
 #define NSTD_UNIQUEPTR_H_
 
-#include <cassert>
-#include <algorithm>
+#include <algorithm> // std::swap
 
 #include "../nullptr_t.h"
 
@@ -14,7 +13,7 @@ struct default_delete {
   ~default_delete() {}
 
   void operator()(Tp* ptr) const {
-    //assert(sizeof(Tp) > 0);
+    //assert(sizeof(Tp) > 0); // this should be a static_assert in c++11
     delete ptr;
   }
 };
@@ -24,7 +23,7 @@ struct default_delete<Tp[]> {
   default_delete() {}
 
   void operator()(Tp* ptr) const {
-    //assert(sizeof(Tp) > 0);
+    //assert(sizeof(Tp) > 0); // this should be a static_assert in c++11
     delete[] ptr;
   }
 };
@@ -48,7 +47,8 @@ class unique_ptr {
     unique_ptr(nullptr_t)
         : p_(nullptr), d_(nullptr) {}
 
-    // move constructors (because we are in c++98 they are copy, but will behave like move constructors)
+    // move constructors
+    // we are in c++98 so they are assign, but will behave like move ones
     unique_ptr(unique_ptr& u) : p_(u.release(), d_(u.get_deleter())) {}
 
     // destructor
@@ -56,7 +56,8 @@ class unique_ptr {
       reset();
     }
 
-    // assigment
+    // movement
+    // we are in c++98 so they are assigment, but will behave like move ones
     unique_ptr& operator=(unique_ptr& u) {
       reset(u.release());
       get_deleter() = u.get_deleter();
@@ -135,7 +136,8 @@ class unique_ptr<Tp[], Dp> {
     unique_ptr(nullptr_t)
         : p_(nullptr), d_(nullptr) {}
 
-    // move constructors (because we are in c++98 they are copy, but will behave like move constructors)
+    // move constructors
+    // we are in c++98 so they are assign, but will behave like move ones
     unique_ptr(unique_ptr& u) : p_(u.release(), d_(u.get_deleter())) {}
 
     // destructor
@@ -143,7 +145,8 @@ class unique_ptr<Tp[], Dp> {
       reset();
     }
 
-    // assigment
+    // movement
+    // we are in c++98 so they are assigment, but will behave like move ones
     unique_ptr& operator=(unique_ptr& u) {
       reset(u.release());
       get_deleter() = u.get_deleter();
