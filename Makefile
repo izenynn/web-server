@@ -32,12 +32,16 @@ MAKE = make
 
 CXX = g++
 
-# Some warnings are enabled in -Wall or -Wextra
-# But I like to explicitly put the ones that are related either way
-CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
-			-Wall -Wextra -Werror -Wpedantic \
-			-Wuninitialized -Wmaybe-uninitialized \
-			-Wshadow \
+CXXFLAGS += -std=c++98 -Wno-c++0x-compat
+CXXFLAGS += -MMD
+
+# warning flags
+WFLAGS :=	-Wall -Wextra -Werror -Wpedantic -Wshadow
+
+# extended warning flags
+# some of this warnings are enabled in -Wall or -Wextra
+# but I like to explicitly put the ones that are related either way
+EWFLAGS :=	-Wuninitialized -Wmaybe-uninitialized \
 			-Wdouble-promotion \
 			-Wformat -Wformat-overflow -Wformat-truncation -Wformat-security \
 			-Wnull-dereference \
@@ -58,8 +62,36 @@ CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
 			-Wmissing-field-initializers \
 			-Wredundant-decls \
 			-Winline \
-			-Wvla \
-			-MMD
+			-Wvla
+
+LINUX_ASAN :=	-fsanitize=address \
+				-fsanitize=pointer-compare \
+				-fsanitize=pointer-subtract \
+				-fsanitize=leak \
+				-fsanitize=undefined \
+				-fsanitize=shift \
+				-fsanitize=shift-exponent \
+				-fsanitize=shift-base \
+				-fsanitize=integer-divide-by-zero \
+				-fsanitize=vla-bound \
+				-fsanitize=null \
+				-fsanitize=return \
+				-fsanitize=signed-integer-overflow \
+				-fsanitize=bounds \
+				-fsanitize=bounds-strict \
+				-fsanitize=alignment \
+				-fsanitize=object-size \
+				-fsanitize=float-divide-by-zero \
+				-fsanitize=float-cast-overflow \
+				-fsanitize=nonnull-attribute \
+				-fsanitize=returns-nonnull-attribute \
+				-fsanitize=bool \
+				-fsanitize=enum \
+				-fsanitize=vptr \
+				-fsanitize=pointer-overflow \
+				-fsanitize=builtin
+
+OSX_ASAN :=		-fsanitize=address
 
 # **************************************************************************** #
 #                                    PATHS                                     #
@@ -133,15 +165,20 @@ DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 # **************************************************************************** #
 
 PHONY := all
-all: $(NAME) ## default rule, compile web server
+all: $(NAME)
 
+$(NAME): CXXFLAGS += $(WFLAGS)
 $(NAME): $(OBJ)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
 	@printf "${BLU}"
-	$(CXX) $(CXXFLAGS) $(OBJ) -o $@
+	$(CXX) $(CXXFLAGS) $(DEBUG) $(OBJ) -o $@
 	@printf "${NOCOL}"
 	@printf "\n${GRN}SUCCESS!${NOCOL}\n"
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
+
+PHONY += debug
+debug: CXXFLAGS += $(WFLAGS) $(EWFLAGS)
+debug: $(NAME)
 
 PHONY += install
 install: $(NAME)
@@ -149,25 +186,25 @@ install: $(NAME)
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize: CXXFLAGS += -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize: DEBUG := -g3 $(LINUX_ASAN)
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize: CXXFLAGS += -g3 -fsanitize=address
+sanitize: DEBUG := -g3 $(OSX_ASAN)
 endif
-sanitize: $(NAME)
+sanitize: debug
 
 PHONY += valgrind
-valgrind: CXXFLAGS += -ggdb3
-valgrind: $(NAME)
+valgrind: DEBUG := -ggdb3
+valgrind: debug
 
 PHONY += thread
-thread: CXXFLAGS += -g3 -fsanitize=thread
-thread: $(NAME)
+thread: DEBUG := -g3 -fsanitize=thread
+thread: debug
 
 # OBJ
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc | $(OBJ_PATH) $(OBJ_DIRS)
 	@printf "${BLU}"
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(DEBUG) -c $< -o $@
 	@printf "${NOCOL}"
 
 # OBJ DIRS
@@ -194,6 +231,17 @@ fclean: clean
 
 PHONY += re
 re: fclean all
+
+# RUN
+PHONY += run
+ifeq ($(UNAME_S),Darwin)
+export ASAN_OPTIONS = detect_leaks=1
+endif
+run: CONF ?= ./conf/all.conf
+run: $(NAME)
+	@printf "\n${YEL}RUNNING...${NOCOL}\n"
+	./$(NAME) $(CONF)
+	@printf "\n${GRN}SUCCESS!${NOCOL}\n"
 
 -include $(DEP)
 
