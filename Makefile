@@ -32,16 +32,33 @@ MAKE = make
 
 CXX = g++
 
+# Some warnings are enabled in -Wall or -Wextra
+# But I like to explicitly put the ones that are related either way
 CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
 			-Wall -Wextra -Werror -Wpedantic \
-			-Wconversion -Wshadow \
+			-Wuninitialized -Wmaybe-uninitialized \
+			-Wshadow \
 			-Wdouble-promotion \
-			-Wformat-security \
+			-Wformat -Wformat-overflow -Wformat-truncation -Wformat-security \
 			-Wnull-dereference \
 			-Winit-self \
 			-Wmissing-include-dirs \
 			-Wunused -Wunused-const-variable=1 \
+			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=malloc \
+			-Wsuggest-attribute=format -Wmissing-format-attribute -Wsuggest-attribute=cold \
 			-Walloc-zero \
+			-Warray-bounds \
+			-Wbool-compare -Wbool-operation \
+			-Wduplicated-branches -Wduplicated-cond \
+			-Wcast-qual -Wcast-align \
+			-Wparentheses -Wdangling-else \
+			-Wconversion -Wfloat-conversion -Wsign-conversion -Wsign-compare \
+			-Waddress \
+			-Wlogical-op -Wlogical-not-parentheses \
+			-Wmissing-field-initializers \
+			-Wredundant-decls \
+			-Winline \
+			-Wvla \
 			-MMD
 
 # **************************************************************************** #
