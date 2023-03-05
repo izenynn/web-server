@@ -1,5 +1,5 @@
 #ifndef NSTD_NULLPTRT_H_
-# define NSTD_NULLPTRT_H_
+#define NSTD_NULLPTRT_H_
 
 namespace nstd {
 

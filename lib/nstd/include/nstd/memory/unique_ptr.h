@@ -1,10 +1,10 @@
 #ifndef NSTD_UNIQUEPTR_H_
-# define NSTD_UNIQUEPTR_H_
+#define NSTD_UNIQUEPTR_H_
 
-# include <cassert>
-# include <algorithm>
+#include <cassert>
+#include <algorithm>
 
-# include "../nullptr_t.h"
+#include "../nullptr_t.h"
 
 namespace nstd {
 
