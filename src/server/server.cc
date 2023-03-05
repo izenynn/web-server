@@ -114,9 +114,9 @@ int Server::start( void ) {
         int fd = it->first;
         // check read fd and receive request
         if ( FD_ISSET( fd, &(this->_fdRead) ) ) {
-          int ret = this->clientRecv( fd );
+          int ret_aux = this->clientRecv( fd );
           // if error reading disconnect client
-          if ( 0 != ret ) {
+          if ( 0 != ret_aux ) {
             ++it;
             this->disconnectClient( fd );
             continue ;
@@ -127,8 +127,8 @@ int Server::start( void ) {
         // check write fd and send response
         if ( FD_ISSET( fd, &(this->_fdWrite) ) ) {
           // if error sending disconnect client
-          int ret = this->clientSend( fd );
-          if ( 0 != ret ) {
+          int ret_aux = this->clientSend( fd );
+          if ( 0 != ret_aux ) {
             ++it;
             this->disconnectClient( fd );
             continue ;
@@ -343,8 +343,8 @@ int Server::initialize( void ) {
 
         struct sockaddr_in addr;
         addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = inet_addr( (*it2)->ip.c_str() );
-        addr.sin_port = htons( (*it2)->port );
+        addr.sin_addr.s_addr = inet_addr( (*it2)->_ip.c_str() );
+        addr.sin_port = htons( (*it2)->_port );
 
         struct timespec loop_delay;
         loop_delay.tv_sec = 10;
@@ -352,7 +352,7 @@ int Server::initialize( void ) {
         bool isBinded = false;
         for ( int tries = 0; tries < 10; ++tries ) {
           if ( -1 == bind( sockfd, reinterpret_cast<struct sockaddr *>(&addr), sizeof( addr ) ) ) {
-            LOG_FAILURE( "bind() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1, retrying..." );
+            LOG_FAILURE( "bind() for address " << (*it2)->_ip << ":" << (*it2)->_port << " failed with return code: -1, retrying..." );
           } else {
             isBinded = true;
             break ;
@@ -360,20 +360,20 @@ int Server::initialize( void ) {
           while ( nanosleep( &loop_delay, &loop_delay ) );
         }
         if ( false == isBinded ) {
-          LOG_ERROR( "bind() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1" );
+          LOG_ERROR( "bind() for address " << (*it2)->_ip << ":" << (*it2)->_port << " failed with return code: -1" );
           return ( -1 );
         }
 
         if ( -1 == listen( sockfd, kBacklogSize ) ) {
-          LOG_ERROR( "listen() for address " << (*it2)->ip << ":" << (*it2)->port << " failed with return code: -1" );
+          LOG_ERROR( "listen() for address " << (*it2)->_ip << ":" << (*it2)->_port << " failed with return code: -1" );
           return ( -1 );
         }
 
-        this->_servers[sockfd] = new Listen( (*it2)->ip, (*it2)->port );
+        this->_servers[sockfd] = new Listen( (*it2)->_ip, (*it2)->_port );
         this->addToFdSet( sockfd );
         binded.push_back( **it2 );
 
-        LOG_INFO( "started listening on " << (*it2)->ip << ":" << (*it2)->port << " with fd: " << sockfd );
+        LOG_INFO( "started listening on " << (*it2)->_ip << ":" << (*it2)->_port << " with fd: " << sockfd );
       }
     }
   }

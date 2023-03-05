@@ -33,7 +33,16 @@ MAKE = make
 CXX = g++
 
 CXXFLAGS += -std=c++98 -Wno-c++0x-compat \
-			-Wall -Wextra -Werror -Wpedantic -Wconversion -MMD
+			-Wall -Wextra -Werror -Wpedantic \
+			-Wconversion -Wshadow \
+			-Wdouble-promotion \
+			-Wformat-security \
+			-Wnull-dereference \
+			-Winit-self \
+			-Wmissing-include-dirs \
+			-Wunused -Wunused-const-variable=2 \
+			-Walloc-zero \
+			-MMD
 
 # **************************************************************************** #
 #                                    PATHS                                     #

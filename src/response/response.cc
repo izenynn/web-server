@@ -265,7 +265,7 @@ void Response::clear( void ) {
 }
 
 void Response::build( void ) {
-  const std::string & method = this->_requestData.getMethod();
+  const std::string & reqMethod = this->_requestData.getMethod();
 
   // check if return directive
   if ( 0 != this->_requestData.getReturn().first ) {
@@ -289,7 +289,7 @@ void Response::build( void ) {
       this->generateRedirectPage( 301, uri + "/" );
       this->setResponse();
       return ;
-    } else if ( false == this->_requestData.isValidMethod( method ) ) {
+    } else if ( false == this->_requestData.isValidMethod( reqMethod ) ) {
       // set error code
       this->_statusCode = 405; // 405 method not allowed
       // set allow header
@@ -344,10 +344,10 @@ bool Response::isConnectionClose( void ) {
 }
 
 int Response::process( void ) {
-  const std::string & method = this->_requestData.getMethod();
+  const std::string & reqMethod = this->_requestData.getMethod();
 
   // get -> checks and internal redirect (index/autoindex directive)
-  if ( "GET" == method ) {
+  if ( "GET" == reqMethod ) {
     // directory, if index -> go to index, else if no index and no autoindex -> bad request
     if ( true == this->_responseData.isDirectory() ) {
       const std::string & index = this->_responseData.getIndex( this->_requestData.getIndex() );
@@ -391,7 +391,7 @@ int Response::process( void ) {
   }
 
   // post / put
-  if ( "POST" == method || "PUT" == method ) {
+  if ( "POST" == reqMethod || "PUT" == reqMethod ) {
     // check request is not the base directory
     {
       std::string location = utils::sanitizePath( this->_requestData.getLocationUri() );
@@ -446,7 +446,7 @@ int Response::process( void ) {
   }
 
   // delete
-  if ( "DELETE" == method ) {
+  if ( "DELETE" == reqMethod ) {
     // check request is not the base directory
     std::string location = utils::sanitizePath( this->_requestData.getLocationUri() );
     std::string request = utils::sanitizePath( this->_requestData.getRequestUri() );
@@ -461,7 +461,7 @@ int Response::process( void ) {
     }
   }
 
-  int ret = (this->*(Response::_methods[method]))();
+  int ret = (this->*(Response::_methods[reqMethod]))();
   return ( ret );
 }
 

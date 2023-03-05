@@ -109,7 +109,7 @@ void ServerConfig::print( const std::string & indent ) const {
 
   std::cout << indent << "listen:" << std::endl;
   for ( std::vector<Listen *>::const_iterator it = this->_listen.begin(); it != this->_listen.end(); ++it ) {
-    std::cout << indent << "    " << "ip: " << (*it)->ip << " port: " << (*it)->port << std::endl;
+    std::cout << indent << "    " << "ip: " << (*it)->_ip << " port: " << (*it)->_port << std::endl;
   }
 
   std::cout << indent << "server_name:" << std::endl;
@@ -484,7 +484,7 @@ void ServerConfig::parseClientMaxBodySize( token_type::const_iterator & it ) {
   if ( std::string::npos != it->find_first_not_of( "0123456789" ) ) {
     throw ServerConfig::ServerConfigException( "exception: invalid size in 'client_max_body_size' directive" );
   }
-  this->_client_max_body_size = atoi( it->c_str() );
+  this->_client_max_body_size = static_cast<std::string::size_type>( atoi( it->c_str() ) );
 
   // check next token is ';'
   ++it;

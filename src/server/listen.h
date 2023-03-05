@@ -11,15 +11,15 @@
 namespace webserv {
 
 struct Listen {
-  std::string ip;
-  uint16_t  port;
+  std::string _ip;
+  uint16_t _port;
 
-  Listen() : ip(""), port(0) {};
-  Listen(std::string ip, uint16_t port) : ip(ip), port(port) {};
+  Listen() : _ip(""), _port(0) {};
+  Listen(std::string ip, uint16_t port) : _ip(ip), _port(port) {};
 };
 
 inline bool operator==( const Listen & lhs, const Listen & rhs ) {
-  return ( lhs.ip == rhs.ip && lhs.port == rhs.port );
+  return ( lhs._ip == rhs._ip && lhs._port == rhs._port );
 }
 
 } // namespace webserv

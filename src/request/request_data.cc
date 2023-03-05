@@ -129,11 +129,11 @@ const std::string & RequestData::getVersion( void ) const {
 }
 
 const std::string & RequestData::getHost( void ) const {
-  return ( this->_host.ip );
+  return ( this->_host._ip );
 }
 
 uint16_t RequestData::getPort( void ) const {
-  return ( this->_host.port );
+  return ( this->_host._port );
 }
 
 void RequestData::setMethod( const std::string & value ) const {
@@ -195,8 +195,8 @@ ServerConfig * RequestData::getRequestServer( void ) {
   // match server with same ip:port
   for ( std::vector<ServerConfig *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
     for ( std::vector<Listen *>::const_iterator it2 = (*it)->_listen.begin(); it2 != (*it)->_listen.end(); ++it2 ) {
-      if ( ( (*it2)->ip == this->_host.ip || (*it2)->ip == "0.0.0.0" )
-          && (*it2)->port == this->_host.port ) {
+      if ( ( (*it2)->_ip == this->_host._ip || (*it2)->_ip == "0.0.0.0" )
+          && (*it2)->_port == this->_host._port ) {
         matches.push_back( *it );
         break ;
       }
