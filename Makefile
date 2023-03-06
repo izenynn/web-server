@@ -124,7 +124,6 @@ ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
 	CXXFLAGS += -D OSX
-	CXXFLAGS += -D _LIBCPP_NULLPTR
 endif
 
 # **************************************************************************** #

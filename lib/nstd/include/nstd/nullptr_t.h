@@ -19,6 +19,9 @@ class nullptr_t {
 
 } // namespace nstd
 
+#ifdef nullptr
+#undef nullptr
+#endif
 const nstd::nullptr_t nullptr = {};
 
 #endif // NSTD_NULLPTRT_H_

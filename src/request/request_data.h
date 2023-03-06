@@ -13,7 +13,7 @@
 
 namespace webserv {
 
-class Listen;
+struct Listen;
 class Client;
 class ServerConfig;
 
