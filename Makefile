@@ -116,6 +116,18 @@ CXXFLAGS += -I ./$(SRC_PATH)
 CXXFLAGS += -I ./$(LIB_PATH)/nstd/include
 
 # **************************************************************************** #
+#                                      OS                                      #
+# **************************************************************************** #
+
+ifeq ($(UNAME_S),Linux)
+	CXXFLAGS += -D LINUX
+endif
+ifeq ($(UNAME_S),Darwin)
+	CXXFLAGS += -D OSX
+	CXXFLAGS += -D _LIBCPP_NULLPTR
+endif
+
+# **************************************************************************** #
 #                                   SOURCES                                    #
 # **************************************************************************** #
 
@@ -164,10 +176,15 @@ DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 #                                    RULES                                     #
 # **************************************************************************** #
 
+DEBUG_BUILD ?= false
+
 PHONY := all
 all: $(NAME)
 
 $(NAME): CXXFLAGS += $(WFLAGS)
+ifeq ($(DEBUG_BUILD),true)
+$(NAME): CXXFLAGS += $(EWFLAGS)
+endif
 $(NAME): $(OBJ)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
 	@printf "${BLU}"
@@ -177,7 +194,7 @@ $(NAME): $(OBJ)
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
 
 PHONY += debug
-debug: CXXFLAGS += $(WFLAGS) $(EWFLAGS)
+debug: DEBUG_BUILD := true
 debug: $(NAME)
 
 PHONY += install
@@ -234,6 +251,9 @@ re: fclean all
 
 # RUN
 PHONY += run
+ifeq ($(UNAME_S),Darwin)
+export ASAN_OPTIONS = detect_leaks=1
+endif
 run: CONF ?= ./conf/all.conf
 run: $(NAME)
 	@printf "\n${YEL}RUNNING...${NOCOL}\n"
