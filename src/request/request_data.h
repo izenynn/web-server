@@ -3,9 +3,10 @@
 
 /** INCLUDES ----------------------------------- */
 
+# include <stdint.h>
+
 # include <vector>
 # include <string>
-# include <stdint.h>
 
 # include "request/request.h"
 

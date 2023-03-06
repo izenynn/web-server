@@ -2,14 +2,15 @@
 
 #include "cgi/cgi.h"
 
-#include <algorithm>
 #include <unistd.h> // fork(), dup2(), pipe(), chdir(), lseek(), read()
 #include <sys/wait.h> // waitpid()
-#include <cstring> // std::strdup()
 #include <fcntl.h> // open()
 #include <unistd.h> // close()
 #include <sys/stat.h> // stat()
 #include <dirent.h> // opendir()
+
+#include <algorithm>
+#include <cstring> // std::strdup()
 
 #include "nstd/memory.h"
 
