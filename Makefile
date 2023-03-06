@@ -41,28 +41,46 @@ WFLAGS :=	-Wall -Wextra -Werror -Wpedantic -Wshadow
 # extended warning flags
 # some of this warnings are enabled in -Wall or -Wextra
 # but I like to explicitly put the ones that are related either way
-EWFLAGS :=	-Wuninitialized -Wmaybe-uninitialized \
-			-Wdouble-promotion \
-			-Wformat -Wformat-overflow -Wformat-truncation -Wformat-security \
-			-Wnull-dereference \
-			-Winit-self \
-			-Wmissing-include-dirs \
-			-Wunused -Wunused-const-variable=1 \
-			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=malloc \
-			-Wsuggest-attribute=format -Wmissing-format-attribute -Wsuggest-attribute=cold \
-			-Walloc-zero \
-			-Warray-bounds \
-			-Wbool-compare -Wbool-operation \
-			-Wduplicated-branches -Wduplicated-cond \
-			-Wcast-qual -Wcast-align \
-			-Wparentheses -Wdangling-else \
-			-Wconversion -Wfloat-conversion -Wsign-conversion -Wsign-compare \
-			-Waddress \
-			-Wlogical-op -Wlogical-not-parentheses \
-			-Wmissing-field-initializers \
-			-Wredundant-decls \
-			-Winline \
-			-Wvla
+LINUX_EWFLAGS :=	-Wuninitialized -Wmaybe-uninitialized \
+					-Wdouble-promotion \
+					-Wformat -Wformat-overflow -Wformat-truncation -Wformat-security \
+					-Wnull-dereference \
+					-Winit-self \
+					-Wmissing-include-dirs \
+					-Wunused -Wunused-const-variable=1 \
+					-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=malloc \
+					-Wsuggest-attribute=format -Wmissing-format-attribute -Wsuggest-attribute=cold \
+					-Walloc-zero \
+					-Warray-bounds \
+					-Wbool-compare -Wbool-operation \
+					-Wduplicated-branches -Wduplicated-cond \
+					-Wcast-qual -Wcast-align \
+					-Wparentheses -Wdangling-else \
+					-Wconversion -Wfloat-conversion -Wsign-conversion -Wsign-compare \
+					-Waddress \
+					-Wlogical-op -Wlogical-not-parentheses \
+					-Wmissing-field-initializers \
+					-Wredundant-decls \
+					-Winline \
+					-Wvla
+
+OSX_EWFLAGS :=		-Wuninitialized \
+					-Wdouble-promotion \
+					-Wformat -Wformat-security \
+					-Wnull-dereference \
+					-Winit-self \
+					-Wmissing-include-dirs \
+					-Wunused -Wunused-const-variable \
+					-Warray-bounds \
+					-Wcast-qual -Wcast-align \
+					-Wparentheses -Wdangling-else \
+					-Wconversion -Wfloat-conversion -Wsign-conversion -Wsign-compare \
+					-Waddress \
+					-Wlogical-not-parentheses \
+					-Wmissing-field-initializers \
+					-Wredundant-decls \
+					-Winline \
+					-Wvla
 
 LINUX_ASAN :=	-fsanitize=address \
 				-fsanitize=pointer-compare \
@@ -91,7 +109,29 @@ LINUX_ASAN :=	-fsanitize=address \
 				-fsanitize=pointer-overflow \
 				-fsanitize=builtin
 
-OSX_ASAN :=		-fsanitize=address
+OSX_ASAN :=		-fsanitize=address \
+				-fsanitize=pointer-compare \
+				-fsanitize=pointer-subtract \
+				-fsanitize=undefined \
+				-fsanitize=shift \
+				-fsanitize=shift-exponent \
+				-fsanitize=shift-base \
+				-fsanitize=integer-divide-by-zero \
+				-fsanitize=vla-bound \
+				-fsanitize=null \
+				-fsanitize=return \
+				-fsanitize=signed-integer-overflow \
+				-fsanitize=bounds \
+				-fsanitize=alignment \
+				-fsanitize=float-divide-by-zero \
+				-fsanitize=float-cast-overflow \
+				-fsanitize=nonnull-attribute \
+				-fsanitize=returns-nonnull-attribute \
+				-fsanitize=bool \
+				-fsanitize=enum \
+				-fsanitize=vptr \
+				-fsanitize=pointer-overflow \
+				-fsanitize=builtin
 
 # **************************************************************************** #
 #                                    PATHS                                     #
@@ -175,15 +215,10 @@ DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 #                                    RULES                                     #
 # **************************************************************************** #
 
-DEBUG_BUILD ?= false
-
 PHONY := all
 all: $(NAME)
 
-$(NAME): CXXFLAGS += $(WFLAGS)
-ifeq ($(DEBUG_BUILD),true)
-$(NAME): CXXFLAGS += $(EWFLAGS)
-endif
+$(NAME): CXXFLAGS += $(WFLAGS) $(EWFLAGS)
 $(NAME): $(OBJ)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
 	@printf "${BLU}"
@@ -193,7 +228,12 @@ $(NAME): $(OBJ)
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
 
 PHONY += debug
-debug: DEBUG_BUILD := true
+ifeq ($(UNAME_S),Linux)
+debug: EWFLAGS := $(LINUX_EWFLAGS)
+endif
+ifeq ($(UNAME_S),Darwin)
+debug: EWFLAGS := $(OSX_EWFLAGS)
+endif
 debug: $(NAME)
 
 PHONY += install
