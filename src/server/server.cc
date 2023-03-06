@@ -2,14 +2,15 @@
 
 #include "server/server.h"
 
-#include <algorithm> // std::find()
-#include <ctime> // nanosleep()
 #include <sys/types.h>
 #include <sys/socket.h> // socket()
 #include <sys/select.h> // select()
 #include <fcntl.h> // fcntl()
 #include <netinet/in.h> // sockaddr_in
 #include <arpa/inet.h> // inet_addr()
+
+#include <algorithm> // std::find()
+#include <ctime> // nanosleep()
 
 #include "nstd/memory.h"
 

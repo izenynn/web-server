@@ -3,10 +3,11 @@
 
 /** INCLUDES ----------------------------------- */
 
+# include <sys/time.h>
+
 # include <string>
 # include <map>
 # include <sstream>
-# include <sys/time.h>
 
 /** CLASS -------------------------------------- */
 

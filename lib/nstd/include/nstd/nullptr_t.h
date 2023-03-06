@@ -19,9 +19,10 @@ class nullptr_t {
 
 } // namespace nstd
 
-#ifdef nullptr
+#if defined(OSX) && defined(nullptr)
 #undef nullptr
-#endif
+#endif // OSX && nullptr
+
 const nstd::nullptr_t nullptr = {};
 
 #endif // NSTD_NULLPTRT_H_
