@@ -4,8 +4,8 @@
 
 This project aims to create a basic HTTP server following the HTTP/1.1 standard in C++98.
 
-- Status: on development
-- Result: n/a
+- Status: finished
+- Result: 125%
 - Observations: null
 
 ## Config file
