@@ -8,8 +8,6 @@ This project aims to create a basic HTTP server following the HTTP/1.1 standard 
 - Result: n/a
 - Observations: null
 
-*developed by: [izenynn](https://github.com/izenynn)*
-
 ## Config file
 
 Configuration is similar to nginx, you can check some examples on the folder `conf/`.
