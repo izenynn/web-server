@@ -47,7 +47,7 @@ LINUX_EWFLAGS :=	-Wuninitialized -Wmaybe-uninitialized \
 					-Wnull-dereference \
 					-Winit-self \
 					-Wmissing-include-dirs \
-					-Wunused -Wunused-const-variable=1 \
+					-Wunused \
 					-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=malloc \
 					-Wsuggest-attribute=format -Wmissing-format-attribute -Wsuggest-attribute=cold \
 					-Walloc-zero \
@@ -70,7 +70,7 @@ OSX_EWFLAGS :=		-Wuninitialized \
 					-Wnull-dereference \
 					-Winit-self \
 					-Wmissing-include-dirs \
-					-Wunused -Wunused-const-variable \
+					-Wunused \
 					-Warray-bounds \
 					-Wcast-qual -Wcast-align \
 					-Wparentheses -Wdangling-else \

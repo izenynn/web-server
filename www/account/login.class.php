@@ -25,7 +25,7 @@ public function init($time=3600, $user=NULL, $pass=NULL) {
 private function verify_user($time, $user, $pass) {
 	if ($user==="admin" && $pass==="password") {
 		// Si la clave es correcta
-		$userid=$this->hash_user($usuario);
+		$userid=$this->hash_user($user);
 		setcookie("userid", $userid, time()+$time);
 		$_SESSION['userid']=$userid;
 		header( "Location: account.php" );

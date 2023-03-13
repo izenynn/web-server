@@ -96,7 +96,7 @@ int Server::start( void ) {
     this->_fdRead = this->_fdSet;
     this->_fdWrite  = this->_fdSet;
 
-    ret = select( this->_fdMax + 1, &(this->_fdRead), &(this->_fdWrite), NULL, &timeout );
+    ret = select( this->_fdMax + 1, &( this->_fdRead ), &( this->_fdWrite ), NULL, &timeout );
 
     if ( -1 == ret && true == Server::_run ) {
       LOG_FAILURE( "select() failed with return code: -1" );
@@ -104,7 +104,7 @@ int Server::start( void ) {
       // iterate our listeners
       for ( std::map<int, Listen *>::const_iterator it = this->_servers.begin(); it != this->_servers.end(); ++it ) {
         // check if listener fd is on read set (if we need to read from that fd)
-        if ( 0 != FD_ISSET( it->first, &(this->_fdRead) ) ) {
+        if ( 0 != FD_ISSET( it->first, &( this->_fdRead ) ) ) {
           // create a new client!
           this->newClient( it->first );
         }
@@ -114,7 +114,7 @@ int Server::start( void ) {
       for ( std::map<int, Client *>::const_iterator it = this->_clients.begin(); it != this->_clients.end(); ) {
         int fd = it->first;
         // check read fd and receive request
-        if ( FD_ISSET( fd, &(this->_fdRead) ) ) {
+        if ( FD_ISSET( fd, &( this->_fdRead ) ) ) {
           int ret_aux = this->clientRecv( fd );
           // if error reading disconnect client
           if ( 0 != ret_aux ) {
@@ -189,14 +189,13 @@ int Server::clientRecv( int fd ) {
   std::string strBuffer( buffer.get(), static_cast<std::string::size_type>( size ) );
 
   // parse request into request class
-  int ret = request->parse( strBuffer );
-
+  int status_code = request->parse( strBuffer );
   this->_clients[fd]->initRequestData( *(this->_serverConfigs) );
-
-  this->_clients[fd]->initResponse( *(this->_serverConfigs), ret );
+  this->_clients[fd]->initResponse( *(this->_serverConfigs), status_code );
 
   return ( 0 );
 }
+
 int Server::clientSend( int fd ) {
   Response * response = this->_clients[fd]->getResponse();
 
@@ -305,8 +304,10 @@ void Server::addToFdSet( int fd ) {
 
 void Server::delFromFdSet( int fd ) {
   for ( std::list<int>::iterator it = this->_fdList.begin(); it != this->_fdList.end(); ++it ) {
-    if ( fd == *it ) this->_fdList.erase( it );
-    break ;
+    if ( fd == *it ) {
+      this->_fdList.erase( it );
+      break ;
+    }
   }
 
   FD_CLR( fd, &(this->_fdSet) );
@@ -361,7 +362,7 @@ int Server::initialize( void ) {
           while ( nanosleep( &loop_delay, &loop_delay ) );
         }
         if ( false == isBinded ) {
-          LOG_ERROR( "bind() for address " << (*it2)->_ip << ":" << (*it2)->_port << " failed with return code: -1" );
+          LOG_ERROR( "bind() failed after max retries for address " << (*it2)->_ip << ":" << (*it2)->_port << " failed with return code: -1" );
           return ( -1 );
         }
 

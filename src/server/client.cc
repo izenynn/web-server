@@ -26,18 +26,7 @@ Client::Client( int fd, Listen & host )
 }
 
 Client::~Client( void ) {
-  if ( nullptr != this->_request ) {
-    delete this->_request;
-    this->_request = nullptr;
-  }
-  if ( nullptr != this->_response ) {
-    delete this->_response;
-    this->_response = nullptr;
-  }
-  if ( nullptr != this->_requestData ) {
-    delete this->_requestData;
-    this->_requestData = nullptr;
-  }
+  this->clear();
   close( this->_fd );
   return ;
 }
@@ -77,7 +66,7 @@ void Client::initResponse( const std::vector<ServerConfig *> & servers, int stat
       if ( nullptr != this->_response ) {
         delete this->_response;
       }
-      this->_response = new Response( *(this->_requestData), 500 );
+      this->_response = new Response( *(this->_requestData), 500 ); // 500 internal server error
       this->_response->build();
       break ;
     }

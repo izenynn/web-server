@@ -15,13 +15,20 @@ class nullptr_t {
     }
   private:
     void operator&() const;
+  public:
+	friend inline bool operator==(nullptr_t, nullptr_t) {
+      return true;
+    }
+	friend inline bool operator!=(nullptr_t, nullptr_t) {
+      return false;
+    }
 };
 
 } // namespace nstd
 
-#if defined(OSX) && defined(nullptr)
+#ifdef nullptr
 #undef nullptr
-#endif // OSX && nullptr
+#endif // nullptr
 
 const nstd::nullptr_t nullptr = {};
 

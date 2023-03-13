@@ -87,7 +87,7 @@ inline std::string & trim( std::string & s, const char * t = " \t\n\r\f\v" ) {
 }
 
 template <typename T>
-bool fromHex(const std::string& hexValue, T& result) {
+inline bool fromHex(const std::string& hexValue, T& result) {
   std::stringstream ss;
   ss << std::hex << hexValue;
   ss >> result;
@@ -139,7 +139,7 @@ int Request::parse( const std::string & buffer ) {
     ret = this->parseBody();
   }
 
-  return ( ret ); // it will never get here
+  return ( ret );
 }
 
 int Request::parseRequestLine( void ) {
