@@ -24,6 +24,9 @@ NAME = webserv
 
 BIN_DIR ?= /usr/local/bin
 
+RM = rm -rf
+MKDIR = mkdir -p
+
 # **************************************************************************** #
 #                                   COMPILER                                   #
 # **************************************************************************** #
@@ -36,7 +39,8 @@ CXXFLAGS += -std=c++98 -Wno-c++0x-compat
 CXXFLAGS += -MMD
 
 # warning flags
-WFLAGS :=	-Wall -Wextra -Werror -Wpedantic -Wshadow
+WFLAGS		:=	-Wall -Wextra -Werror -Wpedantic -Wshadow
+CXXFLAGS	+= $(WFLAGS)
 
 # extended warning flags
 # some of this warnings are enabled in -Wall or -Wextra
@@ -82,7 +86,7 @@ OSX_EWFLAGS :=		-Wuninitialized \
 					-Winline \
 					-Wvla
 
-LINUX_ASAN :=	-fsanitize=address \
+LINUX_SFLAGS :=	-fsanitize=address \
 				-fsanitize=pointer-compare \
 				-fsanitize=pointer-subtract \
 				-fsanitize=leak \
@@ -109,7 +113,7 @@ LINUX_ASAN :=	-fsanitize=address \
 				-fsanitize=pointer-overflow \
 				-fsanitize=builtin
 
-OSX_ASAN :=		-fsanitize=address \
+OSX_SFLAGS :=	-fsanitize=address \
 				-fsanitize=pointer-compare \
 				-fsanitize=pointer-subtract \
 				-fsanitize=undefined \
@@ -218,21 +222,20 @@ DEP = $(addprefix $(OBJ_PATH)/, $(DEP_NAME))
 PHONY := all
 all: $(NAME)
 
-$(NAME): CXXFLAGS += $(WFLAGS) $(EWFLAGS)
 $(NAME): $(OBJ)
 	@printf "\n${YEL}LINKING:${NOCOL}\n"
 	@printf "${BLU}"
-	$(CXX) $(CXXFLAGS) $(DEBUG) $(OBJ) -o $@
+	$(CXX) $(LDFLAGS) $^ -o $@
 	@printf "${NOCOL}"
 	@printf "\n${GRN}SUCCESS!${NOCOL}\n"
 	@printf "${CYN}type \"./${NAME}\" to start!${NOCOL}\n"
 
 PHONY += debug
 ifeq ($(UNAME_S),Linux)
-debug: EWFLAGS := $(LINUX_EWFLAGS)
+debug: CXXFLAGS += $(LINUX_EWFLAGS)
 endif
 ifeq ($(UNAME_S),Darwin)
-debug: EWFLAGS := $(OSX_EWFLAGS)
+debug: CXXFLAGS += $(OSX_EWFLAGS)
 endif
 debug: $(NAME)
 
@@ -241,20 +244,24 @@ install: $(NAME)
 	install $(NAME) $(BIN_DIR)
 
 PHONY += sanitize
+sanitize: CXXFLAGS += -g3
 ifeq ($(UNAME_S),Linux)
-sanitize: DEBUG := -g3 $(LINUX_ASAN)
+sanitize: CXXFLAGS += $(LINUX_SFLAGS)
+sanitize: LDFLAGS += $(LINUX_SFLAGS)
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize: DEBUG := -g3 $(OSX_ASAN)
+sanitize: CXXFLAGS += $(OSX_SFLAGS)
+sanitize: LDFLAGS += $(OSX_SFLAGS)
 endif
 sanitize: debug
 
 PHONY += valgrind
-valgrind: DEBUG := -ggdb3
+valgrind: CXXFLAGS += -ggdb3
 valgrind: debug
 
 PHONY += thread
-thread: DEBUG := -g3 -fsanitize=thread
+thread: CXXFLAGS += -g3
+thread: LDFLAGS += -fsanitize=thread
 thread: debug
 
 # OBJ
@@ -266,23 +273,23 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc | $(OBJ_PATH) $(OBJ_DIRS)
 # OBJ DIRS
 $(OBJ_DIRS): | $(OBJ_PATH)
 	@printf "${MAG}"
-	mkdir -p $(OBJ_DIRS)
+	$(MKDIR) $(OBJ_DIRS)
 	@printf "${NOCOL}"
 $(OBJ_PATH):
 	@printf "${MAG}"
-	mkdir -p $(OBJ_PATH)
+	$(MKDIR) $(OBJ_PATH)
 	@printf "${NOCOL}"
 
 PHONY += clean
 clean:
 	@printf "${RED}"
-	rm -rf $(OBJ_PATH)
+	$(RM) $(OBJ_PATH)
 	@printf "${NOCOL}"
 
 PHONY += fclean
 fclean: clean
 	@printf "${RED}"
-	rm -rf $(NAME)
+	$(RM) $(NAME)
 	@printf "${NOCOL}"
 
 PHONY += re
