@@ -267,7 +267,7 @@ thread: debug
 # OBJ
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.cc | $(OBJ_PATH) $(OBJ_DIRS)
 	@printf "${BLU}"
-	$(CXX) $(CXXFLAGS) $(DEBUG) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 	@printf "${NOCOL}"
 
 # OBJ DIRS
